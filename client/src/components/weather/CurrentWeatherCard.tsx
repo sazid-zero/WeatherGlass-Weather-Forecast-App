@@ -4,6 +4,8 @@ import { formatTime } from '@/lib/weather-utils';
 import type { WeatherData } from '@shared/schema';
 import { TemperatureDisplay, VisibilityDisplay } from './UnitsDisplay';
 import { WeatherIcon } from './WeatherIcon';
+import { useTheme } from '@/components/ui/theme-provider';
+import { useState, useEffect } from 'react';
 
 interface CurrentWeatherCardProps {
   weatherData: WeatherData;
@@ -12,6 +14,28 @@ interface CurrentWeatherCardProps {
 
 export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeatherCardProps) {
   const currentTime = formatTime(new Date());
+  const { theme } = useTheme();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      if (theme === 'dark') {
+        setIsDarkMode(true);
+      } else if (theme === 'system') {
+        setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+      } else {
+        setIsDarkMode(false);
+      }
+    };
+
+    checkDarkMode();
+    
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', checkDarkMode);
+      return () => mediaQuery.removeEventListener('change', checkDarkMode);
+    }
+  }, [theme]);
 
   // Dynamic weather background animation based on weather condition
   const getWeatherAnimation = (condition: string) => {
