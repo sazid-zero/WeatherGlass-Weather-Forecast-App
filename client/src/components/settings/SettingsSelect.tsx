@@ -34,9 +34,9 @@ export function SettingsSelect({
         </Label>
         <p className="text-sm text-muted-foreground mt-1">{description}</p>
       </div>
-      <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+      <Select value={value || options[0]?.value} onValueChange={onValueChange} disabled={disabled}>
         <SelectTrigger className="w-40">
-          <SelectValue />
+          <SelectValue placeholder="Select option..." />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (

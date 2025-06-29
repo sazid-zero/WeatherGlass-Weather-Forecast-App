@@ -176,10 +176,15 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
       className={`glass-card rounded-3xl p-8 h-full relative overflow-hidden ${className}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.02, y: -5 }}
-      transition={{ duration: 0.5 }}
+      whileHover={{ 
+        scale: 1.02, 
+        y: -8,
+        boxShadow: "0 25px 50px rgba(0, 0, 0, 0.25), 0 10px 30px rgba(0, 0, 0, 0.15)"
+      }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
       style={{
-        background: weatherAnimation.background
+        background: weatherAnimation.background,
+        boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1), 0 4px 15px rgba(0, 0, 0, 0.05)"
       }}
     >
       {/* Animated Weather Particles */}

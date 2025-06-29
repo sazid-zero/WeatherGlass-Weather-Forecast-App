@@ -2,6 +2,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Droplets, Wind } from 'lucide-react';
 import type { ForecastData } from '@shared/schema';
+import { useTheme } from '@/components/ui/theme-provider';
 
 interface WeatherChartsProps {
   forecastData: ForecastData[];
@@ -22,6 +23,15 @@ function getConditionColor(condition: string): string {
 }
 
 export function WeatherCharts({ forecastData }: WeatherChartsProps) {
+  const { theme } = useTheme();
+  const isLightTheme = theme === 'light';
+  
+  // Theme-aware colors
+  const axisColor = isLightTheme ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)';
+  const gridColor = isLightTheme ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+  const tooltipBg = isLightTheme ? 'rgba(255,255,255,0.95)' : 'rgba(0,0,0,0.8)';
+  const tooltipBorder = isLightTheme ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)';
+
   if (!forecastData || forecastData.length === 0) {
     return (
       <motion.div 
@@ -123,23 +133,24 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
         </div>
         <ResponsiveContainer width="100%" height={350}>
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
             <XAxis 
               dataKey="time" 
-              stroke="rgba(255,255,255,0.7)" 
+              stroke={axisColor} 
               fontSize={12}
             />
             <YAxis 
-              stroke="rgba(255,255,255,0.7)" 
+              stroke={axisColor} 
               fontSize={12}
               domain={['dataMin - 2', 'dataMax + 2']}
             />
             <Tooltip 
               contentStyle={{
-                backgroundColor: 'rgba(0,0,0,0.8)',
-                border: '1px solid rgba(255,255,255,0.2)',
+                backgroundColor: tooltipBg,
+                border: `1px solid ${tooltipBorder}`,
                 borderRadius: '12px',
-                backdropFilter: 'blur(12px)'
+                backdropFilter: 'blur(12px)',
+                color: isLightTheme ? '#000' : '#fff'
               }}
             />
             <Line 
@@ -198,14 +209,15 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="time" stroke="rgba(255,255,255,0.7)" fontSize={12} />
-              <YAxis stroke="rgba(255,255,255,0.7)" fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+              <XAxis dataKey="time" stroke={axisColor} fontSize={12} />
+              <YAxis stroke={axisColor} fontSize={12} />
               <Tooltip 
                 contentStyle={{
-                  backgroundColor: 'rgba(0,0,0,0.8)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '12px'
+                  backgroundColor: tooltipBg,
+                  border: `1px solid ${tooltipBorder}`,
+                  borderRadius: '12px',
+                  color: isLightTheme ? '#000' : '#fff'
                 }}
               />
               <Bar dataKey="humidity" fill="#06b6d4" name="Humidity %" radius={[4, 4, 0, 0]} />
@@ -231,14 +243,15 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="time" stroke="rgba(255,255,255,0.7)" fontSize={12} />
-              <YAxis stroke="rgba(255,255,255,0.7)" fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+              <XAxis dataKey="time" stroke={axisColor} fontSize={12} />
+              <YAxis stroke={axisColor} fontSize={12} />
               <Tooltip 
                 contentStyle={{
-                  backgroundColor: 'rgba(0,0,0,0.8)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '12px'
+                  backgroundColor: tooltipBg,
+                  border: `1px solid ${tooltipBorder}`,
+                  borderRadius: '12px',
+                  color: isLightTheme ? '#000' : '#fff'
                 }}
               />
               <Line 
