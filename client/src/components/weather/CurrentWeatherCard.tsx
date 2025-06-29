@@ -115,9 +115,10 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
               height: `${12 + Math.random() * 20}px`,
               left: `${Math.random() * 100}%`,
               top: `${10 + Math.random() * 40}%`,
-              background: 'radial-gradient(ellipse, rgba(255, 255, 255, 0.7), rgba(148, 163, 184, 0.5))',
-              boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(148, 163, 184, 0.3)',
-              filter: 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.6))',
+              background: 'radial-gradient(ellipse, rgba(255, 255, 255, 0.9), rgba(203, 213, 225, 0.7))',
+              boxShadow: '0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(148, 163, 184, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.4)',
+              filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 15px rgba(148, 163, 184, 0.5))',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
             }}
             animate={{
               x: [-50, window.innerWidth || 400],
@@ -143,11 +144,15 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
 
   const weatherAnimation = getWeatherAnimation(weatherData.weatherMain);
 
+  const isRainy = weatherData.weatherMain.toLowerCase().includes('rain') || 
+                  weatherData.weatherMain.toLowerCase().includes('drizzle');
+
   return (
     <motion.div 
       className={`glass-card rounded-3xl p-8 h-full relative overflow-hidden ${className}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ scale: 1.02, y: -5 }}
       transition={{ duration: 0.5 }}
       style={{
         background: weatherAnimation.background
@@ -185,8 +190,8 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <p className="text-muted-foreground text-sm font-medium">Now</p>
-            <p className="text-muted-foreground text-xs">{currentTime}</p>
+            <p className={`text-sm font-medium ${isRainy ? 'text-white drop-shadow-lg' : 'text-muted-foreground'}`}>Now</p>
+            <p className={`text-xs ${isRainy ? 'text-white/90 drop-shadow-md' : 'text-muted-foreground'}`}>{currentTime}</p>
           </div>
           <motion.div 
             className="text-4xl"
@@ -203,15 +208,15 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         
         <div className="mb-4">
           <motion.div 
-            className="text-6xl font-light text-foreground mb-2"
+            className={`text-6xl font-light mb-2 ${isRainy ? 'text-white drop-shadow-xl' : 'text-foreground'}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
 <TemperatureDisplay temperature={weatherData.temperature} />
           </motion.div>
-          <p className="text-foreground font-medium capitalize">{weatherData.weatherDescription}</p>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className={`font-medium capitalize ${isRainy ? 'text-white drop-shadow-lg' : 'text-foreground'}`}>{weatherData.weatherDescription}</p>
+          <p className={`text-sm mt-1 ${isRainy ? 'text-white/90 drop-shadow-md' : 'text-muted-foreground'}`}>
 Feels like <TemperatureDisplay temperature={weatherData.feelsLike} />
           </p>
         </div>
@@ -224,16 +229,16 @@ Feels like <TemperatureDisplay temperature={weatherData.feelsLike} />
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <div className="text-center">
-            <Eye className="text-primary h-5 w-5 mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground">Visibility</p>
-            <p className="text-sm font-semibold text-foreground">
+            <Eye className={`h-5 w-5 mx-auto mb-2 ${isRainy ? 'text-white/80' : 'text-primary'}`} />
+            <p className={`text-xs ${isRainy ? 'text-white/70 drop-shadow-md' : 'text-muted-foreground'}`}>Visibility</p>
+            <p className={`text-sm font-semibold ${isRainy ? 'text-white drop-shadow-lg' : 'text-foreground'}`}>
 <VisibilityDisplay visibility={weatherData.visibility} />
             </p>
           </div>
           <div className="text-center">
-            <Droplets className="text-primary h-5 w-5 mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground">Humidity</p>
-            <p className="text-sm font-semibold text-foreground">{weatherData.humidity}%</p>
+            <Droplets className={`h-5 w-5 mx-auto mb-2 ${isRainy ? 'text-white/80' : 'text-primary'}`} />
+            <p className={`text-xs ${isRainy ? 'text-white/70 drop-shadow-md' : 'text-muted-foreground'}`}>Humidity</p>
+            <p className={`text-sm font-semibold ${isRainy ? 'text-white drop-shadow-lg' : 'text-foreground'}`}>{weatherData.humidity}%</p>
           </div>
         </motion.div>
 
