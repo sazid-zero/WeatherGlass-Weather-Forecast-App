@@ -6,11 +6,13 @@ import { SettingsToggle } from '@/components/settings/SettingsToggle';
 import { SettingsSelect } from '@/components/settings/SettingsSelect';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation, type Language } from '@/lib/i18n';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const { settings, updateWeatherSettings, updateNotificationSettings, updatePrivacySettings, resetSettings } = useSettings();
   const { toast } = useToast();
+  const { t } = useTranslation((settings?.weather?.language as Language) || 'en');
 
   const themeOptions = [
     { 
@@ -64,14 +66,22 @@ export default function SettingsPage() {
   ];
 
   const languageOptions = [
-    { value: 'en', label: 'English' }
+    { value: 'en', label: 'English' },
+    { value: 'es', label: 'Español' },
+    { value: 'fr', label: 'Français' },
+    { value: 'de', label: 'Deutsch' },
+    { value: 'it', label: 'Italiano' },
+    { value: 'pt', label: 'Português' },
+    { value: 'ru', label: 'Русский' },
+    { value: 'ja', label: '日本語' },
+    { value: 'zh', label: '中文' }
   ];
 
   const handleResetSettings = () => {
     resetSettings();
     toast({
-      title: "Settings Reset",
-      description: "All settings have been reset to default values.",
+      title: t('settingsPage.resetSettings'),
+      description: t('messages.settingsReset'),
     });
   };
 
@@ -85,9 +95,9 @@ export default function SettingsPage() {
       >
         <div className="flex items-center gap-3 mb-2">
           <SettingsIcon className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold text-foreground">Settings</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('settingsPage.title')}</h1>
         </div>
-        <p className="text-muted-foreground">Customize your weather app experience</p>
+        <p className="text-muted-foreground">{t('settingsPage.subtitle')}</p>
       </motion.header>
 
       {/* Theme Selection */}
@@ -158,14 +168,14 @@ export default function SettingsPage() {
         >
           <div className="flex items-center gap-3 mb-6">
             <Palette className="h-6 w-6 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Weather & Display</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t('settingsPage.weatherDisplay')}</h3>
           </div>
           
           <div className="space-y-2">
             <SettingsSelect
               id="units"
-              label="Temperature Units"
-              description="Choose your preferred temperature scale"
+              label={t('settingsPage.temperatureUnits')}
+              description={t('settingsPage.temperatureDesc')}
               value={settings?.weather?.units || 'metric'}
               onValueChange={(value) => updateWeatherSettings({ units: value as any })}
               options={unitOptions}
@@ -173,8 +183,8 @@ export default function SettingsPage() {
             
             <SettingsSelect
               id="language"
-              label="Language"
-              description="Interface language preference"
+              label={t('settingsPage.language')}
+              description={t('settingsPage.languageDesc')}
               value={settings?.weather?.language || 'en'}
               onValueChange={(value) => updateWeatherSettings({ language: value as any })}
               options={languageOptions}
@@ -190,14 +200,14 @@ export default function SettingsPage() {
         >
           <div className="flex items-center gap-3 mb-6">
             <Globe className="h-6 w-6 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Location</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t('settingsPage.location')}</h3>
           </div>
           
           <div className="space-y-2">
             <SettingsToggle
               id="auto-location"
-              label="Auto-detect Location"
-              description="Use GPS to automatically detect your current location"
+              label={t('settingsPage.autoLocation')}
+              description={t('settingsPage.autoLocationDesc')}
               checked={settings.weather.autoLocation}
               onCheckedChange={(checked) => updateWeatherSettings({ autoLocation: checked })}
             />
