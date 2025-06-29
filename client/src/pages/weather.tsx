@@ -285,7 +285,7 @@ export default function WeatherPage() {
       {weatherData && (
         <>
           {/* Main Weather Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
             {/* Current Weather Card */}
             <motion.div
               className="xl:col-span-1"
@@ -353,7 +353,7 @@ export default function WeatherPage() {
   );
 
   return (
-    <div className="ml-16 sm:ml-20 p-4 sm:p-6">
+    <div className="p-6">
       {/* Background Gradients */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {gradientElements.map((element, index) => (

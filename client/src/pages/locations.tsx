@@ -146,26 +146,24 @@ export default function LocationsPage() {
 
   return (
     <div className="min-h-screen weather-gradient-bg">
-      <div className="ml-16 sm:ml-20 p-4 sm:p-6">
+      <div className="ml-24 p-6">
         <motion.header 
           className="mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('myLocations')}</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-2">{t('myLocations')}</h1>
               <p className="text-muted-foreground">{t('manageLocations')}</p>
             </div>
             
-            <div className="w-full sm:w-auto">
-              <SearchBar onCitySearch={handleAddLocation} />
-            </div>
+            <SearchBar onCitySearch={handleAddLocation} />
           </div>
         </motion.header>
 
-        <div className="grid grid-cols-1 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Favorite Locations */}
           <motion.section
             className="glass-card rounded-3xl p-6"

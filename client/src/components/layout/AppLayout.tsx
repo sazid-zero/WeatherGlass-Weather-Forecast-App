@@ -26,7 +26,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="flex min-h-screen weather-gradient-bg">
       {/* Sidebar Navigation */}
       <motion.nav
-        className="fixed left-0 top-0 h-full w-16 sm:w-20 glass-card border-r border-white/20 flex flex-col items-center py-4 sm:py-6 z-50"
+        className="fixed left-0 top-0 h-full w-20 glass-card border-r border-white/20 flex flex-col items-center py-6 z-50"
         initial={{ x: -80, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
