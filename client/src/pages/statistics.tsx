@@ -3,12 +3,16 @@ import { motion } from 'framer-motion';
 import { TrendingUp, BarChart3, Activity, Calendar, MapPin, Thermometer, Droplets, Wind, Eye } from 'lucide-react';
 import { useWeatherStatistics } from '@/hooks/use-weather-statistics';
 import { useLocationHistory } from '@/hooks/use-location-history';
+import { useSettings } from '@/hooks/use-settings';
 import { SearchBar } from '@/components/weather/SearchBar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/lib/i18n';
 
 export default function StatisticsPage() {
   const { getFavorites, getRecent } = useLocationHistory();
+  const { settings } = useSettings();
+  const { t } = useTranslation(settings.weather.language);
   const [selectedCity, setSelectedCity] = useState<string>('');
   
   // Get available cities from location history
@@ -28,16 +32,16 @@ export default function StatisticsPage() {
 
   return (
     <div className="min-h-screen weather-gradient-bg">
-      <div className="ml-24 p-6">
+      <div className="ml-16 sm:ml-20 p-4 sm:p-6">
         <motion.header 
           className="mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Weather Statistics</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('statistics')}</h1>
               <p className="text-muted-foreground">Detailed analytics and trends for {currentCity}</p>
             </div>
             
@@ -66,7 +70,7 @@ export default function StatisticsPage() {
 
         {/* Key Statistics */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
             {[1, 2, 3, 4].map((index) => (
               <div key={index} className="glass-card rounded-3xl p-6">
                 <Skeleton className="h-6 w-6 mb-4" />
@@ -82,7 +86,7 @@ export default function StatisticsPage() {
             <p className="text-sm text-muted-foreground mt-2">Please try a different city or check your connection</p>
           </div>
         ) : statsData ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
             <motion.div
               className="glass-card rounded-3xl p-6"
               initial={{ opacity: 0, y: 20 }}

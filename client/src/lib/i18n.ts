@@ -78,6 +78,16 @@ export const translations = {
       reset: 'Reset'
     },
     
+    // Locations page
+    myLocations: 'My Locations',
+    manageLocations: 'Manage your saved weather locations',
+    favorites: 'Favorites',
+    recentLocations: 'Recent Locations',
+    noFavoriteLocations: 'No favorite locations yet',
+    addFirstFavorite: 'Search for a city above to add your first favorite',
+    noRecentLocations: 'No recent locations',
+    recentSearchedCities: 'Your recently searched cities will appear here',
+    
     // Messages
     messages: {
       locationNotFound: 'Location not found',
@@ -352,6 +362,141 @@ export const translations = {
     }
   },
   
+  it: {
+    // Navigation
+    home: 'Home',
+    locations: 'Località',
+    statistics: 'Statistiche',
+    settings: 'Impostazioni',
+    
+    // Locations page
+    myLocations: 'Le Mie Località',
+    manageLocations: 'Gestisci le tue località meteo salvate',
+    favorites: 'Preferiti',
+    recentLocations: 'Località Recenti',
+    noFavoriteLocations: 'Nessuna località preferita ancora',
+    addFirstFavorite: 'Cerca una città sopra per aggiungere il primo preferito',
+    noRecentLocations: 'Nessuna località recente',
+    recentSearchedCities: 'Le tue città cercate di recente appariranno qui',
+    
+    // Messages
+    messages: {
+      locationNotFound: 'Località non trovata',
+      weatherDataUnavailable: 'Dati meteo non disponibili',
+      loadingWeather: 'Caricamento dati meteo...',
+      locationPermissionDenied: 'Permesso di localizzazione negato',
+      settingsReset: 'Le impostazioni sono state ripristinate ai valori predefiniti'
+    }
+  },
+  
+  pt: {
+    // Navigation
+    home: 'Início',
+    locations: 'Localizações',
+    statistics: 'Estatísticas',
+    settings: 'Configurações',
+    
+    // Locations page
+    myLocations: 'Minhas Localizações',
+    manageLocations: 'Gerencie suas localizações meteorológicas salvas',
+    favorites: 'Favoritos',
+    recentLocations: 'Localizações Recentes',
+    noFavoriteLocations: 'Nenhuma localização favorita ainda',
+    addFirstFavorite: 'Pesquise por uma cidade acima para adicionar seu primeiro favorito',
+    noRecentLocations: 'Nenhuma localização recente',
+    recentSearchedCities: 'Suas cidades pesquisadas recentemente aparecerão aqui',
+    
+    // Messages
+    messages: {
+      locationNotFound: 'Localização não encontrada',
+      weatherDataUnavailable: 'Dados meteorológicos indisponíveis',
+      loadingWeather: 'Carregando dados meteorológicos...',
+      locationPermissionDenied: 'Permissão de localização negada',
+      settingsReset: 'As configurações foram redefinidas para os valores padrão'
+    }
+  },
+  
+  ru: {
+    // Navigation
+    home: 'Главная',
+    locations: 'Местоположения',
+    statistics: 'Статистика',
+    settings: 'Настройки',
+    
+    // Locations page
+    myLocations: 'Мои Местоположения',
+    manageLocations: 'Управляйте сохранёнными метеорологическими местоположениями',
+    favorites: 'Избранное',
+    recentLocations: 'Недавние Местоположения',
+    noFavoriteLocations: 'Пока нет избранных местоположений',
+    addFirstFavorite: 'Найдите город выше, чтобы добавить первое избранное',
+    noRecentLocations: 'Нет недавних местоположений',
+    recentSearchedCities: 'Ваши недавно найденные города появятся здесь',
+    
+    // Messages
+    messages: {
+      locationNotFound: 'Местоположение не найдено',
+      weatherDataUnavailable: 'Метеорологические данные недоступны',
+      loadingWeather: 'Загрузка метеорологических данных...',
+      locationPermissionDenied: 'Разрешение на местоположение отклонено',
+      settingsReset: 'Настройки сброшены к значениям по умолчанию'
+    }
+  },
+  
+  ja: {
+    // Navigation
+    home: 'ホーム',
+    locations: '場所',
+    statistics: '統計',
+    settings: '設定',
+    
+    // Locations page
+    myLocations: 'マイロケーション',
+    manageLocations: '保存した天気の場所を管理',
+    favorites: 'お気に入り',
+    recentLocations: '最近の場所',
+    noFavoriteLocations: 'お気に入りの場所はまだありません',
+    addFirstFavorite: '上で都市を検索して最初のお気に入りを追加',
+    noRecentLocations: '最近の場所はありません',
+    recentSearchedCities: '最近検索した都市がここに表示されます',
+    
+    // Messages
+    messages: {
+      locationNotFound: '場所が見つかりません',
+      weatherDataUnavailable: '天気データが利用できません',
+      loadingWeather: '天気データを読み込み中...',
+      locationPermissionDenied: '位置情報の許可が拒否されました',
+      settingsReset: '設定がデフォルト値にリセットされました'
+    }
+  },
+  
+  zh: {
+    // Navigation
+    home: '主页',
+    locations: '位置',
+    statistics: '统计',
+    settings: '设置',
+    
+    // Locations page
+    myLocations: '我的位置',
+    manageLocations: '管理您保存的天气位置',
+    favorites: '收藏夹',
+    recentLocations: '最近位置',
+    noFavoriteLocations: '还没有收藏位置',
+    addFirstFavorite: '在上方搜索城市以添加您的第一个收藏',
+    noRecentLocations: '没有最近位置',
+    recentSearchedCities: '您最近搜索的城市将显示在这里',
+    
+    // Messages
+    messages: {
+      locationNotFound: '找不到位置',
+      weatherDataUnavailable: '天气数据不可用',
+      loadingWeather: '正在加载天气数据...',
+      locationPermissionDenied: '位置权限被拒绝',
+      settingsReset: '设置已重置为默认值'
+    }
+  },
+  
   bn: {
     // Navigation
     home: 'হোম',
@@ -481,42 +626,15 @@ export const translations = {
       sunset: 'غروب الشمس'
     },
     
-    // Settings
-    settingsPage: {
-      title: 'الإعدادات',
-      subtitle: 'خصص تجربة تطبيق الطقس الخاص بك',
-      theme: 'المظهر',
-      weatherDisplay: 'الطقس والعرض',
-      temperatureUnits: 'وحدات درجة الحرارة',
-      temperatureDesc: 'اختر مقياس درجة الحرارة المفضل لديك',
-      language: 'اللغة',
-      languageDesc: 'تفضيل لغة الواجهة',
-      location: 'الموقع',
-      autoLocation: 'كشف الموقع تلقائياً',
-      autoLocationDesc: 'استخدم نظام تحديد المواقع لاكتشاف موقعك الحالي تلقائياً',
-      notifications: 'الإشعارات',
-      weatherAlerts: 'تنبيهات الطقس',
-      weatherAlertsDesc: 'احصل على إشعارات حول الظروف الجوية القاسية',
-      privacy: 'الخصوصية',
-      dataCollection: 'جمع البيانات',
-      dataCollectionDesc: 'السماح بجمع بيانات الاستخدام المجهولة',
-      resetSettings: 'إعادة تعيين الإعدادات',
-      resetDesc: 'إعادة تعيين جميع الإعدادات إلى القيم الافتراضية'
-    },
-    
-    // Common actions
-    actions: {
-      search: 'بحث',
-      refresh: 'تحديث',
-      getCurrentLocation: 'احصل على الموقع الحالي',
-      addToFavorites: 'أضف إلى المفضلة',
-      removeFromFavorites: 'إزالة من المفضلة',
-      viewDetails: 'عرض التفاصيل',
-      close: 'إغلاق',
-      save: 'حفظ',
-      cancel: 'إلغاء',
-      reset: 'إعادة تعيين'
-    },
+    // Locations page
+    myLocations: 'مواقعي',
+    manageLocations: 'إدارة مواقع الطقس المحفوظة',
+    favorites: 'المفضلة',
+    recentLocations: 'المواقع الأخيرة',
+    noFavoriteLocations: 'لا توجد مواقع مفضلة بعد',
+    addFirstFavorite: 'ابحث عن مدينة أعلاه لإضافة أول مفضلة',
+    noRecentLocations: 'لا توجد مواقع أخيرة',
+    recentSearchedCities: 'ستظهر المدن التي بحثت عنها مؤخراً هنا',
     
     // Messages
     messages: {

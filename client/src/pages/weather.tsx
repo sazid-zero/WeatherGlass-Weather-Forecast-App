@@ -6,17 +6,21 @@ import { useGeolocation } from '@/hooks/use-geolocation';
 import { useLocationState } from '@/hooks/use-location-state';
 import { useWeatherByCity, useWeatherByCoords, useForecast } from '@/hooks/use-weather';
 import { useLocationHistory } from '@/hooks/use-location-history';
+import { useSettings } from '@/hooks/use-settings';
 import { SearchBar } from '@/components/weather/SearchBar';
 import { WeatherSidebar } from '@/components/weather/WeatherSidebar';
 import { CurrentWeatherCard } from '@/components/weather/CurrentWeatherCard';
 import { WeatherStatsGrid } from '@/components/weather/WeatherStatsGrid';
 import { ForecastSection } from '@/components/weather/ForecastSection';
 import { WeatherCharts } from '@/components/weather/WeatherCharts';
+import { useTranslation } from '@/lib/i18n';
 
 export default function WeatherPage() {
   const { locationState, setSelectedLocation, setCurrentLocation, refreshLocation } = useLocationState();
   const { latitude, longitude, error: geoError, loading: geoLoading } = useGeolocation();
   const { locations, saveLocation, toggleFavorite } = useLocationHistory();
+  const { settings } = useSettings();
+  const { t } = useTranslation(settings.weather.language);
 
   // Initial setup for current location if no location is selected
   useEffect(() => {
@@ -281,7 +285,7 @@ export default function WeatherPage() {
       {weatherData && (
         <>
           {/* Main Weather Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {/* Current Weather Card */}
             <motion.div
               className="xl:col-span-1"
@@ -349,7 +353,7 @@ export default function WeatherPage() {
   );
 
   return (
-    <div className="p-6">
+    <div className="ml-16 sm:ml-20 p-4 sm:p-6">
       {/* Background Gradients */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {gradientElements.map((element, index) => (

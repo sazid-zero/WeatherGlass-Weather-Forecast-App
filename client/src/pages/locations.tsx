@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getWeatherIcon, getWeatherColor } from '@/lib/weather-utils';
+import { useTranslation } from '@/lib/i18n';
 
 interface LocationWeatherCardProps {
   location: any;
@@ -107,6 +108,7 @@ export default function LocationsPage() {
   const { latitude, longitude } = useGeolocation();
   const { setSelectedLocation } = useLocationState();
   const [, setLocation] = useLocation();
+  const { t } = useTranslation(settings.weather.language);
   const { 
     locations, 
     saveLocation, 
@@ -144,24 +146,26 @@ export default function LocationsPage() {
 
   return (
     <div className="min-h-screen weather-gradient-bg">
-      <div className="ml-24 p-6">
+      <div className="ml-16 sm:ml-20 p-4 sm:p-6">
         <motion.header 
           className="mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">My Locations</h1>
-              <p className="text-muted-foreground">Manage your saved weather locations</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('myLocations')}</h1>
+              <p className="text-muted-foreground">{t('manageLocations')}</p>
             </div>
             
-            <SearchBar onCitySearch={handleAddLocation} />
+            <div className="w-full sm:w-auto">
+              <SearchBar onCitySearch={handleAddLocation} />
+            </div>
           </div>
         </motion.header>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-6 lg:gap-8">
           {/* Favorite Locations */}
           <motion.section
             className="glass-card rounded-3xl p-6"
@@ -171,7 +175,7 @@ export default function LocationsPage() {
           >
             <div className="flex items-center gap-3 mb-6">
               <Star className="h-6 w-6 text-yellow-500" />
-              <h2 className="text-xl font-semibold text-foreground">Favorites</h2>
+              <h2 className="text-xl font-semibold text-foreground">{t('favorites')}</h2>
             </div>
             
             <div className="grid gap-4">
@@ -188,8 +192,8 @@ export default function LocationsPage() {
               ) : (
                 <div className="text-center text-muted-foreground py-8">
                   <Star className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
-                  <p>No favorite locations yet</p>
-                  <p className="text-sm">Search for a city above to add your first favorite</p>
+                  <p>{t('noFavoriteLocations')}</p>
+                  <p className="text-sm">{t('addFirstFavorite')}</p>
                 </div>
               )}
             </div>
@@ -204,7 +208,7 @@ export default function LocationsPage() {
           >
             <div className="flex items-center gap-3 mb-6">
               <MapPin className="h-6 w-6 text-primary" />
-              <h2 className="text-xl font-semibold text-foreground">Recent Locations</h2>
+              <h2 className="text-xl font-semibold text-foreground">{t('recentLocations')}</h2>
             </div>
             
             <div className="grid gap-4">
@@ -221,8 +225,8 @@ export default function LocationsPage() {
               ) : (
                 <div className="text-center text-muted-foreground py-8">
                   <MapPin className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
-                  <p>No recent locations</p>
-                  <p className="text-sm">Your recently searched cities will appear here</p>
+                  <p>{t('noRecentLocations')}</p>
+                  <p className="text-sm">{t('recentSearchedCities')}</p>
                 </div>
               )}
             </div>
