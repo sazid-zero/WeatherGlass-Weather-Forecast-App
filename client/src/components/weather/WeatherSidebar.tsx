@@ -1,6 +1,8 @@
-import { Home, MapPin, TrendingUp, Settings, Sun, Moon } from 'lucide-react';
+import { Home, MapPin, TrendingUp, Settings, Sun, Moon, Cloud } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/components/ui/theme-provider';
+import { useLocation } from 'wouter';
+import { Link } from 'wouter';
 import { cn } from '@/lib/utils';
 
 interface WeatherSidebarProps {
@@ -9,16 +11,20 @@ interface WeatherSidebarProps {
 
 export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
   const { theme, setTheme } = useTheme();
+  const [location] = useLocation();
 
   const navigationItems = [
-    { icon: Home, label: 'Home', active: true },
-    { icon: MapPin, label: 'Locations', active: false },
-    { icon: TrendingUp, label: 'Statistics', active: false },
-    { icon: Settings, label: 'Settings', active: false },
+    { icon: Home, label: 'Home', path: '/', active: location === '/' },
+    { icon: MapPin, label: 'Locations', path: '/locations', active: location === '/locations' },
+    { icon: TrendingUp, label: 'Statistics', path: '/statistics', active: location === '/statistics' },
+    { icon: Settings, label: 'Settings', path: '/settings', active: location === '/settings' },
   ];
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    const themes = ['light', 'dark', 'ocean', 'sunset', 'forest', 'aurora'];
+    const currentIndex = themes.indexOf(theme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    setTheme(themes[nextIndex] as any);
   };
 
   return (
@@ -35,7 +41,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <i className="fas fa-cloud-sun text-white text-xl"></i>
+          <Cloud className="h-6 w-6 text-white" />
         </motion.div>
         
         {/* Navigation Items */}
@@ -43,22 +49,23 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
           {navigationItems.map((item, index) => {
             const Icon = item.icon;
             return (
-              <motion.button
-                key={item.label}
-                className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
-                  item.active 
-                    ? "bg-primary/20 text-primary" 
-                    : "hover:bg-primary/20 text-muted-foreground hover:text-primary"
-                )}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                <Icon className="h-5 w-5" />
-              </motion.button>
+              <Link key={item.label} href={item.path}>
+                <motion.button
+                  className={cn(
+                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
+                    item.active 
+                      ? "bg-primary/20 text-primary" 
+                      : "hover:bg-primary/20 text-muted-foreground hover:text-primary"
+                  )}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <Icon className="h-5 w-5" />
+                </motion.button>
+              </Link>
             );
           })}
         </nav>
@@ -69,14 +76,12 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
             onClick={toggleTheme}
             className={cn(
               "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
-              theme === 'light' 
-                ? "bg-yellow-400/20 text-yellow-600 hover:bg-yellow-400 hover:text-white" 
-                : "bg-purple-400/20 text-purple-400 hover:bg-purple-400 hover:text-white"
+              "bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
             )}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {theme === 'light' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <Sun className="h-5 w-5" />
           </motion.button>
         </div>
       </div>
