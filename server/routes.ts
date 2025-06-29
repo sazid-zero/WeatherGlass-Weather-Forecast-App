@@ -194,13 +194,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         const weatherResponse = await fetch(weatherUrl);
         if (!weatherResponse.ok) {
+          const errorText = await weatherResponse.text();
+          console.error("OpenWeather API error:", weatherResponse.status, errorText);
           if (weatherResponse.status === 404) {
             return res.status(404).json({ error: "City not found" });
+          }
+          if (weatherResponse.status === 401) {
+            return res.status(500).json({ error: "Invalid API key" });
           }
           throw new Error(`Weather API error: ${weatherResponse.status}`);
         }
         
-        const weatherApiData: OpenWeatherResponse = await weatherResponse.json();
+        let weatherApiData: OpenWeatherResponse;
+        try {
+          weatherApiData = await weatherResponse.json();
+        } catch (parseError) {
+          console.error("Failed to parse weather API response:", parseError);
+          return res.status(500).json({ error: "Invalid response from weather service" });
+        }
         
         // Get UV Index
         let uvIndex = 0;
@@ -333,10 +344,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { city } = req.params;
       
-      // Get current weather data
-      const weatherData = await storage.getWeatherData(city);
+      if (!OPENWEATHER_API_KEY) {
+        return res.status(500).json({ 
+          error: "Weather API key not configured. Please add OPENWEATHER_API_KEY to environment variables." 
+        });
+      }
+      
+      // Get current weather data, fetch if not available
+      let weatherData = await storage.getWeatherData(city);
       if (!weatherData) {
-        return res.status(404).json({ error: "Weather data not found for this city" });
+        // Fetch fresh weather data
+        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${OPENWEATHER_API_KEY}&units=metric`;
+        
+        const weatherResponse = await fetch(weatherUrl);
+        if (!weatherResponse.ok) {
+          if (weatherResponse.status === 404) {
+            return res.status(404).json({ error: "City not found" });
+          }
+          throw new Error(`Weather API error: ${weatherResponse.status}`);
+        }
+        
+        const weatherApiData: OpenWeatherResponse = await weatherResponse.json();
+        
+        // Get UV Index
+        let uvIndex = 0;
+        try {
+          const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${weatherApiData.coord.lat}&lon=${weatherApiData.coord.lon}&appid=${OPENWEATHER_API_KEY}`;
+          const uvResponse = await fetch(uvUrl);
+          if (uvResponse.ok) {
+            const uvData: UVIndexResponse = await uvResponse.json();
+            uvIndex = uvData.value;
+          }
+        } catch (error) {
+          console.warn("Failed to fetch UV index:", error);
+        }
+        
+        // Get Air Quality
+        let airQuality = null;
+        try {
+          const airUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${weatherApiData.coord.lat}&lon=${weatherApiData.coord.lon}&appid=${OPENWEATHER_API_KEY}`;
+          const airResponse = await fetch(airUrl);
+          if (airResponse.ok) {
+            const airData: AirQualityResponse = await airResponse.json();
+            airQuality = airData.list[0]?.main.aqi || null;
+          }
+        } catch (error) {
+          console.warn("Failed to fetch air quality:", error);
+        }
+        
+        const weatherInsert = {
+          cityName: weatherApiData.name,
+          country: weatherApiData.sys.country,
+          latitude: weatherApiData.coord.lat,
+          longitude: weatherApiData.coord.lon,
+          temperature: weatherApiData.main.temp,
+          feelsLike: weatherApiData.main.feels_like,
+          humidity: weatherApiData.main.humidity,
+          pressure: weatherApiData.main.pressure,
+          windSpeed: weatherApiData.wind.speed,
+          windDirection: weatherApiData.wind.deg || 0,
+          visibility: weatherApiData.visibility,
+          uvIndex,
+          weatherMain: weatherApiData.weather[0].main,
+          weatherDescription: weatherApiData.weather[0].description,
+          weatherIcon: weatherApiData.weather[0].icon,
+          sunrise: new Date(weatherApiData.sys.sunrise * 1000),
+          sunset: new Date(weatherApiData.sys.sunset * 1000),
+          airQuality,
+        };
+        
+        const validatedData = insertWeatherDataSchema.parse(weatherInsert);
+        weatherData = await storage.createWeatherData(validatedData);
       }
 
       // Get forecast data for trend analysis
