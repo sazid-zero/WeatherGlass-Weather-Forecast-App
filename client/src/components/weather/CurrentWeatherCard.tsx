@@ -19,12 +19,13 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
 
   useEffect(() => {
     const checkDarkMode = () => {
-      if (theme === 'dark') {
-        setIsDarkMode(true);
+      if (theme === 'light') {
+        setIsDarkMode(false);
       } else if (theme === 'system') {
         setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
       } else {
-        setIsDarkMode(false);
+        // All other themes (dark, ocean, sunset, forest, aurora) are considered dark themes
+        setIsDarkMode(true);
       }
     };
 
