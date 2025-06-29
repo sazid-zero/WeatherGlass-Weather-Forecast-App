@@ -113,6 +113,10 @@ Changelog:
 - June 29, 2025. Implemented comprehensive weather statistics with real-time data
 - June 29, 2025. Enhanced error handling for weather API responses
 - June 29, 2025. Completed units conversion system for all weather metrics
+- June 29, 2025. Fixed chart visibility in light theme and settings dropdown errors
+- June 29, 2025. Added refresh and current location buttons to home page
+- June 29, 2025. Implemented persistent location selection across page navigation
+- June 29, 2025. Enhanced card hover effects with dramatic shadow animations
 ```
 
 ## User Preferences

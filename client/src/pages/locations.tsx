@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Trash2, Star, Thermometer, Droplets, Wind, Eye } from 'lucide-react';
+import { useLocation } from 'wouter';
 import { SearchBar } from '@/components/weather/SearchBar';
 import { useLocationHistory } from '@/hooks/use-location-history';
+import { useLocationState } from '@/hooks/use-location-state';
 import { useWeatherByCity } from '@/hooks/use-weather';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { useSettings } from '@/hooks/use-settings';
@@ -15,17 +17,19 @@ interface LocationWeatherCardProps {
   location: any;
   onToggleFavorite: (id: string) => void;
   onRemove: (id: string) => void;
+  onLocationSelect: (locationName: string) => void;
 }
 
-function LocationWeatherCard({ location, onToggleFavorite, onRemove }: LocationWeatherCardProps) {
+function LocationWeatherCard({ location, onToggleFavorite, onRemove, onLocationSelect }: LocationWeatherCardProps) {
   const { data: weatherData, isLoading } = useWeatherByCity(location.name);
 
   return (
     <motion.div
-      className="glass-card rounded-2xl p-4 hover:scale-[1.02] transition-all duration-300"
+      className="glass-card rounded-2xl p-4 hover:scale-[1.02] transition-all duration-300 cursor-pointer"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
+      onClick={() => onLocationSelect(location.name)}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -101,6 +105,8 @@ function LocationWeatherCard({ location, onToggleFavorite, onRemove }: LocationW
 export default function LocationsPage() {
   const { settings } = useSettings();
   const { latitude, longitude } = useGeolocation();
+  const { setSelectedLocation } = useLocationState();
+  const [, setLocation] = useLocation();
   const { 
     locations, 
     saveLocation, 
@@ -124,6 +130,13 @@ export default function LocationsPage() {
     } catch (error) {
       console.error('Failed to save location:', error);
     }
+  };
+
+  const handleLocationSelect = (locationName: string) => {
+    // Set the selected location in global state
+    setSelectedLocation(locationName);
+    // Navigate to home page
+    setLocation('/');
   };
 
   const favorites = getFavorites();
@@ -169,6 +182,7 @@ export default function LocationsPage() {
                     location={location}
                     onToggleFavorite={toggleFavorite}
                     onRemove={removeLocation}
+                    onLocationSelect={handleLocationSelect}
                   />
                 ))
               ) : (
@@ -201,6 +215,7 @@ export default function LocationsPage() {
                     location={location}
                     onToggleFavorite={toggleFavorite}
                     onRemove={removeLocation}
+                    onLocationSelect={handleLocationSelect}
                   />
                 ))
               ) : (

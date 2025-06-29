@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, CloudRain, Sun, Wind, Eye } from 'lucide-react';
+import { AlertCircle, CloudRain, Sun, Wind, Eye, RefreshCw, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useGeolocation } from '@/hooks/use-geolocation';
+import { useLocationState } from '@/hooks/use-location-state';
 import { useWeatherByCity, useWeatherByCoords, useForecast } from '@/hooks/use-weather';
 import { useLocationHistory } from '@/hooks/use-location-history';
 import { SearchBar } from '@/components/weather/SearchBar';
@@ -12,32 +14,39 @@ import { ForecastSection } from '@/components/weather/ForecastSection';
 import { WeatherCharts } from '@/components/weather/WeatherCharts';
 
 export default function WeatherPage() {
-  const [selectedCity, setSelectedCity] = useState<string>('');
+  const { locationState, setSelectedLocation, setCurrentLocation, refreshLocation } = useLocationState();
   const { latitude, longitude, error: geoError, loading: geoLoading } = useGeolocation();
   const { saveLocation } = useLocationHistory();
 
-  // Fetch weather data based on coordinates or selected city
+  // Initial setup for current location if no location is selected
+  useEffect(() => {
+    if (latitude && longitude && locationState.isCurrentLocation && !locationState.coordinates) {
+      setCurrentLocation({ lat: latitude, lon: longitude });
+    }
+  }, [latitude, longitude]);
+
+  // Fetch weather data based on location state
   const { data: coordsWeatherData, isLoading: coordsLoading, error: coordsError } = useWeatherByCoords(
-    latitude, 
-    longitude
+    locationState.isCurrentLocation ? latitude : locationState.coordinates?.lat || null, 
+    locationState.isCurrentLocation ? longitude : locationState.coordinates?.lon || null
   );
   
   const { data: cityWeatherData, isLoading: cityLoading, error: cityError } = useWeatherByCity(
-    selectedCity
+    locationState.selectedLocation || ''
   );
 
   const { data: forecastData, isLoading: forecastLoading, error: forecastError } = useForecast(
-    selectedCity || coordsWeatherData?.cityName || ''
+    locationState.selectedLocation || coordsWeatherData?.cityName || ''
   );
 
   // Determine which weather data to use
-  const weatherData = selectedCity ? cityWeatherData : coordsWeatherData;
-  const isLoading = selectedCity ? cityLoading : coordsLoading;
-  const error = selectedCity ? cityError : coordsError;
+  const weatherData = locationState.selectedLocation ? cityWeatherData : coordsWeatherData;
+  const isLoading = locationState.selectedLocation ? cityLoading : coordsLoading;
+  const error = locationState.selectedLocation ? cityError : coordsError;
 
   // Handle city search
   const handleCitySearch = async (city: string) => {
-    setSelectedCity(city);
+    setSelectedLocation(city);
     
     // Save to recent locations after a short delay to let the data load
     setTimeout(async () => {
@@ -56,6 +65,28 @@ export default function WeatherPage() {
     }, 1000);
   };
 
+  // Handle current location button
+  const handleCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+        }
+      );
+    }
+  };
+
+  // Handle refresh button
+  const handleRefresh = () => {
+    refreshLocation();
+  };
+
   // Background gradient effect elements
   const gradientElements = [
     { color: 'bg-primary/20', size: 'w-72 h-72', position: 'top-10 -left-4', delay: 0 },
@@ -63,7 +94,7 @@ export default function WeatherPage() {
     { color: 'bg-yellow-500/20', size: 'w-72 h-72', position: '-bottom-8 left-20', delay: 4 },
   ];
 
-  if (!geoLoading && geoError && !selectedCity) {
+  if (!geoLoading && geoError && !locationState.selectedLocation) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <motion.div 
@@ -100,7 +131,35 @@ export default function WeatherPage() {
               {weatherData ? `Current weather in ${weatherData.cityName}` : 'Real-time weather information'}
             </p>
           </div>
-          <SearchBar onCitySearch={handleCitySearch} className="lg:w-80" />
+          
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                className="flex items-center gap-2 glass-card border-0"
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCurrentLocation}
+                className="flex items-center gap-2 glass-card border-0"
+                disabled={geoLoading}
+              >
+                <MapPin className="h-4 w-4" />
+                Current Location
+              </Button>
+            </div>
+            
+            <SearchBar onCitySearch={handleCitySearch} className="lg:w-80" />
+          </div>
         </div>
       </motion.header>
 

@@ -174,7 +174,7 @@ export default function SettingsPage() {
               id="units"
               label="Temperature Units"
               description="Choose your preferred temperature scale"
-              value={settings.weather.units}
+              value={settings?.weather?.units || 'metric'}
               onValueChange={(value) => updateWeatherSettings({ units: value as any })}
               options={unitOptions}
             />
@@ -183,7 +183,7 @@ export default function SettingsPage() {
               id="language"
               label="Language"
               description="Interface language preference"
-              value={settings.weather.language}
+              value={settings?.weather?.language || 'en'}
               onValueChange={(value) => updateWeatherSettings({ language: value as any })}
               options={languageOptions}
             />
@@ -214,8 +214,8 @@ export default function SettingsPage() {
               id="save-history"
               label="Save Location History"
               description="Remember recently searched locations"
-              checked={settings.weather.saveHistory}
-              onCheckedChange={(checked) => updateWeatherSettings({ saveHistory: checked })}
+              checked={settings.weather.saveLocationHistory}
+              onCheckedChange={(checked) => updateWeatherSettings({ saveLocationHistory: checked })}
             />
           </div>
         </motion.section>
@@ -255,8 +255,8 @@ export default function SettingsPage() {
               id="location-based"
               label="Location-based Alerts"
               description="Get weather updates for your current location"
-              checked={settings.notifications.locationBased}
-              onCheckedChange={(checked) => updateNotificationSettings({ locationBased: checked })}
+              checked={settings.notifications.locationUpdates}
+              onCheckedChange={(checked) => updateNotificationSettings({ locationUpdates: checked })}
             />
           </div>
         </motion.section>
