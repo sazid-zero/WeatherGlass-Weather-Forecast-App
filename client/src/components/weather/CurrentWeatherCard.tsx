@@ -231,117 +231,67 @@ Feels like <TemperatureDisplay temperature={weatherData.feelsLike} />
           </div>
         </motion.div>
 
-        {/* Nature decorative elements at bottom */}
+        {/* Nature elements at the very bottom */}
         <motion.div 
-          className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none overflow-hidden"
+          className="absolute bottom-0 left-0 right-0 h-12 pointer-events-none overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          {/* Grass/Ground base */}
-          <motion.div
-            className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-green-400/20 via-green-300/10 to-transparent dark:from-green-600/20 dark:via-green-500/10"
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-          />
+          {/* Ground base */}
+          <div className="absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-t from-green-700/30 via-green-600/20 to-transparent dark:from-green-800/20 dark:via-green-700/10" />
           
-          {/* Animated grass blades */}
-          {Array.from({ length: 12 }, (_, i) => (
-            <motion.div
-              key={`grass-${i}`}
-              className="absolute bottom-0 w-1 bg-gradient-to-t from-green-500/40 to-green-400/20 dark:from-green-400/30 dark:to-green-300/15"
-              style={{
-                left: `${8 + i * 7}%`,
-                height: `${8 + Math.random() * 8}px`,
-                borderRadius: '2px 2px 0 0',
-              }}
-              animate={{
-                rotate: [0, Math.random() * 4 - 2, 0],
-                scaleY: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 3 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
-
-          {/* Weather-specific nature elements */}
-          {weatherData.weatherMain.toLowerCase().includes('clear') && (
-            // Flying birds for clear weather
-            Array.from({ length: 2 }, (_, i) => (
+          {/* Realistic grass blades using SVG */}
+          {Array.from({ length: 20 }, (_, i) => {
+            const height = 12 + Math.random() * 8;
+            const windStrength = 2 + Math.random() * 3;
+            return (
               <motion.div
-                key={`bird-${i}`}
-                className="absolute text-xs opacity-40 dark:opacity-30"
+                key={`grass-${i}`}
+                className="absolute bottom-0"
                 style={{
-                  left: `${30 + i * 40}%`,
-                  bottom: `${20 + Math.random() * 10}px`,
+                  left: `${5 + (i * 4.5)}%`,
+                  transformOrigin: 'bottom center',
                 }}
                 animate={{
-                  x: [0, 60, 120],
-                  y: [0, -5, -2, -8, 0],
-                  opacity: [0, 0.4, 0.4, 0.4, 0],
+                  rotate: [0, windStrength, -windStrength * 0.5, windStrength * 0.7, 0],
                 }}
                 transition={{
-                  duration: 8 + Math.random() * 4,
-                  repeat: Infinity,
-                  delay: Math.random() * 6,
-                  ease: "easeInOut"
-                }}
-              >
-                🕊️
-              </motion.div>
-            ))
-          )}
-
-          {weatherData.weatherMain.toLowerCase().includes('rain') && (
-            // Puddle reflections for rainy weather
-            Array.from({ length: 3 }, (_, i) => (
-              <motion.div
-                key={`puddle-${i}`}
-                className="absolute rounded-full bg-blue-400/20 dark:bg-blue-500/15"
-                style={{
-                  left: `${15 + i * 25}%`,
-                  bottom: '2px',
-                  width: `${8 + Math.random() * 12}px`,
-                  height: '3px',
-                }}
-                animate={{
-                  scaleX: [1, 1.2, 1],
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: 2 + Math.random() * 1,
+                  duration: 3 + Math.random() * 2,
                   repeat: Infinity,
                   delay: Math.random() * 2,
                   ease: "easeInOut"
                 }}
-              />
-            ))
-          )}
+              >
+                <svg width="3" height={height} viewBox={`0 0 3 ${height}`} className="overflow-visible">
+                  <path
+                    d={`M1.5 ${height} Q1.5 ${height * 0.7} 1.2 ${height * 0.4} Q1.5 ${height * 0.2} 1.5 0`}
+                    fill="none"
+                    stroke="rgba(34, 197, 94, 0.7)"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    className="dark:stroke-green-400/60"
+                  />
+                </svg>
+              </motion.div>
+            );
+          })}
 
-          {/* Floating petals/leaves for other conditions */}
-          {!weatherData.weatherMain.toLowerCase().includes('rain') && 
-           !weatherData.weatherMain.toLowerCase().includes('clear') && (
-            Array.from({ length: 3 }, (_, i) => (
+          {/* Small flower plants */}
+          {Array.from({ length: 3 }, (_, i) => {
+            const positions = [20, 50, 75];
+            const flowerColors = ['#f59e0b', '#ec4899', '#8b5cf6'];
+            return (
               <motion.div
-                key={`leaf-${i}`}
-                className="absolute w-2 h-1 rounded-full"
+                key={`flower-${i}`}
+                className="absolute bottom-0"
                 style={{
-                  left: `${20 + i * 30}%`,
-                  bottom: `${12 + Math.random() * 8}px`,
-                  background: weatherData.weatherMain.toLowerCase().includes('snow') ?
-                    'radial-gradient(ellipse, rgba(255, 255, 255, 0.8), rgba(226, 232, 240, 0.4))' :
-                    'radial-gradient(ellipse, rgba(34, 197, 94, 0.6), rgba(22, 163, 74, 0.3))',
+                  left: `${positions[i]}%`,
+                  transformOrigin: 'bottom center',
                 }}
                 animate={{
-                  y: [0, -8, 0],
-                  x: [0, Math.random() * 4 - 2, 0],
-                  rotate: [0, 360],
-                  opacity: [0.3, 0.7, 0.3],
+                  rotate: [0, 3, -2, 3, 0],
+                  y: [0, -1, 0],
                 }}
                 transition={{
                   duration: 4 + Math.random() * 2,
@@ -349,21 +299,93 @@ Feels like <TemperatureDisplay temperature={weatherData.feelsLike} />
                   delay: Math.random() * 3,
                   ease: "easeInOut"
                 }}
-              />
-            ))
-          )}
+              >
+                <svg width="12" height="18" viewBox="0 0 12 18" className="overflow-visible">
+                  {/* Stem */}
+                  <path
+                    d="M6 18 Q6 12 5.8 8 Q6 4 6 0"
+                    fill="none"
+                    stroke="rgba(34, 197, 94, 0.8)"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    className="dark:stroke-green-400/70"
+                  />
+                  {/* Flower petals */}
+                  <circle cx="6" cy="2" r="1.5" fill={flowerColors[i]} opacity="0.8" />
+                  <circle cx="4" cy="3" r="1" fill={flowerColors[i]} opacity="0.6" />
+                  <circle cx="8" cy="3" r="1" fill={flowerColors[i]} opacity="0.6" />
+                  <circle cx="5" cy="1" r="0.8" fill={flowerColors[i]} opacity="0.7" />
+                  <circle cx="7" cy="1" r="0.8" fill={flowerColors[i]} opacity="0.7" />
+                  {/* Center */}
+                  <circle cx="6" cy="2" r="0.5" fill="#fbbf24" opacity="0.9" />
+                  {/* Small leaves */}
+                  <ellipse cx="4.5" cy="8" rx="1.5" ry="0.8" fill="rgba(34, 197, 94, 0.6)" 
+                    transform="rotate(-30 4.5 8)" className="dark:fill-green-400/50" />
+                  <ellipse cx="7.5" cy="10" rx="1.5" ry="0.8" fill="rgba(34, 197, 94, 0.6)" 
+                    transform="rotate(30 7.5 10)" className="dark:fill-green-400/50" />
+                </svg>
+              </motion.div>
+            );
+          })}
 
-          {/* Subtle mountain silhouette for horizon */}
-          <motion.div
-            className="absolute bottom-6 left-0 right-0 h-6 opacity-20 dark:opacity-10"
-            style={{
-              background: 'linear-gradient(135deg, transparent 20%, rgba(100, 116, 139, 0.4) 40%, rgba(71, 85, 105, 0.3) 60%, transparent 80%)',
-              clipPath: 'polygon(0% 100%, 15% 60%, 25% 70%, 40% 40%, 55% 65%, 70% 30%, 85% 55%, 100% 45%, 100% 100%)',
-            }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: weatherData.weatherMain.toLowerCase().includes('clear') ? 0.3 : 0.15, y: 0 }}
-            transition={{ duration: 1, delay: 1 }}
-          />
+          {/* Small wildflower buds */}
+          {Array.from({ length: 5 }, (_, i) => (
+            <motion.div
+              key={`bud-${i}`}
+              className="absolute bottom-0"
+              style={{
+                left: `${15 + (i * 15)}%`,
+                transformOrigin: 'bottom center',
+              }}
+              animate={{
+                rotate: [0, 2, -1, 2, 0],
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                duration: 5 + Math.random() * 3,
+                repeat: Infinity,
+                delay: Math.random() * 4,
+                ease: "easeInOut"
+              }}
+            >
+              <svg width="6" height="12" viewBox="0 0 6 12">
+                {/* Small stem */}
+                <path
+                  d="M3 12 Q3 8 3 4"
+                  fill="none"
+                  stroke="rgba(34, 197, 94, 0.7)"
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                  className="dark:stroke-green-400/60"
+                />
+                {/* Small bud */}
+                <circle cx="3" cy="4" r="1.5" fill="rgba(236, 72, 153, 0.6)" className="dark:fill-pink-400/50" />
+              </svg>
+            </motion.div>
+          ))}
+
+          {/* Floating seeds/pollen in wind */}
+          {Array.from({ length: 3 }, (_, i) => (
+            <motion.div
+              key={`seed-${i}`}
+              className="absolute w-1 h-1 rounded-full bg-yellow-400/60 dark:bg-yellow-300/40"
+              style={{
+                left: `${30 + (i * 20)}%`,
+                bottom: `${8 + Math.random() * 4}px`,
+              }}
+              animate={{
+                x: [0, 15, 30, 45],
+                y: [0, -3, -1, -5, 0],
+                opacity: [0, 0.8, 0.6, 0.4, 0],
+              }}
+              transition={{
+                duration: 6 + Math.random() * 3,
+                repeat: Infinity,
+                delay: Math.random() * 4,
+                ease: "easeOut"
+              }}
+            />
+          ))}
         </motion.div>
       </div>
     </motion.div>
