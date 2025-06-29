@@ -462,18 +462,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stormy: allConditions.filter(c => c.toLowerCase().includes('storm') || c.toLowerCase().includes('thunder')).length,
       };
 
-      // Generate weekly data from forecast
-      const weeklyData = forecastData.slice(0, 7).map((forecast, index) => {
-        const date = new Date();
-        date.setDate(date.getDate() + index);
-        return {
-          day: date.toLocaleDateString('en', { weekday: 'short' }),
-          temp: Math.round(forecast.temperature),
-          humidity: forecast.humidity,
-          wind: Math.round(forecast.windSpeed),
-          condition: forecast.weatherMain,
-        };
-      });
+      // Generate weekly data from forecast - group by day and take daily averages
+      const weeklyData = [];
+      const today = new Date();
+      
+      for (let i = 0; i < 7; i++) {
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + i);
+        
+        // Filter forecast data for this specific day
+        const dayForecasts = forecastData.filter(f => {
+          const forecastDate = new Date(f.date);
+          return forecastDate.toDateString() === targetDate.toDateString();
+        });
+        
+        if (dayForecasts.length > 0) {
+          // Calculate daily averages
+          const avgTemp = dayForecasts.reduce((sum, f) => sum + f.temperature, 0) / dayForecasts.length;
+          const avgHumidity = dayForecasts.reduce((sum, f) => sum + f.humidity, 0) / dayForecasts.length;
+          const avgWind = dayForecasts.reduce((sum, f) => sum + f.windSpeed, 0) / dayForecasts.length;
+          
+          // Use the most common condition for the day
+          const conditions = dayForecasts.map(f => f.weatherMain);
+          const mostCommonCondition = conditions.sort((a, b) =>
+            conditions.filter(v => v === a).length - conditions.filter(v => v === b).length
+          ).pop() || 'Clear';
+          
+          weeklyData.push({
+            day: targetDate.toLocaleDateString('en', { weekday: 'short' }),
+            temp: Math.round(avgTemp),
+            humidity: Math.round(avgHumidity),
+            wind: Math.round(avgWind),
+            condition: mostCommonCondition,
+          });
+        } else if (i === 0) {
+          // For today, use current weather data if no forecast available
+          weeklyData.push({
+            day: targetDate.toLocaleDateString('en', { weekday: 'short' }),
+            temp: Math.round(weatherData.temperature),
+            humidity: weatherData.humidity,
+            wind: Math.round(weatherData.windSpeed),
+            condition: weatherData.weatherMain,
+          });
+        }
+      }
 
       const statistics = {
         temperature: {

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { AlertCircle, CloudRain, Sun, Wind, Eye } from 'lucide-react';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { useWeatherByCity, useWeatherByCoords, useForecast } from '@/hooks/use-weather';
+import { useLocationHistory } from '@/hooks/use-location-history';
 import { SearchBar } from '@/components/weather/SearchBar';
 import { WeatherSidebar } from '@/components/weather/WeatherSidebar';
 import { CurrentWeatherCard } from '@/components/weather/CurrentWeatherCard';
@@ -13,6 +14,7 @@ import { WeatherCharts } from '@/components/weather/WeatherCharts';
 export default function WeatherPage() {
   const [selectedCity, setSelectedCity] = useState<string>('');
   const { latitude, longitude, error: geoError, loading: geoLoading } = useGeolocation();
+  const { saveLocation } = useLocationHistory();
 
   // Fetch weather data based on coordinates or selected city
   const { data: coordsWeatherData, isLoading: coordsLoading, error: coordsError } = useWeatherByCoords(
@@ -34,8 +36,24 @@ export default function WeatherPage() {
   const error = selectedCity ? cityError : coordsError;
 
   // Handle city search
-  const handleCitySearch = (city: string) => {
+  const handleCitySearch = async (city: string) => {
     setSelectedCity(city);
+    
+    // Save to recent locations after a short delay to let the data load
+    setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/weather/${encodeURIComponent(city)}`);
+        if (response.ok) {
+          const weatherData = await response.json();
+          saveLocation(city, weatherData.country || 'Unknown', {
+            lat: weatherData.latitude,
+            lon: weatherData.longitude
+          });
+        }
+      } catch (error) {
+        console.error('Failed to save location:', error);
+      }
+    }, 1000);
   };
 
   // Background gradient effect elements
