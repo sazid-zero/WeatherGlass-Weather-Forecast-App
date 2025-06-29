@@ -74,6 +74,106 @@ interface AirQualityResponse {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Get weather by coordinates (must come before /:city route)
+  app.get("/api/weather/coords", async (req, res) => {
+    try {
+      const lat = req.query.lat as string;
+      const lon = req.query.lon as string;
+      
+      console.log("Coordinates request:", { lat, lon });
+      
+      if (!lat || !lon) {
+        return res.status(400).json({ error: "Missing coordinates" });
+      }
+      
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lon);
+      
+      if (isNaN(latitude) || isNaN(longitude)) {
+        return res.status(400).json({ error: "Invalid coordinates" });
+      }
+      
+      if (!OPENWEATHER_API_KEY) {
+        return res.status(500).json({ 
+          error: "Weather API key not configured. Please add OPENWEATHER_API_KEY to environment variables." 
+        });
+      }
+
+      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`;
+      
+      console.log("Fetching weather from:", weatherUrl);
+      
+      const weatherResponse = await fetch(weatherUrl);
+      if (!weatherResponse.ok) {
+        const errorText = await weatherResponse.text();
+        console.error("OpenWeather API error:", weatherResponse.status, errorText);
+        if (weatherResponse.status === 404) {
+          return res.status(404).json({ error: "Location not found" });
+        }
+        throw new Error(`Weather API error: ${weatherResponse.status}`);
+      }
+      
+      const weatherApiData: OpenWeatherResponse = await weatherResponse.json();
+      
+      // Get UV Index
+      let uvIndex = 0;
+      try {
+        const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
+        const uvResponse = await fetch(uvUrl);
+        if (uvResponse.ok) {
+          const uvData: UVIndexResponse = await uvResponse.json();
+          uvIndex = uvData.value;
+        }
+      } catch (error) {
+        console.warn("Failed to fetch UV index:", error);
+      }
+      
+      // Get Air Quality
+      let airQuality = null;
+      try {
+        const airUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
+        const airResponse = await fetch(airUrl);
+        if (airResponse.ok) {
+          const airData: AirQualityResponse = await airResponse.json();
+          airQuality = airData.list[0]?.main.aqi || null;
+        }
+      } catch (error) {
+        console.warn("Failed to fetch air quality:", error);
+      }
+      
+      const weatherInsert = {
+        cityName: weatherApiData.name,
+        country: weatherApiData.sys.country,
+        latitude: weatherApiData.coord.lat,
+        longitude: weatherApiData.coord.lon,
+        temperature: weatherApiData.main.temp,
+        feelsLike: weatherApiData.main.feels_like,
+        humidity: weatherApiData.main.humidity,
+        pressure: weatherApiData.main.pressure,
+        windSpeed: weatherApiData.wind.speed,
+        windDirection: weatherApiData.wind.deg || 0,
+        visibility: weatherApiData.visibility,
+        uvIndex,
+        weatherMain: weatherApiData.weather[0].main,
+        weatherDescription: weatherApiData.weather[0].description,
+        weatherIcon: weatherApiData.weather[0].icon,
+        sunrise: new Date(weatherApiData.sys.sunrise * 1000),
+        sunset: new Date(weatherApiData.sys.sunset * 1000),
+        airQuality,
+      };
+      
+      const validatedData = insertWeatherDataSchema.parse(weatherInsert);
+      const weatherData = await storage.createWeatherData(validatedData);
+      
+      res.json(weatherData);
+    } catch (error) {
+      console.error("Weather coords API error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to fetch weather data" 
+      });
+    }
+  });
+
   // Get current weather by city name
   app.get("/api/weather/:city", async (req, res) => {
     try {
@@ -163,90 +263,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get weather by coordinates
-  app.get("/api/weather/coords/:lat/:lon", async (req, res) => {
-    try {
-      const { lat, lon } = req.params;
-      const latitude = parseFloat(lat);
-      const longitude = parseFloat(lon);
-      
-      if (isNaN(latitude) || isNaN(longitude)) {
-        return res.status(400).json({ error: "Invalid coordinates" });
-      }
-      
-      if (!OPENWEATHER_API_KEY) {
-        return res.status(500).json({ 
-          error: "Weather API key not configured. Please add OPENWEATHER_API_KEY to environment variables." 
-        });
-      }
 
-      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`;
-      
-      const weatherResponse = await fetch(weatherUrl);
-      if (!weatherResponse.ok) {
-        throw new Error(`Weather API error: ${weatherResponse.status}`);
-      }
-      
-      const weatherApiData: OpenWeatherResponse = await weatherResponse.json();
-      
-      // Get UV Index
-      let uvIndex = 0;
-      try {
-        const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
-        const uvResponse = await fetch(uvUrl);
-        if (uvResponse.ok) {
-          const uvData: UVIndexResponse = await uvResponse.json();
-          uvIndex = uvData.value;
-        }
-      } catch (error) {
-        console.warn("Failed to fetch UV index:", error);
-      }
-      
-      // Get Air Quality
-      let airQuality = null;
-      try {
-        const airUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
-        const airResponse = await fetch(airUrl);
-        if (airResponse.ok) {
-          const airData: AirQualityResponse = await airResponse.json();
-          airQuality = airData.list[0]?.main.aqi || null;
-        }
-      } catch (error) {
-        console.warn("Failed to fetch air quality:", error);
-      }
-      
-      const weatherInsert = {
-        cityName: weatherApiData.name,
-        country: weatherApiData.sys.country,
-        latitude: weatherApiData.coord.lat,
-        longitude: weatherApiData.coord.lon,
-        temperature: weatherApiData.main.temp,
-        feelsLike: weatherApiData.main.feels_like,
-        humidity: weatherApiData.main.humidity,
-        pressure: weatherApiData.main.pressure,
-        windSpeed: weatherApiData.wind.speed,
-        windDirection: weatherApiData.wind.deg || 0,
-        visibility: weatherApiData.visibility,
-        uvIndex,
-        weatherMain: weatherApiData.weather[0].main,
-        weatherDescription: weatherApiData.weather[0].description,
-        weatherIcon: weatherApiData.weather[0].icon,
-        sunrise: new Date(weatherApiData.sys.sunrise * 1000),
-        sunset: new Date(weatherApiData.sys.sunset * 1000),
-        airQuality,
-      };
-      
-      const validatedData = insertWeatherDataSchema.parse(weatherInsert);
-      const weatherData = await storage.createWeatherData(validatedData);
-      
-      res.json(weatherData);
-    } catch (error) {
-      console.error("Weather coords API error:", error);
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : "Failed to fetch weather data" 
-      });
-    }
-  });
 
   // Get forecast data
   app.get("/api/forecast/:city", async (req, res) => {

@@ -12,6 +12,7 @@ export function useWeatherByCity(city: string) {
 export function useWeatherByCoords(lat: number | null, lon: number | null) {
   return useQuery<WeatherData>({
     queryKey: ['/api/weather/coords', lat, lon],
+    queryFn: () => fetch(`/api/weather/coords?lat=${lat}&lon=${lon}`).then(res => res.json()),
     enabled: !!(lat && lon),
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
