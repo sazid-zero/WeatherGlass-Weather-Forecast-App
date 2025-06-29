@@ -1,9 +1,6 @@
 import { motion } from 'framer-motion';
-import { formatDate, formatTime } from '@/lib/weather-utils';
+import { formatDate } from '@/lib/weather-utils';
 import type { ForecastData } from '@shared/schema';
-import { WeatherIcon } from './WeatherIcon';
-import { WeatherCharts } from './WeatherCharts';
-import { TemperatureDisplay } from './UnitsDisplay';
 
 interface ForecastSectionProps {
   forecastData: ForecastData[];
@@ -11,135 +8,153 @@ interface ForecastSectionProps {
 }
 
 export function ForecastSection({ forecastData, className = "" }: ForecastSectionProps) {
-  // Group forecast data by day for daily forecast
-  const dailyForecast = forecastData.reduce((acc, item) => {
-    const date = new Date(item.date).toDateString();
+  if (!forecastData || forecastData.length === 0) {
+    return (
+      <motion.div 
+        className={`glass-card rounded-3xl p-6 ${className}`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="text-4xl mb-4">📊</div>
+            <p className="text-muted-foreground">Loading forecast data...</p>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Group forecast data by day
+  const dailyForecasts = forecastData.reduce((acc, forecast) => {
+    const date = new Date(forecast.date).toDateString();
     if (!acc[date]) {
       acc[date] = [];
     }
-    acc[date].push(item);
+    acc[date].push(forecast);
     return acc;
   }, {} as Record<string, ForecastData[]>);
 
-  // Get daily summary (first item of each day represents the day)
-  const dailySummary = Object.entries(dailyForecast)
-    .slice(0, 7)
-    .map(([date, items]) => {
-      const dayData = items[0];
-      const maxTemp = Math.max(...items.map(item => item.tempMax));
-      const minTemp = Math.min(...items.map(item => item.tempMin));
-      return {
-        ...dayData,
-        date: new Date(date),
-        tempMax: maxTemp,
-        tempMin: minTemp,
-      };
-    });
+  const dailyAverages = Object.entries(dailyForecasts).map(([date, forecasts]) => {
+    const avgTemp = forecasts.reduce((sum, f) => sum + f.temperature, 0) / forecasts.length;
+    const maxTemp = Math.max(...forecasts.map(f => f.tempMax));
+    const minTemp = Math.min(...forecasts.map(f => f.tempMin));
+    const mainWeather = forecasts[0].weatherMain;
+    
+    return {
+      date: new Date(date),
+      avgTemp: Math.round(avgTemp),
+      maxTemp: Math.round(maxTemp),
+      minTemp: Math.round(minTemp),
+      weatherMain: mainWeather,
+      humidity: Math.round(forecasts.reduce((sum, f) => sum + f.humidity, 0) / forecasts.length)
+    };
+  }).slice(0, 7); // Show 7 days
 
-  // Get today's hourly forecast (next 6 hours)
-  const todayHourly = forecastData.slice(0, 6);
+  const getWeatherEmoji = (weather: string) => {
+    switch (weather) {
+      case 'Clear': return '☀️';
+      case 'Clouds': return '☁️';
+      case 'Rain': return '🌧️';
+      case 'Snow': return '❄️';
+      case 'Thunderstorm': return '⛈️';
+      default: return '☁️';
+    }
+  };
 
   return (
-    <section className={`grid grid-cols-1 xl:grid-cols-2 gap-6 ${className}`}>
-      {/* 7-Day Forecast */}
-      <motion.div 
-        className="glass-card rounded-3xl p-6"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-semibold text-foreground">7-Day Forecast</h3>
-          <button className="text-primary text-sm font-medium hover:text-primary/80 transition-colors">
-            View All
-          </button>
-        </div>
-        
-        <div className="space-y-4">
-          {dailySummary.map((day, index) => {
-            const dayName = formatDate(day.date);
-            
-            return (
+    <motion.div 
+      className={`glass-card rounded-3xl p-6 ${className}`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+    >
+      <div className="mb-6">
+        <h3 className="text-2xl font-bold mb-2">7-Day Forecast</h3>
+        <p className="text-muted-foreground">Extended weather outlook</p>
+      </div>
+
+      <div className="space-y-4">
+        {dailyAverages.map((day, index) => (
+          <motion.div
+            key={day.date.toISOString()}
+            className="glass-card-hover rounded-2xl p-4 flex items-center justify-between"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
+          >
+            <div className="flex items-center space-x-4">
+              <motion.div 
+                className="text-3xl weather-icon-bounce"
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                {getWeatherEmoji(day.weatherMain)}
+              </motion.div>
+              <div>
+                <p className="font-semibold">
+                  {index === 0 ? 'Today' : 
+                   index === 1 ? 'Tomorrow' : 
+                   formatDate(day.date)}
+                </p>
+                <p className="text-sm text-muted-foreground capitalize">
+                  {day.weatherMain}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Humidity</p>
+                <p className="font-semibold">{day.humidity}%</p>
+              </div>
+              <div className="text-right">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl font-bold">{day.maxTemp}°</span>
+                  <span className="text-lg text-muted-foreground">{day.minTemp}°</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Hourly forecast for today */}
+      {forecastData.length > 0 && (
+        <motion.div 
+          className="mt-8 pt-6 border-t border-white/20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
+          <h4 className="text-lg font-semibold mb-4">Today's Hourly Forecast</h4>
+          <div className="flex space-x-4 overflow-x-auto pb-4">
+            {forecastData.slice(0, 8).map((forecast, index) => (
               <motion.div
-                key={index}
-                className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/30 dark:hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                key={forecast.id}
+                className="glass-card-hover rounded-xl p-3 min-w-[100px] text-center"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <div className="flex items-center space-x-4">
-                  <WeatherIcon 
-                    weatherMain={day.weatherMain}
-                    weatherIcon={day.weatherIcon}
-                    size="md"
-                    animated={true}
-                  />
-                  <div>
-                    <p className="font-medium text-foreground">{dayName}</p>
-                    <p className="text-sm text-muted-foreground capitalize">
-                      {day.weatherDescription}
-                    </p>
-                  </div>
+                <p className="text-xs text-muted-foreground mb-2">
+                  {new Date(forecast.date).toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    hour12: true 
+                  })}
+                </p>
+                <div className="text-2xl mb-2">
+                  {getWeatherEmoji(forecast.weatherMain)}
                 </div>
-                <div className="text-right">
-                  <span className="font-semibold text-foreground">
-                    <TemperatureDisplay temperature={day.tempMax} />
-                  </span>
-                  <span className="text-muted-foreground ml-2">
-                    <TemperatureDisplay temperature={day.tempMin} />
-                  </span>
-                </div>
+                <p className="font-semibold">{Math.round(forecast.temperature)}°</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {forecast.precipitationChance}%
+                </p>
               </motion.div>
-            );
-          })}
-        </div>
-      </motion.div>
-      
-      {/* Hourly Forecast */}
-      <motion.div 
-        className="glass-card rounded-3xl p-6"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <h3 className="text-xl font-semibold text-foreground mb-6">Today's Hourly Forecast</h3>
-        
-        <div className="space-y-4 max-h-80 overflow-y-auto custom-scrollbar">
-          {todayHourly.map((hour, index) => {
-            const time = formatTime(new Date(hour.date));
-            
-            return (
-              <motion.div
-                key={index}
-                className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/30 dark:hover:bg-white/10 transition-all duration-300"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm font-medium text-muted-foreground w-12">
-                    {time}
-                  </span>
-                  <WeatherIcon 
-                    weatherMain={hour.weatherMain}
-                    weatherIcon={hour.weatherIcon}
-                    size="sm"
-                    animated={true}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    {hour.precipitationChance}%
-                  </span>
-                </div>
-                <span className="font-semibold text-foreground">
-                  <TemperatureDisplay temperature={hour.temperature} />
-                </span>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.div>
-    </section>
+            ))}
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
   );
 }

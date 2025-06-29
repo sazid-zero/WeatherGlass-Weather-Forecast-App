@@ -37,18 +37,17 @@ export function WeatherIcon({
   animated = true,
   className = '' 
 }: WeatherIconProps) {
-  const isNight = weatherIcon.includes('n');
+  const isNight = weatherIcon && weatherIcon.includes('n');
   
   const getIcon = () => {
+    if (!weatherMain || !weatherIcon) return Cloud;
+    
     const mainWeather = weatherMain.toLowerCase();
     
     if (mainWeather.includes('clear')) {
       return isNight ? Moon : Sun;
     }
     if (mainWeather.includes('cloud')) {
-      if (mainWeather.includes('few') || mainWeather.includes('scattered')) {
-        return isNight ? CloudMoon : Cloud;
-      }
       return Cloud;
     }
     if (mainWeather.includes('rain')) {
@@ -68,7 +67,8 @@ export function WeatherIcon({
     }
     
     // Default based on icon code
-    switch (weatherIcon.substring(0, 2)) {
+    const iconCode = weatherIcon.substring(0, 2);
+    switch (iconCode) {
       case '01': return isNight ? Moon : Sun;
       case '02': case '03': case '04': return Cloud;
       case '09': return CloudDrizzle;
@@ -76,7 +76,7 @@ export function WeatherIcon({
       case '11': return CloudLightning;
       case '13': return CloudSnow;
       case '50': return CloudFog;
-      default: return isNight ? Moon : Sun;
+      default: return Cloud;
     }
   };
 

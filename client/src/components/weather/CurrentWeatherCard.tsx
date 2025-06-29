@@ -33,13 +33,9 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
           ease: "easeInOut"
         }}
       >
-        <WeatherIcon 
-          weatherMain={weatherData.weatherMain}
-          weatherIcon={weatherData.weatherIcon}
-          size="xl"
-          animated={false}
-          className="text-6xl text-primary opacity-30"
-        />
+        <div className="text-6xl text-primary opacity-30">
+          ☁️
+        </div>
       </motion.div>
       
       <div className="relative z-10">
@@ -48,12 +44,17 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
             <p className="text-muted-foreground text-sm font-medium">Now</p>
             <p className="text-muted-foreground text-xs">{currentTime}</p>
           </div>
-          <WeatherIcon 
-            weatherMain={weatherData.weatherMain}
-            weatherIcon={weatherData.weatherIcon}
-            size="xl"
-            animated={true}
-          />
+          <motion.div 
+            className="text-4xl"
+            whileHover={{ scale: 1.1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
+            {weatherData.weatherMain === 'Clear' ? '☀️' : 
+             weatherData.weatherMain === 'Clouds' ? '☁️' : 
+             weatherData.weatherMain === 'Rain' ? '🌧️' : 
+             weatherData.weatherMain === 'Snow' ? '❄️' : 
+             weatherData.weatherMain === 'Thunderstorm' ? '⛈️' : '☁️'}
+          </motion.div>
         </div>
         
         <div className="mb-4">
