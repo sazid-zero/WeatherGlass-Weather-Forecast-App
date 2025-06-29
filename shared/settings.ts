@@ -3,7 +3,7 @@ import { z } from "zod";
 // Settings schemas
 export const weatherSettingsSchema = z.object({
   units: z.enum(["metric", "imperial", "kelvin"]).default("metric"),
-  language: z.enum(["en", "es", "fr", "de", "it", "pt", "ru", "ja", "zh"]).default("en"),
+  language: z.enum(["en"]).default("en"),
   autoLocation: z.boolean().default(true),
   defaultLocation: z.string().optional(),
   saveLocationHistory: z.boolean().default(true),

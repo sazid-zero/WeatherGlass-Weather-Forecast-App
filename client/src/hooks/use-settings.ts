@@ -61,9 +61,13 @@ export function useSettings() {
   };
 
   const updateWeatherSettings = (weatherUpdates: Partial<AppSettings['weather']>) => {
-    updateSettings({
-      weather: { ...settings.weather, ...weatherUpdates }
-    });
+    try {
+      updateSettings({
+        weather: { ...settings.weather, ...weatherUpdates }
+      });
+    } catch (error) {
+      console.error('Failed to update weather settings:', error);
+    }
   };
 
   const updateNotificationSettings = (notificationUpdates: Partial<AppSettings['notifications']>) => {
