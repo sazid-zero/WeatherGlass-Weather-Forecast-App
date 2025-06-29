@@ -11,67 +11,20 @@ import { AlertCircle, Loader2 } from 'lucide-react';
 
 export default function WeatherPage() {
   const [selectedCity, setSelectedCity] = useState<string>('');
-  const [useDemoData, setUseDemoData] = useState(false);
   const { latitude, longitude, error: geoError, loading: geoLoading } = useGeolocation();
   
   // Weather queries
   const { data: weatherByCity, error: cityError, isLoading: cityLoading } = useWeatherByCity(selectedCity);
   const { data: weatherByCoords, error: coordsError, isLoading: coordsLoading } = useWeatherByCoords(latitude, longitude);
-  const { data: forecastData, error: forecastError, isLoading: forecastApiLoading } = useForecast(
+  const { data: forecastData, error: forecastError, isLoading: forecastLoading } = useForecast(
     selectedCity || (weatherByCoords?.cityName || '')
   );
 
-  // Demo data for showcasing glassmorphism effects
-  const demoWeatherData = {
-    id: 1,
-    cityName: 'New York',
-    country: 'US',
-    latitude: 40.7128,
-    longitude: -74.0060,
-    temperature: 22.5,
-    feelsLike: 25.2,
-    humidity: 65,
-    pressure: 1013,
-    windSpeed: 8.5,
-    windDirection: 225,
-    visibility: 10000,
-    uvIndex: 6.2,
-    weatherMain: 'Clear',
-    weatherDescription: 'clear sky',
-    weatherIcon: '01d',
-    sunrise: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    sunset: new Date(Date.now() + 8 * 60 * 60 * 1000),
-    airQuality: 2,
-    createdAt: new Date(),
-  };
-
-  const demoForecastData = Array.from({ length: 35 }, (_, i) => ({
-    id: i + 1,
-    cityName: 'New York',
-    date: new Date(Date.now() + i * 3 * 60 * 60 * 1000),
-    temperature: 22 + Math.sin(i * 0.3) * 8,
-    tempMin: 18 + Math.sin(i * 0.3) * 6,
-    tempMax: 26 + Math.sin(i * 0.3) * 8,
-    humidity: 60 + Math.sin(i * 0.2) * 20,
-    windSpeed: 5 + Math.sin(i * 0.1) * 5,
-    weatherMain: ['Clear', 'Clouds', 'Rain'][i % 3],
-    weatherDescription: ['clear sky', 'few clouds', 'light rain'][i % 3],
-    weatherIcon: ['01d', '02d', '10d'][i % 3],
-    precipitationChance: Math.abs(Math.sin(i * 0.4)) * 80,
-    createdAt: new Date(),
-  }));
-
-  // Check if API errors suggest we should use demo data
-  const apiUnavailable = (cityError || coordsError) && 
-    ((cityError as any)?.message?.includes('401') || (coordsError as any)?.message?.includes('401'));
-
   // Determine which weather data to use
-  const weatherData = useDemoData || apiUnavailable ? demoWeatherData : (selectedCity ? weatherByCity : weatherByCoords);
-  const currentForecast = useDemoData || apiUnavailable ? demoForecastData : forecastData;
+  const weatherData = selectedCity ? weatherByCity : weatherByCoords;
   const currentCity = weatherData?.cityName || '';
-  const weatherLoading = useDemoData || apiUnavailable ? false : (selectedCity ? cityLoading : coordsLoading);
-  const weatherError = useDemoData || apiUnavailable ? null : (selectedCity ? cityError : coordsError);
-  const currentForecastLoading = useDemoData || apiUnavailable ? false : forecastApiLoading;
+  const weatherLoading = selectedCity ? cityLoading : coordsLoading;
+  const weatherError = selectedCity ? cityError : coordsError;
 
   // Handle city search
   const handleCitySearch = (city: string) => {
@@ -144,9 +97,6 @@ export default function WeatherPage() {
               <h1 className="text-3xl font-bold text-foreground mb-2">Today's Weather</h1>
               <p className="text-muted-foreground">
                 {currentCity ? `${currentCity}, ${weatherData?.country || ''}` : 'Select a location'}
-                {(useDemoData || apiUnavailable) && (
-                  <span className="ml-2 text-primary text-sm font-medium">Demo Mode</span>
-                )}
               </p>
             </div>
             
@@ -197,7 +147,7 @@ export default function WeatherPage() {
             </section>
 
             {/* Forecast Section */}
-            {currentForecastLoading ? (
+            {forecastLoading ? (
               <motion.div 
                 className="flex items-center justify-center min-h-[200px]"
                 initial={{ opacity: 0 }}
@@ -208,7 +158,7 @@ export default function WeatherPage() {
                   <span className="font-medium text-foreground">Loading forecast...</span>
                 </div>
               </motion.div>
-            ) : (!useDemoData && !apiUnavailable && forecastError) ? (
+            ) : forecastError ? (
               <motion.div 
                 className="glass-card rounded-3xl p-6"
                 initial={{ opacity: 0 }}
@@ -219,8 +169,8 @@ export default function WeatherPage() {
                   <span className="text-foreground">Unable to load forecast data</span>
                 </div>
               </motion.div>
-            ) : currentForecast && currentForecast.length > 0 ? (
-              <ForecastSection forecastData={currentForecast} />
+            ) : forecastData && forecastData.length > 0 ? (
+              <ForecastSection forecastData={forecastData} />
             ) : null}
           </>
         )}
