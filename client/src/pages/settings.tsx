@@ -74,7 +74,9 @@ export default function SettingsPage() {
     { value: 'pt', label: 'Português' },
     { value: 'ru', label: 'Русский' },
     { value: 'ja', label: '日本語' },
-    { value: 'zh', label: '中文' }
+    { value: 'zh', label: '中文' },
+    { value: 'bn', label: 'বাংলা' },
+    { value: 'ar', label: 'العربية' }
   ];
 
   const handleResetSettings = () => {
@@ -112,7 +114,7 @@ export default function SettingsPage() {
           <h2 className="text-xl font-semibold text-foreground">Choose Theme</h2>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {themeOptions.map((option, index) => {
             const Icon = option.icon;
             const isSelected = theme === option.id;
@@ -159,7 +161,7 @@ export default function SettingsPage() {
       </motion.section>
 
       {/* Weather & Appearance Settings */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <motion.section
           className="glass-card rounded-3xl p-6"
           initial={{ opacity: 0, y: 20 }}
@@ -224,7 +226,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Notifications & Privacy */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <motion.section
           className="glass-card rounded-3xl p-6"
           initial={{ opacity: 0, y: 20 }}

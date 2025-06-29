@@ -47,11 +47,12 @@ This is a modern weather application built with React frontend and Express backe
 - **ForecastSection**: 7-day and hourly forecast displays
 
 ### Internationalization System
-- **Language Support**: English, Spanish, French, German, Italian, Portuguese, Russian, Japanese, Chinese
+- **Language Support**: English, Spanish, French, German, Italian, Portuguese, Russian, Japanese, Chinese, Bengali (Bangla), Arabic
 - **Translation Management**: Centralized translation system in `client/src/lib/i18n.ts`
 - **Dynamic Language Switching**: Real-time interface language updates via settings
 - **Fallback System**: Automatic fallback to English for missing translations
 - **Localized Content**: Weather conditions, UI labels, messages, and settings descriptions
+- **RTL Support**: Prepared for Arabic right-to-left text direction
 
 ### Data Storage Schema
 - **weatherData**: Current weather conditions with location, temperature, humidity, wind, and atmospheric data
@@ -128,8 +129,9 @@ Changelog:
 - June 29, 2025. Simplified language selector to English only to prevent errors
 - June 29, 2025. Enhanced action buttons with zoom and shadow hover effects
 - June 29, 2025. Fixed ResizeObserver loop errors and dropdown runtime issues
-- June 29, 2025. Implemented comprehensive internationalization system with 9 languages
-- June 29, 2025. Added multi-language support for English, Spanish, French, German, Italian, Portuguese, Russian, Japanese, and Chinese
+- June 29, 2025. Implemented comprehensive internationalization system with 11 languages
+- June 29, 2025. Added multi-language support for English, Spanish, French, German, Italian, Portuguese, Russian, Japanese, Chinese, Bengali, and Arabic
+- June 29, 2025. Improved responsive design with better column layouts for small screens
 ```
 
 ## User Preferences

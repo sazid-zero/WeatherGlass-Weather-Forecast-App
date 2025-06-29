@@ -350,6 +350,182 @@ export const translations = {
       locationPermissionDenied: 'Standortberechtigung verweigert',
       settingsReset: 'Einstellungen wurden auf Standardwerte zurückgesetzt'
     }
+  },
+  
+  bn: {
+    // Navigation
+    home: 'হোম',
+    locations: 'অবস্থান',
+    statistics: 'পরিসংখ্যান',
+    settings: 'সেটিংস',
+    
+    // Weather conditions
+    weather: {
+      clear: 'পরিষ্কার',
+      clouds: 'মেঘ',
+      rain: 'বৃষ্টি',
+      drizzle: 'ঝিরঝির বৃষ্টি',
+      thunderstorm: 'ঝড়',
+      snow: 'তুষার',
+      mist: 'কুয়াশা',
+      fog: 'ঘন কুয়াশা',
+      haze: 'ধোঁয়াশা',
+      smoke: 'ধোঁয়া',
+      dust: 'ধুলো',
+      sand: 'বালি',
+      ash: 'ছাই',
+      squall: 'ঝড়ো হাওয়া',
+      tornado: 'টর্নেডো'
+    },
+    
+    // Weather metrics
+    metrics: {
+      temperature: 'তাপমাত্রা',
+      feelsLike: 'অনুভূত হয়',
+      humidity: 'আর্দ্রতা',
+      pressure: 'চাপ',
+      windSpeed: 'বাতাসের গতি',
+      windDirection: 'বাতাসের দিক',
+      visibility: 'দৃশ্যমানতা',
+      uvIndex: 'ইউভি সূচক',
+      airQuality: 'বায়ুর গুণমান',
+      sunrise: 'সূর্যোদয়',
+      sunset: 'সূর্যাস্ত'
+    },
+    
+    // Settings
+    settingsPage: {
+      title: 'সেটিংস',
+      subtitle: 'আপনার আবহাওয়া অ্যাপের অভিজ্ঞতা কাস্টমাইজ করুন',
+      theme: 'থিম',
+      weatherDisplay: 'আবহাওয়া এবং ডিসপ্লে',
+      temperatureUnits: 'তাপমাত্রার একক',
+      temperatureDesc: 'আপনার পছন্দের তাপমাত্রার স্কেল বেছে নিন',
+      language: 'ভাষা',
+      languageDesc: 'ইন্টারফেসের ভাষা পছন্দ',
+      location: 'অবস্থান',
+      autoLocation: 'স্বয়ংক্রিয় অবস্থান সনাক্তকরণ',
+      autoLocationDesc: 'আপনার বর্তমান অবস্থান স্বয়ংক্রিয়ভাবে সনাক্ত করতে GPS ব্যবহার করুন',
+      notifications: 'বিজ্ঞপ্তি',
+      weatherAlerts: 'আবহাওয়া সতর্কতা',
+      weatherAlertsDesc: 'গুরুতর আবহাওয়া পরিস্থিতি সম্পর্কে বিজ্ঞপ্তি পান',
+      privacy: 'গোপনীয়তা',
+      dataCollection: 'ডেটা সংগ্রহ',
+      dataCollectionDesc: 'বেনামী ব্যবহারের ডেটা সংগ্রহের অনুমতি দিন',
+      resetSettings: 'সেটিংস রিসেট করুন',
+      resetDesc: 'সমস্ত সেটিংস ডিফল্ট মানে রিসেট করুন'
+    },
+    
+    // Common actions
+    actions: {
+      search: 'অনুসন্ধান',
+      refresh: 'রিফ্রেশ',
+      getCurrentLocation: 'বর্তমান অবস্থান পান',
+      addToFavorites: 'প্রিয়তে যোগ করুন',
+      removeFromFavorites: 'প্রিয় থেকে সরান',
+      viewDetails: 'বিস্তারিত দেখুন',
+      close: 'বন্ধ',
+      save: 'সংরক্ষণ',
+      cancel: 'বাতিল',
+      reset: 'রিসেট'
+    },
+    
+    // Messages
+    messages: {
+      locationNotFound: 'অবস্থান পাওয়া যায়নি',
+      weatherDataUnavailable: 'আবহাওয়ার ডেটা উপলব্ধ নেই',
+      loadingWeather: 'আবহাওয়ার ডেটা লোড হচ্ছে...',
+      locationPermissionDenied: 'অবস্থানের অনুমতি প্রত্যাখ্যান',
+      settingsReset: 'সেটিংস ডিফল্ট মানে রিসেট করা হয়েছে'
+    }
+  },
+  
+  ar: {
+    // Navigation
+    home: 'الرئيسية',
+    locations: 'المواقع',
+    statistics: 'الإحصائيات',
+    settings: 'الإعدادات',
+    
+    // Weather conditions
+    weather: {
+      clear: 'صافي',
+      clouds: 'غيوم',
+      rain: 'مطر',
+      drizzle: 'رذاذ',
+      thunderstorm: 'عاصفة رعدية',
+      snow: 'ثلج',
+      mist: 'ضباب خفيف',
+      fog: 'ضباب',
+      haze: 'ضباب دخاني',
+      smoke: 'دخان',
+      dust: 'غبار',
+      sand: 'رمل',
+      ash: 'رماد',
+      squall: 'عاصفة قصيرة',
+      tornado: 'إعصار'
+    },
+    
+    // Weather metrics
+    metrics: {
+      temperature: 'درجة الحرارة',
+      feelsLike: 'يشعر وكأنه',
+      humidity: 'الرطوبة',
+      pressure: 'الضغط',
+      windSpeed: 'سرعة الرياح',
+      windDirection: 'اتجاه الرياح',
+      visibility: 'الرؤية',
+      uvIndex: 'مؤشر الأشعة فوق البنفسجية',
+      airQuality: 'جودة الهواء',
+      sunrise: 'شروق الشمس',
+      sunset: 'غروب الشمس'
+    },
+    
+    // Settings
+    settingsPage: {
+      title: 'الإعدادات',
+      subtitle: 'خصص تجربة تطبيق الطقس الخاص بك',
+      theme: 'المظهر',
+      weatherDisplay: 'الطقس والعرض',
+      temperatureUnits: 'وحدات درجة الحرارة',
+      temperatureDesc: 'اختر مقياس درجة الحرارة المفضل لديك',
+      language: 'اللغة',
+      languageDesc: 'تفضيل لغة الواجهة',
+      location: 'الموقع',
+      autoLocation: 'كشف الموقع تلقائياً',
+      autoLocationDesc: 'استخدم نظام تحديد المواقع لاكتشاف موقعك الحالي تلقائياً',
+      notifications: 'الإشعارات',
+      weatherAlerts: 'تنبيهات الطقس',
+      weatherAlertsDesc: 'احصل على إشعارات حول الظروف الجوية القاسية',
+      privacy: 'الخصوصية',
+      dataCollection: 'جمع البيانات',
+      dataCollectionDesc: 'السماح بجمع بيانات الاستخدام المجهولة',
+      resetSettings: 'إعادة تعيين الإعدادات',
+      resetDesc: 'إعادة تعيين جميع الإعدادات إلى القيم الافتراضية'
+    },
+    
+    // Common actions
+    actions: {
+      search: 'بحث',
+      refresh: 'تحديث',
+      getCurrentLocation: 'احصل على الموقع الحالي',
+      addToFavorites: 'أضف إلى المفضلة',
+      removeFromFavorites: 'إزالة من المفضلة',
+      viewDetails: 'عرض التفاصيل',
+      close: 'إغلاق',
+      save: 'حفظ',
+      cancel: 'إلغاء',
+      reset: 'إعادة تعيين'
+    },
+    
+    // Messages
+    messages: {
+      locationNotFound: 'الموقع غير موجود',
+      weatherDataUnavailable: 'بيانات الطقس غير متوفرة',
+      loadingWeather: 'جاري تحميل بيانات الطقس...',
+      locationPermissionDenied: 'تم رفض إذن الموقع',
+      settingsReset: 'تم إعادة تعيين الإعدادات إلى القيم الافتراضية'
+    }
   }
 };
 
