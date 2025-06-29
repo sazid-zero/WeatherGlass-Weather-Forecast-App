@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { Eye, Droplets } from 'lucide-react';
+import { Eye, Droplets, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { formatTime } from '@/lib/weather-utils';
 import type { WeatherData } from '@shared/schema';
 import { TemperatureDisplay, VisibilityDisplay } from './UnitsDisplay';
@@ -10,9 +11,11 @@ import { useState, useEffect } from 'react';
 interface CurrentWeatherCardProps {
   weatherData: WeatherData;
   className?: string;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
-export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeatherCardProps) {
+export function CurrentWeatherCard({ weatherData, className = "", isFavorite = false, onToggleFavorite }: CurrentWeatherCardProps) {
   const currentTime = formatTime(new Date());
   const { theme } = useTheme();
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -222,17 +225,37 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
             <p className="text-muted-foreground text-sm font-medium">Now</p>
             <p className="text-muted-foreground text-xs">{currentTime}</p>
           </div>
-          <motion.div 
-            className="text-4xl"
-            whileHover={{ scale: 1.1 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          >
-            {weatherData.weatherMain === 'Clear' ? '☀️' : 
-             weatherData.weatherMain === 'Clouds' ? '☁️' : 
-             weatherData.weatherMain === 'Rain' ? '🌧️' : 
-             weatherData.weatherMain === 'Snow' ? '❄️' : 
-             weatherData.weatherMain === 'Thunderstorm' ? '⛈️' : '☁️'}
-          </motion.div>
+          
+          <div className="flex items-center gap-3">
+            {onToggleFavorite && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onToggleFavorite}
+                className="p-2 hover:bg-yellow-500/20 transition-all duration-300"
+              >
+                <Star 
+                  className={`h-5 w-5 transition-all duration-300 ${
+                    isFavorite 
+                      ? 'text-yellow-500 fill-current' 
+                      : 'text-muted-foreground hover:text-yellow-400'
+                  }`} 
+                />
+              </Button>
+            )}
+            
+            <motion.div 
+              className="text-4xl"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              {weatherData.weatherMain === 'Clear' ? '☀️' : 
+               weatherData.weatherMain === 'Clouds' ? '☁️' : 
+               weatherData.weatherMain === 'Rain' ? '🌧️' : 
+               weatherData.weatherMain === 'Snow' ? '❄️' : 
+               weatherData.weatherMain === 'Thunderstorm' ? '⛈️' : '☁️'}
+            </motion.div>
+          </div>
         </div>
         
         <div className="mb-4">

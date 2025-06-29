@@ -117,6 +117,9 @@ Changelog:
 - June 29, 2025. Added refresh and current location buttons to home page
 - June 29, 2025. Implemented persistent location selection across page navigation
 - June 29, 2025. Enhanced card hover effects with dramatic shadow animations
+- June 29, 2025. Added favorite button to main weather card with star icon
+- June 29, 2025. Simplified language selector to English only to prevent errors
+- June 29, 2025. Enhanced action buttons with zoom and shadow hover effects
 ```
 
 ## User Preferences

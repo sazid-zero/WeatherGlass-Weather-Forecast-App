@@ -16,7 +16,7 @@ import { WeatherCharts } from '@/components/weather/WeatherCharts';
 export default function WeatherPage() {
   const { locationState, setSelectedLocation, setCurrentLocation, refreshLocation } = useLocationState();
   const { latitude, longitude, error: geoError, loading: geoLoading } = useGeolocation();
-  const { saveLocation } = useLocationHistory();
+  const { locations, saveLocation, toggleFavorite } = useLocationHistory();
 
   // Initial setup for current location if no location is selected
   useEffect(() => {
@@ -87,6 +87,41 @@ export default function WeatherPage() {
     refreshLocation();
   };
 
+  // Handle favorite toggle
+  const handleToggleFavorite = () => {
+    if (weatherData) {
+      const existingLocation = locations.find((loc: any) => 
+        loc.name.toLowerCase() === weatherData.cityName.toLowerCase()
+      );
+      
+      if (existingLocation) {
+        toggleFavorite(existingLocation.id);
+      } else {
+        // Add to favorites if not already in history - first save, then toggle to favorite
+        saveLocation(weatherData.cityName, weatherData.country || 'Unknown', {
+          lat: weatherData.latitude,
+          lon: weatherData.longitude
+        });
+        
+        // Find the newly added location and toggle it to favorite
+        setTimeout(() => {
+          const newLocation = locations.find((loc: any) => 
+            loc.name.toLowerCase() === weatherData.cityName.toLowerCase()
+          );
+          if (newLocation) {
+            toggleFavorite(newLocation.id);
+          }
+        }, 100);
+      }
+    }
+  };
+
+  // Check if current location is favorite
+  const isCurrentLocationFavorite = weatherData ? 
+    locations.some((loc: any) => 
+      loc.name.toLowerCase() === weatherData.cityName.toLowerCase() && loc.favorite
+    ) : false;
+
   // Background gradient effect elements
   const gradientElements = [
     { color: 'bg-primary/20', size: 'w-72 h-72', position: 'top-10 -left-4', delay: 0 },
@@ -135,27 +170,45 @@ export default function WeatherPage() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             {/* Action Buttons */}
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRefresh}
-                className="flex items-center gap-2 glass-card border-0"
-                disabled={isLoading}
+              <motion.div
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
               >
-                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRefresh}
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200"
+                  disabled={isLoading}
+                >
+                  <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+              </motion.div>
               
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCurrentLocation}
-                className="flex items-center gap-2 glass-card border-0"
-                disabled={geoLoading}
+              <motion.div
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
               >
-                <MapPin className="h-4 w-4" />
-                Current Location
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCurrentLocation}
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200"
+                  disabled={geoLoading}
+                >
+                  <MapPin className="h-4 w-4" />
+                  Current Location
+                </Button>
+              </motion.div>
             </div>
             
             <SearchBar onCitySearch={handleCitySearch} className="lg:w-80" />
@@ -207,7 +260,12 @@ export default function WeatherPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <CurrentWeatherCard weatherData={weatherData} className="h-full" />
+              <CurrentWeatherCard 
+                weatherData={weatherData} 
+                className="h-full" 
+                isFavorite={isCurrentLocationFavorite}
+                onToggleFavorite={handleToggleFavorite}
+              />
             </motion.div>
 
             {/* Weather Stats Grid */}

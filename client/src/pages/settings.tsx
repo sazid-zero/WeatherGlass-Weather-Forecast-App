@@ -64,15 +64,7 @@ export default function SettingsPage() {
   ];
 
   const languageOptions = [
-    { value: 'en', label: 'English' },
-    { value: 'es', label: 'Español' },
-    { value: 'fr', label: 'Français' },
-    { value: 'de', label: 'Deutsch' },
-    { value: 'it', label: 'Italiano' },
-    { value: 'pt', label: 'Português' },
-    { value: 'ru', label: 'Русский' },
-    { value: 'ja', label: '日本語' },
-    { value: 'zh', label: '中文' }
+    { value: 'en', label: 'English' }
   ];
 
   const handleResetSettings = () => {
