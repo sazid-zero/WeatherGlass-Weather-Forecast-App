@@ -229,6 +229,49 @@
   gap: 1.5rem;
 }
 
+/* Enhanced weather particle visibility */
+.weather-particle-sun {
+  box-shadow: 
+    0 0 8px rgba(251, 191, 36, 0.6), 
+    0 0 16px rgba(245, 158, 11, 0.4) !important;
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.8)) !important;
+}
+
+.dark .weather-particle-sun {
+  box-shadow: 
+    0 0 12px rgba(251, 191, 36, 0.8), 
+    0 0 24px rgba(245, 158, 11, 0.6) !important;
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.9)) !important;
+}
+
+.weather-particle-snow {
+  box-shadow: 
+    0 0 6px rgba(255, 255, 255, 0.8), 
+    0 0 12px rgba(226, 232, 240, 0.6) !important;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9)) !important;
+}
+
+.dark .weather-particle-snow {
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.9), 
+    0 0 20px rgba(226, 232, 240, 0.8) !important;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.95)) !important;
+}
+
+.weather-particle-cloud {
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.5), 
+    0 0 20px rgba(148, 163, 184, 0.3) !important;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)) !important;
+}
+
+.dark .weather-particle-cloud {
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.7), 
+    0 0 30px rgba(148, 163, 184, 0.5) !important;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) !important;
+}
+
 .weather-icon-bounce {
   animation: bounce 2s infinite;
 }

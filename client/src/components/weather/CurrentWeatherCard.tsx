@@ -19,7 +19,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
     
     if (lowerCondition.includes('rain') || lowerCondition.includes('drizzle')) {
       return {
-        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(29, 78, 216, 0.4) 100%)',
+        background: 'linear-gradient(135deg, rgba(55, 65, 81, 0.6) 0%, rgba(75, 85, 99, 0.5) 50%, rgba(107, 114, 128, 0.4) 100%)',
         particles: Array.from({ length: 15 }, (_, i) => (
           <motion.div
             key={`rain-${i}`}
@@ -50,11 +50,13 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         particles: Array.from({ length: 12 }, (_, i) => (
           <motion.div
             key={`snow-${i}`}
-            className="absolute w-2 h-2 rounded-full weather-particle-snow"
+            className="absolute w-3 h-3 rounded-full weather-particle-snow"
             style={{
               left: `${Math.random() * 100}%`,
               top: `-10px`,
-              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(226, 232, 240, 0.6))',
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(226, 232, 240, 0.8))',
+              boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(226, 232, 240, 0.6)',
+              filter: 'drop-shadow(0 0 3px rgba(255, 255, 255, 0.9))',
             }}
             animate={{
               y: [0, 400],
@@ -78,11 +80,13 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         particles: Array.from({ length: 8 }, (_, i) => (
           <motion.div
             key={`sun-${i}`}
-            className="absolute w-1 h-1 rounded-full weather-particle-sun"
+            className="absolute w-2 h-2 rounded-full weather-particle-sun"
             style={{
               left: `${30 + Math.random() * 40}%`,
               top: `${20 + Math.random() * 30}%`,
-              background: 'radial-gradient(circle, rgba(251, 191, 36, 0.8), rgba(245, 158, 11, 0.5))',
+              background: 'radial-gradient(circle, rgba(251, 191, 36, 0.95), rgba(245, 158, 11, 0.8))',
+              boxShadow: '0 0 8px rgba(251, 191, 36, 0.6), 0 0 16px rgba(245, 158, 11, 0.4)',
+              filter: 'drop-shadow(0 0 4px rgba(251, 191, 36, 0.8))',
             }}
             animate={{
               scale: [0, 1, 0],
@@ -111,7 +115,9 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
               height: `${12 + Math.random() * 20}px`,
               left: `${Math.random() * 100}%`,
               top: `${10 + Math.random() * 40}%`,
-              background: 'radial-gradient(ellipse, rgba(255, 255, 255, 0.4), rgba(148, 163, 184, 0.2))',
+              background: 'radial-gradient(ellipse, rgba(255, 255, 255, 0.7), rgba(148, 163, 184, 0.5))',
+              boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(148, 163, 184, 0.3)',
+              filter: 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.6))',
             }}
             animate={{
               x: [-50, window.innerWidth || 400],
