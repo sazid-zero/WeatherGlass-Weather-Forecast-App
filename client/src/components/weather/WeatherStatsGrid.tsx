@@ -7,6 +7,7 @@ import {
   formatTime 
 } from '@/lib/weather-utils';
 import type { WeatherData } from '@shared/schema';
+import { SpeedDisplay, PressureDisplay } from './UnitsDisplay';
 
 interface WeatherStatsGridProps {
   weatherData: WeatherData;
@@ -23,7 +24,7 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
   const statsData = [
     {
       title: "Wind Status",
-      value: `${weatherData.windSpeed.toFixed(1)} km/h`,
+      value: <SpeedDisplay speed={weatherData.windSpeed} />,
       icon: Wind,
       iconBg: "text-primary",
       detail: windDir,

@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { insertWeatherDataSchema, insertForecastDataSchema } from "@shared/schema";
 import { z } from "zod";
 
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || process.env.VITE_OPENWEATHER_API_KEY || "";
+const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || "db491620c4afabe70deb77af3b145cbd";
 
 interface OpenWeatherResponse {
   main: {
@@ -308,6 +308,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         error: error instanceof Error ? error.message : "Failed to fetch forecast data" 
       });
+    }
+  });
+
+  // Get weather statistics for a city
+  app.get("/api/weather/statistics/:city", async (req, res) => {
+    try {
+      const { city } = req.params;
+      
+      // Get current weather data
+      const weatherData = await storage.getWeatherData(city);
+      if (!weatherData) {
+        return res.status(404).json({ error: "Weather data not found for this city" });
+      }
+
+      // Get forecast data for trend analysis
+      const forecastData = await storage.getForecastData(city);
+
+      // Calculate statistics
+      const temps = [weatherData.temperature, ...forecastData.map(f => f.temperature)];
+      const humidities = [weatherData.humidity, ...forecastData.map(f => f.humidity)];
+      const winds = [weatherData.windSpeed, ...forecastData.map(f => f.windSpeed)];
+
+      const avgTemp = temps.reduce((sum, temp) => sum + temp, 0) / temps.length;
+      const avgHumidity = humidities.reduce((sum, hum) => sum + hum, 0) / humidities.length;
+      const avgWind = winds.reduce((sum, wind) => sum + wind, 0) / winds.length;
+
+      // Determine trends
+      const tempTrend = forecastData.length > 0 
+        ? (forecastData[forecastData.length - 1].temperature > weatherData.temperature ? 'up' : 'down')
+        : 'stable';
+      
+      const humidityTrend = forecastData.length > 0
+        ? (forecastData[forecastData.length - 1].humidity > weatherData.humidity ? 'up' : 'down')
+        : 'stable';
+
+      const windTrend = forecastData.length > 0
+        ? (forecastData[forecastData.length - 1].windSpeed > weatherData.windSpeed ? 'up' : 'down')
+        : 'stable';
+
+      // Count weather conditions
+      const allConditions = [weatherData.weatherMain, ...forecastData.map(f => f.weatherMain)];
+      const conditions = {
+        sunny: allConditions.filter(c => c.toLowerCase().includes('clear') || c.toLowerCase().includes('sun')).length,
+        cloudy: allConditions.filter(c => c.toLowerCase().includes('cloud')).length,
+        rainy: allConditions.filter(c => c.toLowerCase().includes('rain')).length,
+        stormy: allConditions.filter(c => c.toLowerCase().includes('storm') || c.toLowerCase().includes('thunder')).length,
+      };
+
+      // Generate weekly data from forecast
+      const weeklyData = forecastData.slice(0, 7).map((forecast, index) => {
+        const date = new Date();
+        date.setDate(date.getDate() + index);
+        return {
+          day: date.toLocaleDateString('en', { weekday: 'short' }),
+          temp: Math.round(forecast.temperature),
+          humidity: forecast.humidity,
+          wind: Math.round(forecast.windSpeed),
+          condition: forecast.weatherMain,
+        };
+      });
+
+      const statistics = {
+        temperature: {
+          current: Math.round(weatherData.temperature),
+          average: Math.round(avgTemp),
+          min: Math.round(Math.min(...temps)),
+          max: Math.round(Math.max(...temps)),
+          trend: tempTrend,
+        },
+        humidity: {
+          current: weatherData.humidity,
+          average: Math.round(avgHumidity),
+          trend: humidityTrend,
+        },
+        wind: {
+          current: Math.round(weatherData.windSpeed),
+          average: Math.round(avgWind),
+          trend: windTrend,
+        },
+        conditions,
+        weeklyData,
+      };
+
+      res.json(statistics);
+    } catch (error) {
+      console.error('Statistics API error:', error);
+      res.status(500).json({ error: "Failed to fetch weather statistics" });
     }
   });
 

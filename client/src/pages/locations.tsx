@@ -1,40 +1,133 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Plus, Trash2, Star } from 'lucide-react';
+import { MapPin, Trash2, Star, Thermometer, Droplets, Wind, Eye } from 'lucide-react';
 import { SearchBar } from '@/components/weather/SearchBar';
+import { useLocationHistory } from '@/hooks/use-location-history';
+import { useWeatherByCity } from '@/hooks/use-weather';
+import { useGeolocation } from '@/hooks/use-geolocation';
+import { useSettings } from '@/hooks/use-settings';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { getWeatherIcon, getWeatherColor } from '@/lib/weather-utils';
+
+interface LocationWeatherCardProps {
+  location: any;
+  onToggleFavorite: (id: string) => void;
+  onRemove: (id: string) => void;
+}
+
+function LocationWeatherCard({ location, onToggleFavorite, onRemove }: LocationWeatherCardProps) {
+  const { data: weatherData, isLoading } = useWeatherByCity(location.name);
+
+  return (
+    <motion.div
+      className="glass-card rounded-2xl p-4 hover:scale-[1.02] transition-all duration-300"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -2 }}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <MapPin className="h-5 w-5 text-primary" />
+          <div>
+            <h3 className="font-semibold text-foreground">{location.name}</h3>
+            <p className="text-sm text-muted-foreground">{location.country}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onToggleFavorite(location.id)}
+            className="p-2 hover:bg-yellow-500/20"
+          >
+            <Star className={`h-4 w-4 ${location.favorite ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onRemove(location.id)}
+            className="p-2 hover:bg-red-500/20"
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-8 w-16" />
+        </div>
+      ) : weatherData ? (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-2xl font-bold text-foreground">
+              {Math.round(weatherData.temperature)}°C
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-muted-foreground capitalize">
+                {weatherData.weatherDescription}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Feels like {Math.round(weatherData.feelsLike)}°C
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="flex items-center gap-1">
+              <Droplets className="h-3 w-3 text-blue-500" />
+              <span className="text-muted-foreground">{weatherData.humidity}%</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Wind className="h-3 w-3 text-green-500" />
+              <span className="text-muted-foreground">{Math.round(weatherData.windSpeed)} m/s</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Eye className="h-3 w-3 text-purple-500" />
+              <span className="text-muted-foreground">{Math.round(weatherData.visibility / 1000)} km</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="text-sm text-muted-foreground">Weather data unavailable</div>
+      )}
+    </motion.div>
+  );
+}
 
 export default function LocationsPage() {
-  const [savedLocations, setSavedLocations] = useState([
-    { id: 1, name: 'New York', country: 'US', favorite: true },
-    { id: 2, name: 'London', country: 'UK', favorite: false },
-    { id: 3, name: 'Tokyo', country: 'JP', favorite: false },
-    { id: 4, name: 'Paris', country: 'FR', favorite: true },
-  ]);
+  const { settings } = useSettings();
+  const { latitude, longitude } = useGeolocation();
+  const { 
+    locations, 
+    saveLocation, 
+    toggleFavorite, 
+    removeLocation, 
+    getFavorites, 
+    getRecent 
+  } = useLocationHistory();
 
-  const handleAddLocation = (city: string) => {
-    const newLocation = {
-      id: Date.now(),
-      name: city,
-      country: 'Unknown',
-      favorite: false,
-    };
-    setSavedLocations([...savedLocations, newLocation]);
+  const handleAddLocation = async (city: string) => {
+    // Fetch weather data to get coordinates
+    try {
+      const response = await fetch(`/api/weather/${encodeURIComponent(city)}`);
+      if (response.ok) {
+        const weatherData = await response.json();
+        saveLocation(city, weatherData.country || 'Unknown', {
+          lat: weatherData.latitude,
+          lon: weatherData.longitude
+        });
+      }
+    } catch (error) {
+      console.error('Failed to save location:', error);
+    }
   };
 
-  const toggleFavorite = (id: number) => {
-    setSavedLocations(locations =>
-      locations.map(loc =>
-        loc.id === id ? { ...loc, favorite: !loc.favorite } : loc
-      )
-    );
-  };
-
-  const removeLocation = (id: number) => {
-    setSavedLocations(locations => locations.filter(loc => loc.id !== id));
-  };
-
-  const favorites = savedLocations.filter(loc => loc.favorite);
-  const others = savedLocations.filter(loc => !loc.favorite);
+  const favorites = getFavorites();
+  const recentLocations = getRecent(10).filter(loc => !loc.favorite);
 
   return (
     <div className="min-h-screen weather-gradient-bg">
@@ -68,46 +161,27 @@ export default function LocationsPage() {
               <h2 className="text-xl font-semibold text-foreground">Favorites</h2>
             </div>
             
-            <div className="space-y-4">
+            <div className="grid gap-4">
               {favorites.length > 0 ? (
                 favorites.map((location, index) => (
-                  <motion.div
+                  <LocationWeatherCard
                     key={location.id}
-                    className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/30 dark:hover:bg-white/10 transition-all duration-300"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <MapPin className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium text-foreground">{location.name}</p>
-                        <p className="text-sm text-muted-foreground">{location.country}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => toggleFavorite(location.id)}
-                        className="p-2 rounded-lg hover:bg-yellow-500/20 transition-colors"
-                      >
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      </button>
-                      <button
-                        onClick={() => removeLocation(location.id)}
-                        className="p-2 rounded-lg hover:bg-red-500/20 transition-colors"
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </button>
-                    </div>
-                  </motion.div>
+                    location={location}
+                    onToggleFavorite={toggleFavorite}
+                    onRemove={removeLocation}
+                  />
                 ))
               ) : (
-                <p className="text-center text-muted-foreground py-8">No favorite locations yet</p>
+                <div className="text-center text-muted-foreground py-8">
+                  <Star className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
+                  <p>No favorite locations yet</p>
+                  <p className="text-sm">Search for a city above to add your first favorite</p>
+                </div>
               )}
             </div>
           </motion.section>
 
-          {/* All Locations */}
+          {/* Recent Locations */}
           <motion.section
             className="glass-card rounded-3xl p-6"
             initial={{ opacity: 0, x: 20 }}
@@ -116,41 +190,26 @@ export default function LocationsPage() {
           >
             <div className="flex items-center gap-3 mb-6">
               <MapPin className="h-6 w-6 text-primary" />
-              <h2 className="text-xl font-semibold text-foreground">All Locations</h2>
+              <h2 className="text-xl font-semibold text-foreground">Recent Locations</h2>
             </div>
             
-            <div className="space-y-4">
-              {others.map((location, index) => (
-                <motion.div
-                  key={location.id}
-                  className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/30 dark:hover:bg-white/10 transition-all duration-300"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="font-medium text-foreground">{location.name}</p>
-                      <p className="text-sm text-muted-foreground">{location.country}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => toggleFavorite(location.id)}
-                      className="p-2 rounded-lg hover:bg-yellow-500/20 transition-colors"
-                    >
-                      <Star className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                    <button
-                      onClick={() => removeLocation(location.id)}
-                      className="p-2 rounded-lg hover:bg-red-500/20 transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
+            <div className="grid gap-4">
+              {recentLocations.length > 0 ? (
+                recentLocations.map((location, index) => (
+                  <LocationWeatherCard
+                    key={location.id}
+                    location={location}
+                    onToggleFavorite={toggleFavorite}
+                    onRemove={removeLocation}
+                  />
+                ))
+              ) : (
+                <div className="text-center text-muted-foreground py-8">
+                  <MapPin className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
+                  <p>No recent locations</p>
+                  <p className="text-sm">Your recently searched cities will appear here</p>
+                </div>
+              )}
             </div>
           </motion.section>
         </div>

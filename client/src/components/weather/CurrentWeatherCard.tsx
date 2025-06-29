@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Eye, Droplets } from 'lucide-react';
 import { getWeatherIcon, getWeatherColor, formatTime } from '@/lib/weather-utils';
 import type { WeatherData } from '@shared/schema';
+import { TemperatureDisplay, VisibilityDisplay } from './UnitsDisplay';
 
 interface CurrentWeatherCardProps {
   weatherData: WeatherData;
@@ -58,11 +59,11 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            {Math.round(weatherData.temperature)}°
+<TemperatureDisplay temperature={weatherData.temperature} />
           </motion.div>
           <p className="text-foreground font-medium capitalize">{weatherData.weatherDescription}</p>
           <p className="text-muted-foreground text-sm mt-1">
-            Feels like {Math.round(weatherData.feelsLike)}°
+Feels like <TemperatureDisplay temperature={weatherData.feelsLike} />
           </p>
         </div>
         
@@ -77,7 +78,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
             <Eye className="text-primary h-5 w-5 mx-auto mb-2" />
             <p className="text-xs text-muted-foreground">Visibility</p>
             <p className="text-sm font-semibold text-foreground">
-              {Math.round(weatherData.visibility / 1000)} km
+<VisibilityDisplay visibility={weatherData.visibility} />
             </p>
           </div>
           <div className="text-center">

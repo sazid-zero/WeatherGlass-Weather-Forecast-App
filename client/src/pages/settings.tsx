@@ -1,9 +1,16 @@
 import { motion } from 'framer-motion';
-import { Settings as SettingsIcon, Palette, Bell, Globe, Shield, Moon, Sun, Droplets, Waves, TreePine, Zap } from 'lucide-react';
+import { Settings as SettingsIcon, Palette, Bell, Globe, Shield, Moon, Sun, Droplets, Waves, TreePine, Zap, RotateCcw } from 'lucide-react';
 import { useTheme } from '@/components/ui/theme-provider';
+import { useSettings } from '@/hooks/use-settings';
+import { SettingsToggle } from '@/components/settings/SettingsToggle';
+import { SettingsSelect } from '@/components/settings/SettingsSelect';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const { settings, updateWeatherSettings, updateNotificationSettings, updatePrivacySettings, resetSettings } = useSettings();
+  const { toast } = useToast();
 
   const themeOptions = [
     { 
@@ -50,44 +57,31 @@ export default function SettingsPage() {
     }
   ];
 
-  const settingsSections = [
-    {
-      title: 'Appearance',
-      icon: Palette,
-      items: [
-        { label: 'Theme', description: 'Choose your preferred color theme' },
-        { label: 'Units', description: 'Temperature and measurement units' },
-        { label: 'Language', description: 'Interface language' }
-      ]
-    },
-    {
-      title: 'Notifications',
-      icon: Bell,
-      items: [
-        { label: 'Weather Alerts', description: 'Severe weather notifications' },
-        { label: 'Daily Forecast', description: 'Daily weather summary' },
-        { label: 'Location Updates', description: 'Location-based alerts' }
-      ]
-    },
-    {
-      title: 'Location',
-      icon: Globe,
-      items: [
-        { label: 'Auto-detect Location', description: 'Use GPS for current location' },
-        { label: 'Default Location', description: 'Set your home location' },
-        { label: 'Location History', description: 'Save recent locations' }
-      ]
-    },
-    {
-      title: 'Privacy',
-      icon: Shield,
-      items: [
-        { label: 'Data Collection', description: 'Control data usage' },
-        { label: 'Location Sharing', description: 'Manage location privacy' },
-        { label: 'Analytics', description: 'App usage analytics' }
-      ]
-    }
+  const unitOptions = [
+    { value: 'metric', label: 'Celsius (°C)' },
+    { value: 'imperial', label: 'Fahrenheit (°F)' },
+    { value: 'kelvin', label: 'Kelvin (K)' }
   ];
+
+  const languageOptions = [
+    { value: 'en', label: 'English' },
+    { value: 'es', label: 'Español' },
+    { value: 'fr', label: 'Français' },
+    { value: 'de', label: 'Deutsch' },
+    { value: 'it', label: 'Italiano' },
+    { value: 'pt', label: 'Português' },
+    { value: 'ru', label: 'Русский' },
+    { value: 'ja', label: '日本語' },
+    { value: 'zh', label: '中文' }
+  ];
+
+  const handleResetSettings = () => {
+    resetSettings();
+    toast({
+      title: "Settings Reset",
+      description: "All settings have been reset to default values.",
+    });
+  };
 
   return (
     <div className="min-h-screen weather-gradient-bg">
@@ -159,48 +153,172 @@ export default function SettingsPage() {
           </div>
         </motion.section>
 
-        {/* Settings Sections */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {settingsSections.map((section, sectionIndex) => {
-            const SectionIcon = section.icon;
+        {/* Weather & Appearance Settings */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+          <motion.section
+            className="glass-card rounded-3xl p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Palette className="h-6 w-6 text-primary" />
+              <h3 className="text-lg font-semibold text-foreground">Weather & Display</h3>
+            </div>
             
-            return (
-              <motion.section
-                key={section.title}
-                className="glass-card rounded-3xl p-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 + sectionIndex * 0.1 }}
-              >
-                <div className="flex items-center gap-3 mb-6">
-                  <SectionIcon className="h-6 w-6 text-primary" />
-                  <h3 className="text-lg font-semibold text-foreground">{section.title}</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  {section.items.map((item, itemIndex) => (
-                    <motion.div
-                      key={item.label}
-                      className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/30 dark:hover:bg-white/10 transition-all duration-300 cursor-pointer"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: 0.3 + sectionIndex * 0.1 + itemIndex * 0.05 }}
-                      whileHover={{ scale: 1.01 }}
-                    >
-                      <div>
-                        <p className="font-medium text-foreground">{item.label}</p>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
-                      </div>
-                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-primary" />
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.section>
-            );
-          })}
+            <div className="space-y-2">
+              <SettingsSelect
+                id="units"
+                label="Temperature Units"
+                description="Choose your preferred temperature scale"
+                value={settings.weather.units}
+                onValueChange={(value) => updateWeatherSettings({ units: value as any })}
+                options={unitOptions}
+              />
+              
+              <SettingsSelect
+                id="language"
+                label="Language"
+                description="Interface language preference"
+                value={settings.weather.language}
+                onValueChange={(value) => updateWeatherSettings({ language: value as any })}
+                options={languageOptions}
+              />
+            </div>
+          </motion.section>
+
+          <motion.section
+            className="glass-card rounded-3xl p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Globe className="h-6 w-6 text-primary" />
+              <h3 className="text-lg font-semibold text-foreground">Location</h3>
+            </div>
+            
+            <div className="space-y-2">
+              <SettingsToggle
+                id="auto-location"
+                label="Auto-detect Location"
+                description="Use GPS to automatically detect your current location"
+                checked={settings.weather.autoLocation}
+                onCheckedChange={(checked) => updateWeatherSettings({ autoLocation: checked })}
+              />
+              
+              <SettingsToggle
+                id="location-history"
+                label="Save Location History"
+                description="Remember recently searched locations"
+                checked={settings.weather.saveLocationHistory}
+                onCheckedChange={(checked) => updateWeatherSettings({ saveLocationHistory: checked })}
+              />
+            </div>
+          </motion.section>
         </div>
+
+        {/* Notifications & Privacy Settings */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+          <motion.section
+            className="glass-card rounded-3xl p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Bell className="h-6 w-6 text-primary" />
+              <h3 className="text-lg font-semibold text-foreground">Notifications</h3>
+            </div>
+            
+            <div className="space-y-2">
+              <SettingsToggle
+                id="weather-alerts"
+                label="Weather Alerts"
+                description="Get notified about severe weather conditions"
+                checked={settings.notifications.weatherAlerts}
+                onCheckedChange={(checked) => updateNotificationSettings({ weatherAlerts: checked })}
+              />
+              
+              <SettingsToggle
+                id="daily-forecast"
+                label="Daily Forecast"
+                description="Receive daily weather summary notifications"
+                checked={settings.notifications.dailyForecast}
+                onCheckedChange={(checked) => updateNotificationSettings({ dailyForecast: checked })}
+              />
+              
+              <SettingsToggle
+                id="location-updates"
+                label="Location Updates"
+                description="Notifications when weather changes at your location"
+                checked={settings.notifications.locationUpdates}
+                onCheckedChange={(checked) => updateNotificationSettings({ locationUpdates: checked })}
+              />
+            </div>
+          </motion.section>
+
+          <motion.section
+            className="glass-card rounded-3xl p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Shield className="h-6 w-6 text-primary" />
+              <h3 className="text-lg font-semibold text-foreground">Privacy & Data</h3>
+            </div>
+            
+            <div className="space-y-2">
+              <SettingsToggle
+                id="data-collection"
+                label="Data Collection"
+                description="Allow collection of usage data to improve the app"
+                checked={settings.privacy.dataCollection}
+                onCheckedChange={(checked) => updatePrivacySettings({ dataCollection: checked })}
+              />
+              
+              <SettingsToggle
+                id="location-sharing"
+                label="Location Sharing"
+                description="Share location data for personalized weather features"
+                checked={settings.privacy.locationSharing}
+                onCheckedChange={(checked) => updatePrivacySettings({ locationSharing: checked })}
+              />
+              
+              <SettingsToggle
+                id="analytics"
+                label="Analytics"
+                description="Help improve the app by sharing anonymous usage statistics"
+                checked={settings.privacy.analytics}
+                onCheckedChange={(checked) => updatePrivacySettings({ analytics: checked })}
+              />
+            </div>
+          </motion.section>
+        </div>
+
+        {/* Reset Settings */}
+        <motion.section
+          className="glass-card rounded-3xl p-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Reset Settings</h3>
+              <p className="text-muted-foreground">Restore all settings to their default values</p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleResetSettings}
+              className="flex items-center gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset All
+            </Button>
+          </div>
+        </motion.section>
       </div>
     </div>
   );
