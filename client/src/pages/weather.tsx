@@ -122,10 +122,10 @@ export default function WeatherPage() {
       {weatherData && (
         <>
           {/* Main Weather Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
             {/* Current Weather Card */}
             <motion.div
-              className="lg:col-span-1"
+              className="xl:col-span-1"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -135,7 +135,7 @@ export default function WeatherPage() {
 
             {/* Weather Stats Grid */}
             <motion.div
-              className="lg:col-span-2"
+              className="xl:col-span-2"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -187,7 +187,7 @@ export default function WeatherPage() {
   );
 
   return (
-    <div className="p-4 sm:p-6 max-w-full overflow-x-hidden">
+    <div className="p-6">
       {/* Background Gradients */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {gradientElements.map((element, index) => (
@@ -208,9 +208,7 @@ export default function WeatherPage() {
         ))}
       </div>
 
-      <div className="max-w-7xl mx-auto">
-        {content}
-      </div>
+      {content}
     </div>
   );
 }

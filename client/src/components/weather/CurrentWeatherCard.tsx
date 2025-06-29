@@ -139,7 +139,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
 
   return (
     <motion.div 
-      className={`glass-card rounded-3xl p-4 sm:p-6 md:p-8 h-full relative overflow-hidden ${className}`}
+      className={`glass-card rounded-3xl p-8 h-full relative overflow-hidden ${className}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
@@ -154,7 +154,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
 
       {/* Floating Weather Elements */}
       <motion.div 
-        className="absolute top-4 right-4 sm:top-6 sm:right-6 opacity-30 dark:opacity-20"
+        className="absolute top-6 right-6 opacity-20"
         animate={{ 
           rotate: [0, 5, -5, 0],
           scale: [1, 1.05, 1],
@@ -166,7 +166,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
           ease: "easeInOut"
         }}
       >
-        <div className="text-4xl sm:text-6xl md:text-8xl drop-shadow-lg">
+        <div className="text-8xl">
           {weatherData.weatherMain.toLowerCase().includes('rain') ? '🌧️' :
            weatherData.weatherMain.toLowerCase().includes('snow') ? '❄️' :
            weatherData.weatherMain.toLowerCase().includes('clear') ? '☀️' :
@@ -183,7 +183,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
             <p className="text-muted-foreground text-xs">{currentTime}</p>
           </div>
           <motion.div 
-            className="text-3xl sm:text-4xl drop-shadow-md"
+            className="text-4xl"
             whileHover={{ scale: 1.1 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
@@ -197,15 +197,15 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         
         <div className="mb-4">
           <motion.div 
-            className="text-4xl sm:text-5xl md:text-6xl font-light text-foreground mb-2"
+            className="text-6xl font-light text-foreground mb-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
 <TemperatureDisplay temperature={weatherData.temperature} />
           </motion.div>
-          <p className="text-foreground font-medium capitalize text-sm sm:text-base">{weatherData.weatherDescription}</p>
-          <p className="text-muted-foreground text-xs sm:text-sm mt-1">
+          <p className="text-foreground font-medium capitalize">{weatherData.weatherDescription}</p>
+          <p className="text-muted-foreground text-sm mt-1">
 Feels like <TemperatureDisplay temperature={weatherData.feelsLike} />
           </p>
         </div>
