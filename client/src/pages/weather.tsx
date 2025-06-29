@@ -1,31 +1,37 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { WeatherSidebar } from '@/components/weather/WeatherSidebar';
+import { AlertCircle, CloudRain, Sun, Wind, Eye } from 'lucide-react';
+import { useGeolocation } from '@/hooks/use-geolocation';
+import { useWeatherByCity, useWeatherByCoords, useForecast } from '@/hooks/use-weather';
 import { SearchBar } from '@/components/weather/SearchBar';
+import { WeatherSidebar } from '@/components/weather/WeatherSidebar';
 import { CurrentWeatherCard } from '@/components/weather/CurrentWeatherCard';
 import { WeatherStatsGrid } from '@/components/weather/WeatherStatsGrid';
 import { ForecastSection } from '@/components/weather/ForecastSection';
 import { WeatherCharts } from '@/components/weather/WeatherCharts';
-import { useWeatherByCity, useWeatherByCoords, useForecast } from '@/hooks/use-weather';
-import { useGeolocation } from '@/hooks/use-geolocation';
-import { AlertCircle, Loader2 } from 'lucide-react';
 
 export default function WeatherPage() {
   const [selectedCity, setSelectedCity] = useState<string>('');
   const { latitude, longitude, error: geoError, loading: geoLoading } = useGeolocation();
+
+  // Fetch weather data based on coordinates or selected city
+  const { data: coordsWeatherData, isLoading: coordsLoading, error: coordsError } = useWeatherByCoords(
+    latitude, 
+    longitude
+  );
   
-  // Weather queries
-  const { data: weatherByCity, error: cityError, isLoading: cityLoading } = useWeatherByCity(selectedCity);
-  const { data: weatherByCoords, error: coordsError, isLoading: coordsLoading } = useWeatherByCoords(latitude, longitude);
-  const { data: forecastData, error: forecastError, isLoading: forecastLoading } = useForecast(
-    selectedCity || (weatherByCoords?.cityName || '')
+  const { data: cityWeatherData, isLoading: cityLoading, error: cityError } = useWeatherByCity(
+    selectedCity
+  );
+
+  const { data: forecastData, isLoading: forecastLoading, error: forecastError } = useForecast(
+    selectedCity || coordsWeatherData?.cityName || ''
   );
 
   // Determine which weather data to use
-  const weatherData = selectedCity ? weatherByCity : weatherByCoords;
-  const currentCity = weatherData?.cityName || '';
-  const weatherLoading = selectedCity ? cityLoading : coordsLoading;
-  const weatherError = selectedCity ? cityError : coordsError;
+  const weatherData = selectedCity ? cityWeatherData : coordsWeatherData;
+  const isLoading = selectedCity ? cityLoading : coordsLoading;
+  const error = selectedCity ? cityError : coordsError;
 
   // Handle city search
   const handleCitySearch = (city: string) => {
@@ -41,7 +47,7 @@ export default function WeatherPage() {
 
   if (!geoLoading && geoError && !selectedCity) {
     return (
-      <div className="min-h-screen weather-gradient-bg flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen">
         <motion.div 
           className="glass-card rounded-3xl p-8 max-w-md mx-4"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -60,8 +66,128 @@ export default function WeatherPage() {
     );
   }
 
+  const content = (
+    <>
+      {/* Header */}
+      <motion.header 
+        className="mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Weather Dashboard</h1>
+            <p className="text-muted-foreground">
+              {weatherData ? `Current weather in ${weatherData.cityName}` : 'Real-time weather information'}
+            </p>
+          </div>
+          <SearchBar onCitySearch={handleCitySearch} className="lg:w-80" />
+        </div>
+      </motion.header>
+
+      {/* Loading State */}
+      {isLoading && (
+        <motion.div 
+          className="glass-card rounded-3xl p-6 mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="flex items-center gap-3">
+            <motion.div 
+              className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <span className="text-foreground">Loading weather data...</span>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <motion.div 
+          className="glass-card rounded-3xl p-6 mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="flex items-center gap-3">
+            <AlertCircle className="h-6 w-6 text-red-500" />
+            <span className="text-foreground">Unable to load weather data. Please try again.</span>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Weather Content */}
+      {weatherData && (
+        <>
+          {/* Main Weather Grid */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+            {/* Current Weather Card */}
+            <motion.div
+              className="xl:col-span-1"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <CurrentWeatherCard weatherData={weatherData} className="h-full" />
+            </motion.div>
+
+            {/* Weather Stats Grid */}
+            <motion.div
+              className="xl:col-span-2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <WeatherStatsGrid weatherData={weatherData} />
+            </motion.div>
+          </div>
+
+          {/* Forecast Section */}
+          {forecastLoading ? (
+            <motion.div 
+              className="glass-card rounded-3xl p-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="flex items-center gap-3">
+                <motion.div 
+                  className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                />
+                <span className="text-foreground">Loading forecast data...</span>
+              </div>
+            </motion.div>
+          ) : forecastError ? (
+            <motion.div 
+              className="glass-card rounded-3xl p-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-6 w-6 text-red-500" />
+                <span className="text-foreground">Unable to load forecast data</span>
+              </div>
+            </motion.div>
+          ) : forecastData && forecastData.length > 0 ? (
+            <>
+              <ForecastSection forecastData={forecastData} />
+              
+              {/* Weather Charts */}
+              <div className="mt-8">
+                <WeatherCharts forecastData={forecastData} />
+              </div>
+            </>
+          ) : null}
+        </>
+      )}
+    </>
+  );
+
   return (
-    <div className="min-h-screen weather-gradient-bg">
+    <div className="p-6">
       {/* Background Gradients */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {gradientElements.map((element, index) => (
@@ -82,107 +208,7 @@ export default function WeatherPage() {
         ))}
       </div>
 
-      <WeatherSidebar />
-
-      {/* Main Content */}
-      <main className="ml-24 p-6">
-        {/* Header */}
-        <motion.header 
-          className="mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Today's Weather</h1>
-              <p className="text-muted-foreground">
-                {currentCity ? `${currentCity}, ${weatherData?.country || ''}` : 'Select a location'}
-              </p>
-            </div>
-            
-            <SearchBar onCitySearch={handleCitySearch} />
-          </div>
-        </motion.header>
-
-        {/* Loading State */}
-        {(weatherLoading || geoLoading) && (
-          <motion.div 
-            className="flex items-center justify-center min-h-[400px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <div className="glass-card rounded-3xl p-8 flex items-center gap-4">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="text-lg font-medium text-foreground">Loading weather data...</span>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Error State */}
-        {weatherError && !weatherLoading && (
-          <motion.div 
-            className="glass-card rounded-3xl p-8 mb-8"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <div className="flex items-center gap-4">
-              <AlertCircle className="h-8 w-8 text-red-500" />
-              <div>
-                <h2 className="text-xl font-bold text-foreground">Error Loading Weather Data</h2>
-                <p className="text-muted-foreground mt-1">
-                  {weatherError instanceof Error ? weatherError.message : 'Unable to fetch weather information'}
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Weather Content */}
-        {weatherData && !weatherLoading && (
-          <>
-            {/* Main Weather Display */}
-            <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              <CurrentWeatherCard weatherData={weatherData} className="lg:col-span-1" />
-              <WeatherStatsGrid weatherData={weatherData} className="lg:col-span-2" />
-            </section>
-
-            {/* Forecast Section */}
-            {forecastLoading ? (
-              <motion.div 
-                className="flex items-center justify-center min-h-[200px]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <div className="glass-card rounded-3xl p-6 flex items-center gap-4">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  <span className="font-medium text-foreground">Loading forecast...</span>
-                </div>
-              </motion.div>
-            ) : forecastError ? (
-              <motion.div 
-                className="glass-card rounded-3xl p-6"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-6 w-6 text-red-500" />
-                  <span className="text-foreground">Unable to load forecast data</span>
-                </div>
-              </motion.div>
-            ) : forecastData && forecastData.length > 0 ? (
-              <>
-                <ForecastSection forecastData={forecastData} />
-                
-                {/* Weather Charts */}
-                <div className="mt-8">
-                  <WeatherCharts forecastData={forecastData} />
-                </div>
-              </>
-            ) : null}
-          </>
-        )}
-      </main>
+      {content}
     </div>
   );
 }

@@ -13,28 +13,162 @@ interface CurrentWeatherCardProps {
 export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeatherCardProps) {
   const currentTime = formatTime(new Date());
 
+  // Dynamic weather background animation based on weather condition
+  const getWeatherAnimation = (condition: string) => {
+    const lowerCondition = condition.toLowerCase();
+    
+    if (lowerCondition.includes('rain') || lowerCondition.includes('drizzle')) {
+      return {
+        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(29, 78, 216, 0.4) 100%)',
+        particles: Array.from({ length: 15 }, (_, i) => (
+          <motion.div
+            key={`rain-${i}`}
+            className="absolute w-0.5 h-8 bg-blue-300/40 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `-10px`,
+            }}
+            animate={{
+              y: [0, 400],
+              opacity: [0, 1, 1, 0]
+            }}
+            transition={{
+              duration: 2 + Math.random() * 1,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+              ease: "linear"
+            }}
+          />
+        ))
+      };
+    }
+    
+    if (lowerCondition.includes('snow')) {
+      return {
+        background: 'linear-gradient(135deg, rgba(226, 232, 240, 0.3) 0%, rgba(148, 163, 184, 0.4) 100%)',
+        particles: Array.from({ length: 12 }, (_, i) => (
+          <motion.div
+            key={`snow-${i}`}
+            className="absolute w-2 h-2 bg-white/60 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `-10px`,
+            }}
+            animate={{
+              y: [0, 400],
+              x: [0, Math.random() * 20 - 10],
+              opacity: [0, 1, 1, 0]
+            }}
+            transition={{
+              duration: 4 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+              ease: "easeInOut"
+            }}
+          />
+        ))
+      };
+    }
+    
+    if (lowerCondition.includes('clear') || lowerCondition.includes('sun')) {
+      return {
+        background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(245, 158, 11, 0.4) 100%)',
+        particles: Array.from({ length: 8 }, (_, i) => (
+          <motion.div
+            key={`sun-${i}`}
+            className="absolute w-1 h-1 bg-yellow-300/50 rounded-full"
+            style={{
+              left: `${30 + Math.random() * 40}%`,
+              top: `${20 + Math.random() * 30}%`,
+            }}
+            animate={{
+              scale: [0, 1, 0],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: 2 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 4,
+              ease: "easeInOut"
+            }}
+          />
+        ))
+      };
+    }
+    
+    if (lowerCondition.includes('cloud')) {
+      return {
+        background: 'linear-gradient(135deg, rgba(148, 163, 184, 0.3) 0%, rgba(100, 116, 139, 0.4) 100%)',
+        particles: Array.from({ length: 6 }, (_, i) => (
+          <motion.div
+            key={`cloud-${i}`}
+            className="absolute bg-white/20 rounded-full"
+            style={{
+              width: `${20 + Math.random() * 40}px`,
+              height: `${12 + Math.random() * 20}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${10 + Math.random() * 40}%`,
+            }}
+            animate={{
+              x: [-50, window.innerWidth || 400],
+              opacity: [0, 0.6, 0.6, 0]
+            }}
+            transition={{
+              duration: 15 + Math.random() * 10,
+              repeat: Infinity,
+              delay: Math.random() * 8,
+              ease: "linear"
+            }}
+          />
+        ))
+      };
+    }
+    
+    // Default for other conditions
+    return {
+      background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.4) 100%)',
+      particles: []
+    };
+  };
+
+  const weatherAnimation = getWeatherAnimation(weatherData.weatherMain);
+
   return (
     <motion.div 
       className={`glass-card rounded-3xl p-8 h-full relative overflow-hidden ${className}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
+      style={{
+        background: weatherAnimation.background
+      }}
     >
-      {/* Weather Icon Animation Background */}
+      {/* Animated Weather Particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {weatherAnimation.particles}
+      </div>
+
+      {/* Floating Weather Elements */}
       <motion.div 
-        className="absolute top-4 right-4 opacity-10"
+        className="absolute top-6 right-6 opacity-20"
         animate={{ 
           rotate: [0, 5, -5, 0],
-          scale: [1, 1.05, 1]
+          scale: [1, 1.05, 1],
+          y: [0, -5, 0]
         }}
         transition={{ 
-          duration: 6,
+          duration: 8,
           repeat: Infinity,
           ease: "easeInOut"
         }}
       >
-        <div className="text-6xl text-primary opacity-30">
-          ☁️
+        <div className="text-8xl">
+          {weatherData.weatherMain.toLowerCase().includes('rain') ? '🌧️' :
+           weatherData.weatherMain.toLowerCase().includes('snow') ? '❄️' :
+           weatherData.weatherMain.toLowerCase().includes('clear') ? '☀️' :
+           weatherData.weatherMain.toLowerCase().includes('cloud') ? '☁️' :
+           weatherData.weatherMain.toLowerCase().includes('thunder') ? '⛈️' :
+           '🌤️'}
         </div>
       </motion.div>
       
