@@ -23,10 +23,11 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         particles: Array.from({ length: 15 }, (_, i) => (
           <motion.div
             key={`rain-${i}`}
-            className="absolute w-0.5 h-8 bg-blue-300/40 rounded-full"
+            className="absolute w-0.5 h-8 rounded-full weather-particle-rain"
             style={{
               left: `${Math.random() * 100}%`,
               top: `-10px`,
+              background: 'linear-gradient(to bottom, rgba(59, 130, 246, 0.95), rgba(29, 78, 216, 0.8))',
             }}
             animate={{
               y: [0, 400],
@@ -49,10 +50,11 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         particles: Array.from({ length: 12 }, (_, i) => (
           <motion.div
             key={`snow-${i}`}
-            className="absolute w-2 h-2 bg-white/60 rounded-full"
+            className="absolute w-2 h-2 rounded-full weather-particle-snow"
             style={{
               left: `${Math.random() * 100}%`,
               top: `-10px`,
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(226, 232, 240, 0.6))',
             }}
             animate={{
               y: [0, 400],
@@ -76,10 +78,11 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         particles: Array.from({ length: 8 }, (_, i) => (
           <motion.div
             key={`sun-${i}`}
-            className="absolute w-1 h-1 bg-yellow-300/50 rounded-full"
+            className="absolute w-1 h-1 rounded-full weather-particle-sun"
             style={{
               left: `${30 + Math.random() * 40}%`,
               top: `${20 + Math.random() * 30}%`,
+              background: 'radial-gradient(circle, rgba(251, 191, 36, 0.8), rgba(245, 158, 11, 0.5))',
             }}
             animate={{
               scale: [0, 1, 0],
@@ -102,16 +105,17 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         particles: Array.from({ length: 6 }, (_, i) => (
           <motion.div
             key={`cloud-${i}`}
-            className="absolute bg-white/20 rounded-full"
+            className="absolute rounded-full weather-particle-cloud"
             style={{
               width: `${20 + Math.random() * 40}px`,
               height: `${12 + Math.random() * 20}px`,
               left: `${Math.random() * 100}%`,
               top: `${10 + Math.random() * 40}%`,
+              background: 'radial-gradient(ellipse, rgba(255, 255, 255, 0.4), rgba(148, 163, 184, 0.2))',
             }}
             animate={{
               x: [-50, window.innerWidth || 400],
-              opacity: [0, 0.6, 0.6, 0]
+              opacity: [0, 0.8, 0.8, 0]
             }}
             transition={{
               duration: 15 + Math.random() * 10,
@@ -135,7 +139,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
 
   return (
     <motion.div 
-      className={`glass-card rounded-3xl p-8 h-full relative overflow-hidden ${className}`}
+      className={`glass-card rounded-3xl p-4 sm:p-6 md:p-8 h-full relative overflow-hidden ${className}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
@@ -150,7 +154,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
 
       {/* Floating Weather Elements */}
       <motion.div 
-        className="absolute top-6 right-6 opacity-20"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 opacity-30 dark:opacity-20"
         animate={{ 
           rotate: [0, 5, -5, 0],
           scale: [1, 1.05, 1],
@@ -162,7 +166,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
           ease: "easeInOut"
         }}
       >
-        <div className="text-8xl">
+        <div className="text-4xl sm:text-6xl md:text-8xl drop-shadow-lg">
           {weatherData.weatherMain.toLowerCase().includes('rain') ? '🌧️' :
            weatherData.weatherMain.toLowerCase().includes('snow') ? '❄️' :
            weatherData.weatherMain.toLowerCase().includes('clear') ? '☀️' :
@@ -179,7 +183,7 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
             <p className="text-muted-foreground text-xs">{currentTime}</p>
           </div>
           <motion.div 
-            className="text-4xl"
+            className="text-3xl sm:text-4xl drop-shadow-md"
             whileHover={{ scale: 1.1 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
@@ -193,15 +197,15 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
         
         <div className="mb-4">
           <motion.div 
-            className="text-6xl font-light text-foreground mb-2"
+            className="text-4xl sm:text-5xl md:text-6xl font-light text-foreground mb-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
 <TemperatureDisplay temperature={weatherData.temperature} />
           </motion.div>
-          <p className="text-foreground font-medium capitalize">{weatherData.weatherDescription}</p>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-foreground font-medium capitalize text-sm sm:text-base">{weatherData.weatherDescription}</p>
+          <p className="text-muted-foreground text-xs sm:text-sm mt-1">
 Feels like <TemperatureDisplay temperature={weatherData.feelsLike} />
           </p>
         </div>
