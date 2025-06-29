@@ -19,7 +19,9 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
     
     if (lowerCondition.includes('rain') || lowerCondition.includes('drizzle')) {
       return {
-        background: 'linear-gradient(135deg, rgba(203, 213, 225, 0.5) 0%, rgba(226, 232, 240, 0.4) 50%, rgba(241, 245, 249, 0.3) 100%)',
+        background: isDarkMode 
+          ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(51, 65, 85, 0.2) 50%, rgba(71, 85, 105, 0.1) 100%)'
+          : 'linear-gradient(135deg, rgba(203, 213, 225, 0.5) 0%, rgba(226, 232, 240, 0.4) 50%, rgba(241, 245, 249, 0.3) 100%)',
         particles: Array.from({ length: 15 }, (_, i) => (
           <motion.div
             key={`rain-${i}`}
