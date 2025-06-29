@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
-import { getWeatherIcon, getWeatherColor, formatDate, formatTime } from '@/lib/weather-utils';
+import { formatDate, formatTime } from '@/lib/weather-utils';
 import type { ForecastData } from '@shared/schema';
+import { WeatherIcon } from './WeatherIcon';
+import { WeatherCharts } from './WeatherCharts';
+import { TemperatureDisplay } from './UnitsDisplay';
 
 interface ForecastSectionProps {
   forecastData: ForecastData[];
@@ -54,8 +57,6 @@ export function ForecastSection({ forecastData, className = "" }: ForecastSectio
         
         <div className="space-y-4">
           {dailySummary.map((day, index) => {
-            const iconClass = getWeatherIcon(day.weatherMain, day.weatherIcon);
-            const colorClass = getWeatherColor(day.weatherMain);
             const dayName = formatDate(day.date);
             
             return (
@@ -68,7 +69,12 @@ export function ForecastSection({ forecastData, className = "" }: ForecastSectio
                 whileHover={{ scale: 1.02 }}
               >
                 <div className="flex items-center space-x-4">
-                  <i className={`${iconClass} ${colorClass} text-xl w-8`}></i>
+                  <WeatherIcon 
+                    weatherMain={day.weatherMain}
+                    weatherIcon={day.weatherIcon}
+                    size="md"
+                    animated={true}
+                  />
                   <div>
                     <p className="font-medium text-foreground">{dayName}</p>
                     <p className="text-sm text-muted-foreground capitalize">
@@ -78,10 +84,10 @@ export function ForecastSection({ forecastData, className = "" }: ForecastSectio
                 </div>
                 <div className="text-right">
                   <span className="font-semibold text-foreground">
-                    {Math.round(day.tempMax)}°
+                    <TemperatureDisplay temperature={day.tempMax} />
                   </span>
                   <span className="text-muted-foreground ml-2">
-                    {Math.round(day.tempMin)}°
+                    <TemperatureDisplay temperature={day.tempMin} />
                   </span>
                 </div>
               </motion.div>
@@ -101,8 +107,6 @@ export function ForecastSection({ forecastData, className = "" }: ForecastSectio
         
         <div className="space-y-4 max-h-80 overflow-y-auto custom-scrollbar">
           {todayHourly.map((hour, index) => {
-            const iconClass = getWeatherIcon(hour.weatherMain, hour.weatherIcon);
-            const colorClass = getWeatherColor(hour.weatherMain);
             const time = formatTime(new Date(hour.date));
             
             return (
@@ -118,13 +122,18 @@ export function ForecastSection({ forecastData, className = "" }: ForecastSectio
                   <span className="text-sm font-medium text-muted-foreground w-12">
                     {time}
                   </span>
-                  <i className={`${iconClass} ${colorClass} text-lg w-6`}></i>
+                  <WeatherIcon 
+                    weatherMain={hour.weatherMain}
+                    weatherIcon={hour.weatherIcon}
+                    size="sm"
+                    animated={true}
+                  />
                   <span className="text-sm text-muted-foreground">
                     {hour.precipitationChance}%
                   </span>
                 </div>
                 <span className="font-semibold text-foreground">
-                  {Math.round(hour.temperature)}°
+                  <TemperatureDisplay temperature={hour.temperature} />
                 </span>
               </motion.div>
             );

@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import { Eye, Droplets } from 'lucide-react';
-import { getWeatherIcon, getWeatherColor, formatTime } from '@/lib/weather-utils';
+import { formatTime } from '@/lib/weather-utils';
 import type { WeatherData } from '@shared/schema';
 import { TemperatureDisplay, VisibilityDisplay } from './UnitsDisplay';
+import { WeatherIcon } from './WeatherIcon';
 
 interface CurrentWeatherCardProps {
   weatherData: WeatherData;
@@ -10,8 +11,6 @@ interface CurrentWeatherCardProps {
 }
 
 export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeatherCardProps) {
-  const iconClass = getWeatherIcon(weatherData.weatherMain, weatherData.weatherIcon);
-  const colorClass = getWeatherColor(weatherData.weatherMain);
   const currentTime = formatTime(new Date());
 
   return (
@@ -34,7 +33,13 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
           ease: "easeInOut"
         }}
       >
-        <i className={`${iconClass} text-6xl text-primary`}></i>
+        <WeatherIcon 
+          weatherMain={weatherData.weatherMain}
+          weatherIcon={weatherData.weatherIcon}
+          size="xl"
+          animated={false}
+          className="text-6xl text-primary opacity-30"
+        />
       </motion.div>
       
       <div className="relative z-10">
@@ -43,13 +48,12 @@ export function CurrentWeatherCard({ weatherData, className = "" }: CurrentWeath
             <p className="text-muted-foreground text-sm font-medium">Now</p>
             <p className="text-muted-foreground text-xs">{currentTime}</p>
           </div>
-          <motion.div 
-            className="text-4xl"
-            whileHover={{ scale: 1.1 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          >
-            <i className={`${iconClass} ${colorClass}`}></i>
-          </motion.div>
+          <WeatherIcon 
+            weatherMain={weatherData.weatherMain}
+            weatherIcon={weatherData.weatherIcon}
+            size="xl"
+            animated={true}
+          />
         </div>
         
         <div className="mb-4">

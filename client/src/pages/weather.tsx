@@ -5,6 +5,7 @@ import { SearchBar } from '@/components/weather/SearchBar';
 import { CurrentWeatherCard } from '@/components/weather/CurrentWeatherCard';
 import { WeatherStatsGrid } from '@/components/weather/WeatherStatsGrid';
 import { ForecastSection } from '@/components/weather/ForecastSection';
+import { WeatherCharts } from '@/components/weather/WeatherCharts';
 import { useWeatherByCity, useWeatherByCoords, useForecast } from '@/hooks/use-weather';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { AlertCircle, Loader2 } from 'lucide-react';
@@ -170,7 +171,14 @@ export default function WeatherPage() {
                 </div>
               </motion.div>
             ) : forecastData && forecastData.length > 0 ? (
-              <ForecastSection forecastData={forecastData} />
+              <>
+                <ForecastSection forecastData={forecastData} />
+                
+                {/* Weather Charts */}
+                <div className="mt-8">
+                  <WeatherCharts forecastData={forecastData} />
+                </div>
+              </>
             ) : null}
           </>
         )}

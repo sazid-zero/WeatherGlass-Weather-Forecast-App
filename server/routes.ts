@@ -296,13 +296,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         const forecastResponse = await fetch(forecastUrl);
         if (!forecastResponse.ok) {
+          const errorText = await forecastResponse.text();
+          console.error("Forecast API error:", forecastResponse.status, errorText);
           if (forecastResponse.status === 404) {
             return res.status(404).json({ error: "City not found" });
+          }
+          if (forecastResponse.status === 401) {
+            return res.status(500).json({ error: "Invalid API key" });
           }
           throw new Error(`Forecast API error: ${forecastResponse.status}`);
         }
         
-        const forecastApiData: OpenWeatherForecastResponse = await forecastResponse.json();
+        let forecastApiData: OpenWeatherForecastResponse;
+        try {
+          forecastApiData = await forecastResponse.json();
+        } catch (parseError) {
+          console.error("Failed to parse forecast API response:", parseError);
+          return res.status(500).json({ error: "Invalid response from forecast service" });
+        }
         
         // Clear old forecast data
         await storage.deleteForecastData(city);

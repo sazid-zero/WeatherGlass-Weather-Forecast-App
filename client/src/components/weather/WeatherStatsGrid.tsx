@@ -8,6 +8,7 @@ import {
 } from '@/lib/weather-utils';
 import type { WeatherData } from '@shared/schema';
 import { SpeedDisplay, PressureDisplay } from './UnitsDisplay';
+import { SunriseIcon, SunsetIcon, WindIcon } from './WeatherIcon';
 
 interface WeatherStatsGridProps {
   weatherData: WeatherData;
@@ -25,8 +26,8 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
     {
       title: "Wind Status",
       value: <SpeedDisplay speed={weatherData.windSpeed} />,
-      icon: Wind,
-      iconBg: "text-primary",
+      icon: () => <WindIcon windSpeed={weatherData.windSpeed} className="h-6 w-6" />,
+      iconBg: "text-blue-500",
       detail: windDir,
       bgIcon: "fas fa-wind"
     },
@@ -48,7 +49,8 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
       detail: null,
       bgIcon: "fas fa-sun",
       sunrise: sunriseTime,
-      sunset: sunsetTime
+      sunset: sunsetTime,
+      customContent: true
     },
     {
       title: "Air Quality",
