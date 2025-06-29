@@ -226,36 +226,17 @@ export function CurrentWeatherCard({ weatherData, className = "", isFavorite = f
             <p className="text-muted-foreground text-xs">{currentTime}</p>
           </div>
           
-          <div className="flex items-center gap-3">
-            {onToggleFavorite && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onToggleFavorite}
-                className="p-2 hover:bg-yellow-500/20 transition-all duration-300"
-              >
-                <Star 
-                  className={`h-5 w-5 transition-all duration-300 ${
-                    isFavorite 
-                      ? 'text-yellow-500 fill-current' 
-                      : 'text-muted-foreground hover:text-yellow-400'
-                  }`} 
-                />
-              </Button>
-            )}
-            
-            <motion.div 
-              className="text-4xl"
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              {weatherData.weatherMain === 'Clear' ? '☀️' : 
-               weatherData.weatherMain === 'Clouds' ? '☁️' : 
-               weatherData.weatherMain === 'Rain' ? '🌧️' : 
-               weatherData.weatherMain === 'Snow' ? '❄️' : 
-               weatherData.weatherMain === 'Thunderstorm' ? '⛈️' : '☁️'}
-            </motion.div>
-          </div>
+          <motion.div 
+            className="text-4xl"
+            whileHover={{ scale: 1.1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
+            {weatherData.weatherMain === 'Clear' ? '☀️' : 
+             weatherData.weatherMain === 'Clouds' ? '☁️' : 
+             weatherData.weatherMain === 'Rain' ? '🌧️' : 
+             weatherData.weatherMain === 'Snow' ? '❄️' : 
+             weatherData.weatherMain === 'Thunderstorm' ? '⛈️' : '☁️'}
+          </motion.div>
         </div>
         
         <div className="mb-4">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, CloudRain, Sun, Wind, Eye, RefreshCw, MapPin } from 'lucide-react';
+import { AlertCircle, CloudRain, Sun, Wind, Eye, RefreshCw, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { useLocationState } from '@/hooks/use-location-state';
@@ -170,6 +170,34 @@ export default function WeatherPage() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             {/* Action Buttons */}
             <div className="flex gap-2">
+              {/* Favorite Button */}
+              <motion.div
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleToggleFavorite}
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 hover:bg-yellow-500/20"
+                  disabled={!weatherData}
+                >
+                  <Star 
+                    className={`h-4 w-4 transition-all duration-300 ${
+                      isCurrentLocationFavorite 
+                        ? 'text-yellow-500 fill-current' 
+                        : 'text-muted-foreground hover:text-yellow-400'
+                    }`} 
+                  />
+                  Favorite
+                </Button>
+              </motion.div>
+              
+              {/* Refresh Button */}
               <motion.div
                 whileHover={{ 
                   scale: 1.05,
@@ -190,6 +218,7 @@ export default function WeatherPage() {
                 </Button>
               </motion.div>
               
+              {/* Current Location Button */}
               <motion.div
                 whileHover={{ 
                   scale: 1.05,
@@ -263,8 +292,6 @@ export default function WeatherPage() {
               <CurrentWeatherCard 
                 weatherData={weatherData} 
                 className="h-full" 
-                isFavorite={isCurrentLocationFavorite}
-                onToggleFavorite={handleToggleFavorite}
               />
             </motion.div>
 
