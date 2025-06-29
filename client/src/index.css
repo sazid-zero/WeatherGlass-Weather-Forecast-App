@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(248, 39%, 98%);
+  --foreground: hsl(220, 14%, 4%);
+  --muted: hsl(210, 4%, 96%);
+  --muted-foreground: hsl(215, 5%, 45%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(220, 14%, 4%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(220, 14%, 4%);
+  --border: hsl(220, 6%, 90%);
+  --input: hsl(220, 6%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(210, 4%, 96%);
+  --secondary-foreground: hsl(220, 9%, 10%);
+  --accent: hsl(210, 4%, 96%);
+  --accent-foreground: hsl(220, 9%, 10%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(60, 9%, 98%);
+  --ring: hsl(220, 14%, 4%);
+  --radius: 1.25rem;
+  
+  /* Custom weather app colors */
+  --weather-primary: hsl(207, 90%, 54%);
+  --weather-secondary: hsl(255, 91%, 76%);
+  --weather-accent: hsl(45, 93%, 47%);
+  --weather-glass-light: hsla(0, 0%, 100%, 0.15);
+  --weather-glass-dark: hsla(0, 0%, 100%, 0.1);
+  --weather-gradient-start: hsl(210, 40%, 96%);
+  --weather-gradient-mid: hsl(0, 0%, 100%);
+  --weather-gradient-end: hsl(220, 13%, 91%);
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 4%, 16%);
+  --muted-foreground: hsl(240, 5%, 65%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(0, 0%, 0%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 4%, 16%);
+  --input: hsl(240, 4%, 16%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 4%, 16%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 4%, 16%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 63%, 31%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 5%, 84%);
+  
+  /* Dark mode weather colors */
+  --weather-gradient-start: hsl(0, 0%, 0%);
+  --weather-gradient-mid: hsl(229, 84%, 5%);
+  --weather-gradient-end: hsl(0, 0%, 0%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  .glass-card {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--weather-glass-light);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .glass-card {
+    background: var(--weather-glass-dark);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .weather-gradient-bg {
+    background: linear-gradient(135deg, var(--weather-gradient-start) 0%, var(--weather-gradient-mid) 50%, var(--weather-gradient-end) 100%);
+  }
+  
+  .dark .weather-gradient-bg {
+    background: linear-gradient(135deg, hsl(0, 0%, 0%) 0%, hsl(229, 84%, 5%) 25%, hsl(217, 91%, 13%) 50%, hsl(206, 100%, 19%) 75%, hsl(0, 0%, 0%) 100%);
+  }
+  
+  .weather-accent-gradient {
+    background: linear-gradient(135deg, var(--weather-secondary) 0%, var(--weather-primary) 50%, hsl(189, 94%, 43%) 100%);
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.5);
+    border-radius: 10px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.7);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-float-delayed {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+  
+  .animate-float-delayed-more {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: 4s;
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-10px); 
+  }
+}
