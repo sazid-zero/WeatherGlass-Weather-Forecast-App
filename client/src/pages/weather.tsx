@@ -14,6 +14,7 @@ import { WeatherStatsGrid } from '@/components/weather/WeatherStatsGrid';
 import { ForecastSection } from '@/components/weather/ForecastSection';
 import { WeatherCharts } from '@/components/weather/WeatherCharts';
 import { useTranslation } from '@/lib/i18n';
+import { queryClient } from '@/lib/queryClient';
 
 export default function WeatherPage() {
   const { locationState, setSelectedLocation, setCurrentLocation, refreshLocation } = useLocationState();
@@ -86,9 +87,33 @@ export default function WeatherPage() {
     }
   };
 
-  // Handle refresh button
-  const handleRefresh = () => {
-    refreshLocation();
+  // Handle refresh button - force refetch data
+  const handleRefresh = async () => {
+    try {
+      // Invalidate and refetch current weather data
+      if (locationState.selectedLocation) {
+        await queryClient.invalidateQueries({ 
+          queryKey: ['/api/weather', locationState.selectedLocation] 
+        });
+        await queryClient.invalidateQueries({ 
+          queryKey: ['/api/forecast', locationState.selectedLocation] 
+        });
+      } else if (latitude && longitude) {
+        await queryClient.invalidateQueries({ 
+          queryKey: ['/api/weather/coords', latitude, longitude] 
+        });
+        if (coordsWeatherData?.cityName) {
+          await queryClient.invalidateQueries({ 
+            queryKey: ['/api/forecast', coordsWeatherData.cityName] 
+          });
+        }
+      }
+      
+      // Also refresh location state
+      refreshLocation();
+    } catch (error) {
+      console.error('Failed to refresh weather data:', error);
+    }
   };
 
   // Handle favorite toggle
@@ -249,8 +274,8 @@ export default function WeatherPage() {
         </div>
       </motion.header>
 
-      {/* Loading State */}
-      {isLoading && (
+      {/* Loading State - Only show if no cached data exists */}
+      {isLoading && !weatherData && (
         <motion.div 
           className="glass-card rounded-3xl p-6 mb-6 ml-20"
           initial={{ opacity: 0 }}
@@ -268,7 +293,7 @@ export default function WeatherPage() {
       )}
 
       {/* Error State */}
-      {error && (
+      {error && !weatherData && (
         <motion.div 
           className="glass-card rounded-3xl p-6 mb-6 ml-24"
           initial={{ opacity: 0 }}
@@ -281,7 +306,7 @@ export default function WeatherPage() {
         </motion.div>
       )}
 
-      {/* Weather Content */}
+      {/* Weather Content - Show immediately if cached data exists */}
       {weatherData && (
         <>
           {/* Main Weather Grid */}
@@ -311,7 +336,7 @@ export default function WeatherPage() {
           </div>
 
           {/* Forecast Section */}
-          {forecastLoading ? (
+          {forecastLoading && !forecastData ? (
             <motion.div 
               className="glass-card rounded-3xl p-6 ml-20"
               initial={{ opacity: 0 }}
@@ -326,7 +351,7 @@ export default function WeatherPage() {
                 <span className="text-foreground">Loading forecast data...</span>
               </div>
             </motion.div>
-          ) : forecastError ? (
+          ) : forecastError && !forecastData ? (
             <motion.div 
               className="glass-card rounded-3xl p-6 ml-20"
               initial={{ opacity: 0 }}
