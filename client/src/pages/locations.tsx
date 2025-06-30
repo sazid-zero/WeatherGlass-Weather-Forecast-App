@@ -44,7 +44,10 @@ function LocationWeatherCard({ location, onToggleFavorite, onRemove, onLocationS
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onToggleFavorite(location.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(location.id);
+            }}
             className="p-2 hover:bg-yellow-500/20"
           >
             <Star className={`h-4 w-4 ${location.favorite ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} />
@@ -52,7 +55,10 @@ function LocationWeatherCard({ location, onToggleFavorite, onRemove, onLocationS
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onRemove(location.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove(location.id);
+            }}
             className="p-2 hover:bg-red-500/20"
           >
             <Trash2 className="h-4 w-4 text-red-500" />

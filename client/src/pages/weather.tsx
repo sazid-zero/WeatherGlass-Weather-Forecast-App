@@ -34,7 +34,7 @@ export default function WeatherPage() {
     locationState.isCurrentLocation ? latitude : locationState.coordinates?.lat || null, 
     locationState.isCurrentLocation ? longitude : locationState.coordinates?.lon || null
   );
-  
+
   const { data: cityWeatherData, isLoading: cityLoading, error: cityError } = useWeatherByCity(
     locationState.selectedLocation || ''
   );
@@ -51,7 +51,7 @@ export default function WeatherPage() {
   // Handle city search
   const handleCitySearch = async (city: string) => {
     setSelectedLocation(city);
-    
+
     // Save to recent locations after a short delay to let the data load
     setTimeout(async () => {
       try {
@@ -97,7 +97,7 @@ export default function WeatherPage() {
       const existingLocation = locations.find((loc: any) => 
         loc.name.toLowerCase() === weatherData.cityName.toLowerCase()
       );
-      
+
       if (existingLocation) {
         toggleFavorite(existingLocation.id);
       } else {
@@ -106,7 +106,7 @@ export default function WeatherPage() {
           lat: weatherData.latitude,
           lon: weatherData.longitude
         });
-        
+
         // Find the newly added location and toggle it to favorite
         setTimeout(() => {
           const newLocation = locations.find((loc: any) => 
@@ -170,7 +170,7 @@ export default function WeatherPage() {
               {weatherData ? `Current weather in ${weatherData.cityName}` : 'Real-time weather information'}
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             {/* Action Buttons */}
             <div className="flex gap-2">
@@ -200,7 +200,7 @@ export default function WeatherPage() {
                   Favorite
                 </Button>
               </motion.div>
-              
+
               {/* Refresh Button */}
               <motion.div
                 whileHover={{ 
@@ -221,7 +221,7 @@ export default function WeatherPage() {
                   Refresh
                 </Button>
               </motion.div>
-              
+
               {/* Current Location Button */}
               <motion.div
                 whileHover={{ 
@@ -243,7 +243,7 @@ export default function WeatherPage() {
                 </Button>
               </motion.div>
             </div>
-            
+
             <SearchBar onCitySearch={handleCitySearch} className="lg:w-80" />
           </div>
         </div>
@@ -340,7 +340,7 @@ export default function WeatherPage() {
           ) : forecastData && forecastData.length > 0 ? (
             <>
               <ForecastSection forecastData={forecastData} />
-              
+
               {/* Weather Charts */}
               <div className="mt-8">
                 <WeatherCharts forecastData={forecastData} />

@@ -1,4 +1,4 @@
-import { weatherData, forecastData, type WeatherData, type ForecastData, type InsertWeatherData, type InsertForecastData } from "@shared/schema";
+import { type WeatherData, type ForecastData, type InsertWeatherData, type InsertForecastData } from "@shared/schema";
 
 export interface IStorage {
   getWeatherData(cityName: string): Promise<WeatherData | undefined>;

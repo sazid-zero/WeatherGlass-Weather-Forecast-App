@@ -1,4 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -29,7 +30,6 @@ app.use((req, res, next) => {
       }
       log(logLine);
     }
-    next();
   });
 
   next();
@@ -37,7 +37,23 @@ app.use((req, res, next) => {
 
 // Health check endpoint for Railway
 app.get("/health", (req, res) => {
-  res.status(200).send("Health check OK");
+  res.status(200).json({ 
+    status: "OK", 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
+// Fallback for root when frontend is not built
+app.get("/", (req, res) => {
+  if (app.get("env") === "development") {
+    res.redirect("/health");
+  } else {
+    res.status(503).json({ 
+      error: "Frontend not built", 
+      message: "Please build the frontend first" 
+    });
+  }
 });
 
 (async () => {
