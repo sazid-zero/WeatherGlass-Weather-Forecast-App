@@ -68,19 +68,18 @@ export async function setupVite(app: Express, server: Server) {
 }
 // server/vite.ts
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "../../client/dist");
+  const rootDir = import.meta.dirname || process.cwd();
+  const distPath = path.resolve(rootDir, "..", "dist", "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+      `Could not find dist directory at ${distPath}. Make sure to build the client first.`,
     );
   }
 
   app.use(express.static(distPath));
 
-  app.use("*", (_req, res) => {
-    if (!res.headersSent) {
-      res.sendFile(path.resolve(distPath, "index.html"));
-    }
+  app.get("*", (_req, res) => {
+    res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
