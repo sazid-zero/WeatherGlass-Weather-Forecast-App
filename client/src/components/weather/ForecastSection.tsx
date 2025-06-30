@@ -65,7 +65,7 @@ export function ForecastSection({ forecastData, className = "" }: ForecastSectio
 
   return (
     <motion.div 
-      className={`glass-card rounded-3xl p-6 ${className}`}
+      className={`glass-card rounded-3xl p-6 ml-20 ${className}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.3 }}

@@ -158,7 +158,7 @@ export default function WeatherPage() {
     <>
       {/* Header */}
       <motion.header 
-        className="mb-8"
+        className="ml-20 mb-8"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -252,7 +252,7 @@ export default function WeatherPage() {
       {/* Loading State */}
       {isLoading && (
         <motion.div 
-          className="glass-card rounded-3xl p-6 mb-6"
+          className="glass-card rounded-3xl p-6 mb-6 ml-20"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -270,7 +270,7 @@ export default function WeatherPage() {
       {/* Error State */}
       {error && (
         <motion.div 
-          className="glass-card rounded-3xl p-6 mb-6"
+          className="glass-card rounded-3xl p-6 mb-6 ml-24"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -285,7 +285,7 @@ export default function WeatherPage() {
       {weatherData && (
         <>
           {/* Main Weather Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 ml-20">
             {/* Current Weather Card */}
             <motion.div
               className="xl:col-span-1"
@@ -313,11 +313,11 @@ export default function WeatherPage() {
           {/* Forecast Section */}
           {forecastLoading ? (
             <motion.div 
-              className="glass-card rounded-3xl p-6"
+              className="glass-card rounded-3xl p-6 ml-20"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 ">
                 <motion.div 
                   className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
                   animate={{ rotate: 360 }}
@@ -328,7 +328,7 @@ export default function WeatherPage() {
             </motion.div>
           ) : forecastError ? (
             <motion.div 
-              className="glass-card rounded-3xl p-6"
+              className="glass-card rounded-3xl p-6 ml-20"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
@@ -342,7 +342,7 @@ export default function WeatherPage() {
               <ForecastSection forecastData={forecastData} />
 
               {/* Weather Charts */}
-              <div className="mt-8">
+              <div className="mt-8 ml-20">
                 <WeatherCharts forecastData={forecastData} />
               </div>
             </>

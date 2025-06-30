@@ -2,10 +2,15 @@ import express, { type Request, Response, NextFunction } from "express";
 import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import dotenv from 'dotenv';
+import cors from 'cors';
+
+dotenv.config(); // Load environment variables
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors()); // Enable CORS
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -44,42 +49,37 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Fallback for root when frontend is not built
-app.get("/", (req, res) => {
-  if (app.get("env") === "development") {
-    res.redirect("/health");
-  } else {
-    res.status(503).json({ 
-      error: "Frontend not built", 
-      message: "Please build the frontend first" 
-    });
-  }
+// Debug route
+app.get("/debug", (req, res) => {
+  res.json({
+    message: "Server is running",
+    environment: process.env.NODE_ENV,
+    cwd: process.cwd(),
+    __dirname
+  });
 });
 
 (async () => {
   console.log("Starting server...");
   const server = await registerRoutes(app);
   console.log("Routes registered");
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    res.status(status).json({ message });
-    throw err;
-  });
-
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  const port = process.env.PORT || 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    log(`Error: ${message} (Status: ${status})`, "express");
+    res.status(status).json({ message });
+  });
+
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+  const host = process.env.NODE_ENV === 'production' ? "0.0.0.0" : "localhost";
+
+  server.listen(port, host, () => {
+    log(`serving on http://${host}:${port}`);
   });
 })();

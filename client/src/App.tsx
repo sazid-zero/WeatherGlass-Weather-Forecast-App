@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ui/theme-provider";
-import { BrowserRouter, Route, Switch } from "wouter";
+import { Route, Switch } from "wouter";
 import WeatherPage from "@/pages/weather";
 import LocationsPage from "@/pages/locations";
 import StatisticsPage from "@/pages/statistics";

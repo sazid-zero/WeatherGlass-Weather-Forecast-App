@@ -88,7 +88,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="ml-24 p-6">
       <motion.header 
         className="mb-8"
         initial={{ opacity: 0, y: -20 }}

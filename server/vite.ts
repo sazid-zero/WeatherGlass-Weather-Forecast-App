@@ -1,4 +1,3 @@
-
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
@@ -7,6 +6,9 @@ import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const viteLogger = createLogger();
 
@@ -17,7 +19,6 @@ export function log(message: string, source = "express") {
     second: "2-digit",
     hour12: true,
   });
-
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
@@ -25,7 +26,7 @@ export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: true,
+    host: true,
   };
 
   const vite = await createViteServer({
@@ -35,7 +36,7 @@ export async function setupVite(app: Express, server: Server) {
       ...viteLogger,
       error: (msg, options) => {
         viteLogger.error(msg, options);
-        process.exit(1);
+        log(`Vite error: ${msg}`, "vite");
       },
     },
     server: serverOptions,
@@ -43,33 +44,21 @@ export async function setupVite(app: Express, server: Server) {
   });
 
   app.use(vite.middlewares);
-  app.use("*", async (req, res, next) => {
+  app.get("*", async (req, res, next) => {
     const url = req.originalUrl;
+    log(`Processing request: ${url}`, "vite");
 
     try {
-      // Try multiple paths for the client template
-      const possiblePaths = [
-        path.join(process.cwd(), "client", "index.html"),
-        path.join(process.cwd(), "..", "client", "index.html"),
-        "./client/index.html"
-      ];
+      const templatePath = path.resolve(process.cwd(), "client", "index.html");
+      log(`Checking template path: ${templatePath}`, "vite");
 
-      let template = '';
-      let templateFound = false;
-
-      for (const templatePath of possiblePaths) {
-        try {
-          template = await fs.promises.readFile(templatePath, "utf-8");
-          templateFound = true;
-          break;
-        } catch (e) {
-          continue;
-        }
+      if (!fs.existsSync(templatePath)) {
+        log(`Could not find client template at: ${templatePath}`, "vite");
+        return res.status(404).send("Could not find client template");
       }
 
-      if (!templateFound) {
-        throw new Error("Could not find client template");
-      }
+      let template = await fs.promises.readFile(templatePath, "utf-8");
+      log(`Found template at: ${templatePath}`, "vite");
 
       template = template.replace(
         `src="/src/main.tsx"`,
@@ -77,37 +66,24 @@ export async function setupVite(app: Express, server: Server) {
       );
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
-    } catch (e) {
-      vite.ssrFixStacktrace(e as Error);
-      next(e);
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      log(`Error processing ${url}: ${errorMessage}`, "vite");
+      res.status(500).send(`Error processing request: ${errorMessage}`);
+      // next(e); // Avoid passing to next middleware to prevent default error handler
     }
   });
 }
 
 export function serveStatic(app: Express) {
-  // Try multiple possible static file locations
-  const possiblePaths = [
-    path.join(process.cwd(), "dist", "public"),
-    path.join(process.cwd(), "dist"),
-    "./dist/public",
-    "./dist"
-  ];
+  const staticPath = path.join(process.cwd(), "dist");
+  log(`Checking static path: ${staticPath}`, "express");
 
-  let staticPath = '';
-  let pathFound = false;
-
-  for (const testPath of possiblePaths) {
-    if (fs.existsSync(testPath)) {
-      staticPath = testPath;
-      pathFound = true;
-      break;
-    }
-  }
-
-  if (!pathFound) {
-    throw new Error(
-      `Could not find dist directory. Tried: ${possiblePaths.join(', ')}. Make sure to build the client first.`,
-    );
+  if (!fs.existsSync(staticPath)) {
+    log(`Could not find dist directory at: ${staticPath}`, "express");
+    return app.use((req, res) => {
+      res.status(404).send("Dist directory not found. Run `npm run build` first.");
+    });
   }
 
   app.use(express.static(staticPath));
