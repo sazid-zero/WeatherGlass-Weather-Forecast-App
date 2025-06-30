@@ -1,3 +1,4 @@
+
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
@@ -5,6 +6,7 @@ import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
+import { fileURLToPath } from 'url';
 
 const viteLogger = createLogger();
 
@@ -45,11 +47,30 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      // Use process.cwd() to get the current working directory
-      const clientTemplate = path.join(process.cwd(), "client", "index.html");
+      // Try multiple paths for the client template
+      const possiblePaths = [
+        path.join(process.cwd(), "client", "index.html"),
+        path.join(process.cwd(), "..", "client", "index.html"),
+        "./client/index.html"
+      ];
 
-      // always reload the index.html file from disk incase it changes
-      let template = await fs.promises.readFile(clientTemplate, "utf-8");
+      let template = '';
+      let templateFound = false;
+
+      for (const templatePath of possiblePaths) {
+        try {
+          template = await fs.promises.readFile(templatePath, "utf-8");
+          templateFound = true;
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (!templateFound) {
+        throw new Error("Could not find client template");
+      }
+
       template = template.replace(
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`,
@@ -62,30 +83,41 @@ export async function setupVite(app: Express, server: Server) {
     }
   });
 }
-// server/vite.ts
-export function serveStatic(app: Express) {
-  // In production, the built files are in the dist/public directory
-  const distPath = path.join(process.cwd(), "dist", "public");
 
-  if (!fs.existsSync(distPath)) {
-    // Fallback to checking if files are in dist root
-    const fallbackPath = path.join(process.cwd(), "dist");
-    if (fs.existsSync(fallbackPath)) {
-      app.use(express.static(fallbackPath));
-      app.get("*", (_req, res) => {
-        res.sendFile(path.join(fallbackPath, "index.html"));
-      });
-      return;
+export function serveStatic(app: Express) {
+  // Try multiple possible static file locations
+  const possiblePaths = [
+    path.join(process.cwd(), "dist", "public"),
+    path.join(process.cwd(), "dist"),
+    "./dist/public",
+    "./dist"
+  ];
+
+  let staticPath = '';
+  let pathFound = false;
+
+  for (const testPath of possiblePaths) {
+    if (fs.existsSync(testPath)) {
+      staticPath = testPath;
+      pathFound = true;
+      break;
     }
-    
+  }
+
+  if (!pathFound) {
     throw new Error(
-      `Could not find dist directory at ${distPath} or ${fallbackPath}. Make sure to build the client first.`,
+      `Could not find dist directory. Tried: ${possiblePaths.join(', ')}. Make sure to build the client first.`,
     );
   }
 
-  app.use(express.static(distPath));
+  app.use(express.static(staticPath));
 
   app.get("*", (_req, res) => {
-    res.sendFile(path.join(distPath, "index.html"));
+    const indexPath = path.join(staticPath, "index.html");
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(path.resolve(indexPath));
+    } else {
+      res.status(404).send("Index file not found");
+    }
   });
 }
