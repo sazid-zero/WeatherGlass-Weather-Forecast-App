@@ -45,8 +45,8 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      const rootDir = import.meta.dirname || process.cwd();
-      const clientTemplate = path.join(rootDir, "..", "client", "index.html");
+      // Use process.cwd() to get the current working directory
+      const clientTemplate = path.join(process.cwd(), "client", "index.html");
 
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
