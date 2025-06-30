@@ -68,18 +68,28 @@ export async function setupVite(app: Express, server: Server) {
 }
 // server/vite.ts
 export function serveStatic(app: Express) {
-  const rootDir = import.meta.dirname || process.cwd();
-  const distPath = path.resolve(rootDir, "..", "dist", "public");
+  // In production, the built files are in the dist/public directory
+  const distPath = path.join(process.cwd(), "dist", "public");
 
   if (!fs.existsSync(distPath)) {
+    // Fallback to checking if files are in dist root
+    const fallbackPath = path.join(process.cwd(), "dist");
+    if (fs.existsSync(fallbackPath)) {
+      app.use(express.static(fallbackPath));
+      app.get("*", (_req, res) => {
+        res.sendFile(path.join(fallbackPath, "index.html"));
+      });
+      return;
+    }
+    
     throw new Error(
-      `Could not find dist directory at ${distPath}. Make sure to build the client first.`,
+      `Could not find dist directory at ${distPath} or ${fallbackPath}. Make sure to build the client first.`,
     );
   }
 
   app.use(express.static(distPath));
 
   app.get("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+    res.sendFile(path.join(distPath, "index.html"));
   });
 }
