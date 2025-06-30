@@ -38,7 +38,7 @@ function App() {
           <LocationProvider>
             <div className="flex min-h-screen weather-gradient-bg">
               <WeatherSidebar />
-              <main className="flex-1">
+              <main className="flex-1 ">
                 <Switch>
                   <Route path="/" component={WeatherPage} />
                   <Route path="/locations" component={LocationsPage} />

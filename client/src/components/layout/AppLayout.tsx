@@ -23,7 +23,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   return (
-    <div className="flex min-h-screen weather-gradient-bg">
+    <div className="flex min-h-screen weather-gradient-bg ">
       {/* Sidebar Navigation */}
       <motion.nav
         className="fixed left-0 top-0 h-full w-20 glass-card border-r border-white/20 flex flex-col items-center py-6 z-50"
@@ -111,7 +111,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </motion.nav>
 
       {/* Main Content */}
-      <main className="flex-1 ml-20">
+      <main className="flex-1 ml-20 ">
         {children}
       </main>
     </div>

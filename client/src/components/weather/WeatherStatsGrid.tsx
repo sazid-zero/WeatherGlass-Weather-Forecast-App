@@ -108,7 +108,7 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
       {stats.map((stat, index) => (
         <motion.div
           key={stat.id}
-          className={`glass-card-hover rounded-3xl p-6 bg-gradient-to-br ${stat.color}`}
+          className={`glass-card-hover rounded-3xl p-6 bg-gradient-to-br  ${stat.color}`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: index * 0.1 }}

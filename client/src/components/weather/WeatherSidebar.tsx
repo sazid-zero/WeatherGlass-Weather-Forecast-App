@@ -29,7 +29,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
 
   return (
     <motion.aside 
-      className={cn("fixed left-0 top-0 h-full w-20 z-50", className)}
+      className={cn("fixed left-0 top-0 min-h-svh w-20 z-50", className)}
       initial={{ x: -100 }}
       animate={{ x: 0 }}
       transition={{ duration: 0.5 }}
