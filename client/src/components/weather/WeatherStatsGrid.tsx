@@ -102,13 +102,14 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
     }
   ];
 
+  // Responsive grid: 2 columns on mobile, 2 on sm, 3 on xl
+  // Main stats cards span 2 columns on mobile, 1 on sm+
   return (
-    <div className={`weather-stats-grid ${className}`}>
-      {/* Main weather stats */}
+    <div className={`weather-stats-grid grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 ${className}`}>
       {stats.map((stat, index) => (
         <motion.div
           key={stat.id}
-          className={`glass-card-hover rounded-3xl p-6 bg-gradient-to-br  ${stat.color}`}
+          className={`glass-card-hover rounded-3xl p-6 bg-gradient-to-br  ${stat.color} col-span-2 sm:col-span-1`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -124,7 +125,6 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
               <h3 className="font-semibold text-foreground">{stat.title}</h3>
             </div>
           </div>
-          
           <div className="space-y-2">
             <motion.p 
               className="text-3xl font-bold text-foreground"
@@ -136,7 +136,6 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
             </motion.p>
             <p className="text-sm text-muted-foreground">{stat.description}</p>
           </div>
-
           {/* Progress indicator for certain stats */}
           {stat.id === 'humidity' && (
             <div className="mt-4">
@@ -150,7 +149,6 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
               </div>
             </div>
           )}
-
           {stat.id === 'uv-index' && (
             <div className="mt-4">
               <div className="w-full bg-white/20 rounded-full h-2">
@@ -172,9 +170,9 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
         </motion.div>
       ))}
 
-      {/* Sun data in a combined card */}
+      {/* Sun data in a combined card, spans 2 columns on mobile */}
       <motion.div
-        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-amber-400/20 to-orange-400/20 md:col-span-2"
+        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-amber-400/20 to-orange-400/20 md:col-span-2 col-span-2"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
@@ -184,7 +182,6 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
           <Sun className="w-5 h-5 text-yellow-500" />
           <span>Sun & Moon</span>
         </h3>
-        
         <div className="grid grid-cols-2 gap-6">
           {sunData.map((sun, index) => (
             <div key={sun.id} className="text-center">
@@ -208,7 +205,6 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
             </div>
           ))}
         </div>
-
         {/* Day length calculation */}
         <motion.div 
           className="mt-6 pt-4 border-t border-white/20 text-center"
@@ -230,9 +226,9 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
         </motion.div>
       </motion.div>
 
-      {/* Atmospheric pressure card */}
+      {/* Atmospheric pressure card, spans 2 columns on mobile */}
       <motion.div
-        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-slate-400/20 to-gray-400/20"
+        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-slate-400/20 to-gray-400/20 col-span-2 sm:col-span-1"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 1.0 }}
@@ -244,13 +240,12 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
             <h3 className="font-semibold text-foreground">Pressure</h3>
           </div>
         </div>
-        
         <div className="space-y-2">
           <motion.p 
             className="text-3xl font-bold text-foreground"
             initial={{ scale: 0.5 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 1.3 }}
+            transition={{ duration: 0.5, delay: 1.1 }}
           >
             {weatherData.pressure} hPa
           </motion.p>
@@ -260,7 +255,6 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
              'Normal pressure'}
           </p>
         </div>
-
         <div className="mt-4">
           <div className="w-full bg-white/20 rounded-full h-2">
             <motion.div 
