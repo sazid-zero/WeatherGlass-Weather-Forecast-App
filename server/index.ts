@@ -59,27 +59,34 @@ app.get("/debug", (req, res) => {
   });
 });
 
+
+// Top-level async IIFE with error logging
 (async () => {
-  console.log("Starting server...");
-  const server = await registerRoutes(app);
-  console.log("Routes registered");
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+  try {
+    console.log("Starting server...");
+    const server = await registerRoutes(app);
+    console.log("Routes registered");
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+      log(`Error: ${message} (Status: ${status})`, "express");
+      res.status(status).json({ message });
+    });
+
+    const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
+    const host = process.env.NODE_ENV === 'production' ? "0.0.0.0" : "localhost";
+
+    server.listen(port, host, () => {
+      log(`serving on http://${host}:${port}`);
+    });
+  } catch (err) {
+    console.error('Fatal server error:', err);
+    process.exit(1);
   }
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    log(`Error: ${message} (Status: ${status})`, "express");
-    res.status(status).json({ message });
-  });
-
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
-  const host = process.env.NODE_ENV === 'production' ? "0.0.0.0" : "localhost";
-
-  server.listen(port, host, () => {
-    log(`serving on http://${host}:${port}`);
-  });
 })();
