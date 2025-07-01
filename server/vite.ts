@@ -76,19 +76,23 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const staticPath = path.join(process.cwd(), "dist");
+  // Serve static files from the correct directory for Vite build output
+  const staticPath = path.join(process.cwd(), "dist", "public");
   log(`Checking static path: ${staticPath}`, "express");
 
   if (!fs.existsSync(staticPath)) {
-    log(`Could not find dist directory at: ${staticPath}`, "express");
+    log(`Could not find dist/public directory at: ${staticPath}`, "express");
     return app.use((req, res) => {
-      res.status(404).send("Dist directory not found. Run `npm run build` first.");
+      res.status(404).send("dist/public directory not found. Run `npm run build` first.");
     });
   }
 
   app.use(express.static(staticPath));
 
-  app.get("*", (_req, res) => {
+  // SPA fallback: serve index.html for all non-API, non-static requests
+  app.get("*", (req, res) => {
+    // Don't serve index.html for API routes
+    if (req.path.startsWith("/api")) return res.status(404).send("API route not found");
     const indexPath = path.join(staticPath, "index.html");
     if (fs.existsSync(indexPath)) {
       res.sendFile(path.resolve(indexPath));
