@@ -76,7 +76,10 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const staticPath = path.join(process.cwd(), "dist", "public");
+  // Use ESM-safe __dirname
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const staticPath = path.join(__dirname, "..", "..", "dist", "public");
   log(`Checking static path: ${staticPath}`, "express");
 
   if (!fs.existsSync(staticPath)) {
@@ -91,7 +94,7 @@ export function serveStatic(app: Express) {
   app.get("*", (_req, res) => {
     const indexPath = path.join(staticPath, "index.html");
     if (fs.existsSync(indexPath)) {
-      res.sendFile(path.resolve(indexPath));
+      res.sendFile(indexPath);
     } else {
       res.status(404).send("Index file not found");
     }
