@@ -76,7 +76,7 @@ app.get("/debug", (req, res) => {
     res.status(status).json({ message });
   });
 
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
   const host = process.env.NODE_ENV === 'production' ? "0.0.0.0" : "localhost";
 
   server.listen(port, host, () => {

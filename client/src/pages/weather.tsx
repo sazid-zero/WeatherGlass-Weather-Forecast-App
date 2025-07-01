@@ -31,12 +31,12 @@ export default function WeatherPage() {
   }, [latitude, longitude]);
 
   // Fetch weather data based on location state
-  const { data: coordsWeatherData, isLoading: coordsLoading, error: coordsError } = useWeatherByCoords(
+  const { data: coordsWeatherData, isLoading: coordsLoading, error: coordsError, isFetching: coordsFetching, dataUpdatedAt: coordsUpdatedAt } = useWeatherByCoords(
     locationState.isCurrentLocation ? latitude : locationState.coordinates?.lat || null, 
     locationState.isCurrentLocation ? longitude : locationState.coordinates?.lon || null
   );
 
-  const { data: cityWeatherData, isLoading: cityLoading, error: cityError } = useWeatherByCity(
+  const { data: cityWeatherData, isLoading: cityLoading, error: cityError, isFetching: cityFetching, dataUpdatedAt: cityUpdatedAt } = useWeatherByCity(
     locationState.selectedLocation || ''
   );
 
@@ -47,7 +47,8 @@ export default function WeatherPage() {
   // Determine which weather data to use
   const weatherData = locationState.selectedLocation ? cityWeatherData : coordsWeatherData;
   const isLoading = locationState.selectedLocation ? cityLoading : coordsLoading;
-  const error = locationState.selectedLocation ? cityError : coordsError;
+  const isFetching = locationState.selectedLocation ? cityFetching : coordsFetching;
+  const lastWeatherData = locationState.selectedLocation ? cityWeatherData : coordsWeatherData;
 
   // Handle city search
   const handleCitySearch = async (city: string) => {
@@ -274,28 +275,32 @@ export default function WeatherPage() {
         </div>
       </motion.header>
 
-      {/* Loading State - Only show if no cached data exists */}
-      {isLoading && !weatherData && (
-        <motion.div 
-          className="glass-card rounded-3xl p-6 mb-6 ml-20"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          <div className="flex items-center gap-3">
+
+      {/* Loading State - Show last known data with overlay spinner if fetching */}
+      {isFetching && lastWeatherData && (
+        <div className="relative">
+          {/* Weather Content - Show last known data */}
+          <div className="opacity-60 pointer-events-none select-none">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 ml-20">
+              <CurrentWeatherCard weatherData={lastWeatherData} className="h-full" />
+              <WeatherStatsGrid weatherData={lastWeatherData} />
+            </div>
+          </div>
+          {/* Overlay spinner */}
+          <div className="absolute inset-0 flex items-center justify-center z-10">
             <motion.div 
-              className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
+              className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full bg-background/80"
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             />
-            <span className="text-foreground">Loading weather data...</span>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Error State */}
-      {error && !weatherData && (
+      {(locationState.selectedLocation ? cityError : coordsError) && !lastWeatherData && (
         <motion.div 
-          className="glass-card rounded-3xl p-6 mb-6 ml-24"
+          className="glass-card rounded-3xl p-6 mb-6 ml-24 shadow-xl shadow-black/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -337,23 +342,23 @@ export default function WeatherPage() {
 
           {/* Forecast Section */}
           {forecastLoading && !forecastData ? (
-            <motion.div 
-              className="glass-card rounded-3xl p-6 ml-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <div className="flex items-center gap-3 ">
-                <motion.div 
-                  className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                />
-                <span className="text-foreground">Loading forecast data...</span>
-              </div>
-            </motion.div>
+          <motion.div 
+            className="glass-card rounded-3xl p-6 ml-20 shadow-xl shadow-black/10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="flex items-center gap-3 ">
+              <motion.div 
+                className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+              <span className="text-foreground">Loading forecast data...</span>
+            </div>
+          </motion.div>
           ) : forecastError && !forecastData ? (
             <motion.div 
-              className="glass-card rounded-3xl p-6 ml-20"
+              className="glass-card rounded-3xl p-6 ml-20 shadow-xl shadow-black/10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
