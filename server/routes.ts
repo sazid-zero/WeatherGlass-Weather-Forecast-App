@@ -350,6 +350,196 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get weather statistics by coordinates
+  app.get("/api/weather/statistics/coords", async (req, res) => {
+    try {
+      const lat = req.query.lat as string;
+      const lon = req.query.lon as string;
+      if (!lat || !lon) {
+        return res.status(400).json({ error: "Missing coordinates" });
+      }
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lon);
+      if (isNaN(latitude) || isNaN(longitude)) {
+        return res.status(400).json({ error: "Invalid coordinates" });
+      }
+      if (!OPENWEATHER_API_KEY) {
+        return res.status(500).json({ error: "Weather API key not configured. Please add OPENWEATHER_API_KEY to environment variables." });
+      }
+
+      // Fetch current weather data by coordinates
+      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`;
+      const weatherResponse = await fetch(weatherUrl);
+      if (!weatherResponse.ok) {
+        if (weatherResponse.status === 404) {
+          return res.status(404).json({ error: "Location not found" });
+        }
+        throw new Error(`Weather API error: ${weatherResponse.status}`);
+      }
+      const weatherApiData: OpenWeatherResponse = await weatherResponse.json();
+
+      // Get UV Index
+      let uvIndex = 0;
+      try {
+        const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${weatherApiData.coord.lat}&lon=${weatherApiData.coord.lon}&appid=${OPENWEATHER_API_KEY}`;
+        const uvResponse = await fetch(uvUrl);
+        if (uvResponse.ok) {
+          const uvData: UVIndexResponse = await uvResponse.json();
+          uvIndex = uvData.value;
+        }
+      } catch (error) {
+        console.warn("Failed to fetch UV index:", error);
+      }
+
+      // Get Air Quality
+      let airQuality = null;
+      try {
+        const airUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${weatherApiData.coord.lat}&lon=${weatherApiData.coord.lon}&appid=${OPENWEATHER_API_KEY}`;
+        const airResponse = await fetch(airUrl);
+        if (airResponse.ok) {
+          const airData: AirQualityResponse = await airResponse.json();
+          airQuality = airData.list[0]?.main.aqi || null;
+        }
+      } catch (error) {
+        console.warn("Failed to fetch air quality:", error);
+      }
+
+      // Compose weather data object (not saved to DB for coords)
+      const weatherData = {
+        cityName: weatherApiData.name,
+        country: weatherApiData.sys.country,
+        latitude: weatherApiData.coord.lat,
+        longitude: weatherApiData.coord.lon,
+        temperature: weatherApiData.main.temp,
+        feelsLike: weatherApiData.main.feels_like,
+        humidity: weatherApiData.main.humidity,
+        pressure: weatherApiData.main.pressure,
+        windSpeed: weatherApiData.wind.speed,
+        windDirection: weatherApiData.wind.deg || 0,
+        visibility: weatherApiData.visibility,
+        uvIndex,
+        weatherMain: weatherApiData.weather[0].main,
+        weatherDescription: weatherApiData.weather[0].description,
+        weatherIcon: weatherApiData.weather[0].icon,
+        sunrise: new Date(weatherApiData.sys.sunrise * 1000),
+        sunset: new Date(weatherApiData.sys.sunset * 1000),
+        airQuality,
+      };
+
+      // Fetch forecast data for trend analysis (by coordinates)
+      // Use OpenWeatherMap 5-day/3-hour forecast API
+      const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`;
+      const forecastResponse = await fetch(forecastUrl);
+      let forecastData: Array<{ date: Date; temperature: number; humidity: number; windSpeed: number; weatherMain: string }> = [];
+      if (forecastResponse.ok) {
+        const forecastApiData: OpenWeatherForecastResponse = await forecastResponse.json();
+        forecastData = forecastApiData.list.map((item) => ({
+          date: new Date(item.dt * 1000),
+          temperature: item.main.temp,
+          humidity: item.main.humidity,
+          windSpeed: item.wind.speed,
+          weatherMain: item.weather[0].main,
+        }));
+      }
+
+      // Calculate statistics (same as city endpoint)
+      const temps = [weatherData.temperature, ...forecastData.map(f => f.temperature)];
+      const humidities = [weatherData.humidity, ...forecastData.map(f => f.humidity)];
+      const winds = [weatherData.windSpeed, ...forecastData.map(f => f.windSpeed)];
+
+      const avgTemp = temps.reduce((sum, temp) => sum + temp, 0) / temps.length;
+      const avgHumidity = humidities.reduce((sum, hum) => sum + hum, 0) / humidities.length;
+      const avgWind = winds.reduce((sum, wind) => sum + wind, 0) / winds.length;
+
+      // Determine trends
+      const tempTrend = forecastData.length > 0 
+        ? (forecastData[forecastData.length - 1].temperature > weatherData.temperature ? 'up' : 'down')
+        : 'stable';
+      const humidityTrend = forecastData.length > 0
+        ? (forecastData[forecastData.length - 1].humidity > weatherData.humidity ? 'up' : 'down')
+        : 'stable';
+      const windTrend = forecastData.length > 0
+        ? (forecastData[forecastData.length - 1].windSpeed > weatherData.windSpeed ? 'up' : 'down')
+        : 'stable';
+
+      // Count weather conditions
+      const allConditions = [weatherData.weatherMain, ...forecastData.map(f => f.weatherMain)];
+      const conditions = {
+        sunny: allConditions.filter(c => c.toLowerCase().includes('clear') || c.toLowerCase().includes('sun')).length,
+        cloudy: allConditions.filter(c => c.toLowerCase().includes('cloud')).length,
+        rainy: allConditions.filter(c => c.toLowerCase().includes('rain')).length,
+        stormy: allConditions.filter(c => c.toLowerCase().includes('storm') || c.toLowerCase().includes('thunder')).length,
+      };
+
+      // Generate weekly data from forecast - group by day and take daily averages
+      const weeklyData = [];
+      const today = new Date();
+      for (let i = 0; i < 7; i++) {
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + i);
+        // Filter forecast data for this specific day
+        const dayForecasts = forecastData.filter(f => {
+          const forecastDate = new Date(f.date);
+          return forecastDate.toDateString() === targetDate.toDateString();
+        });
+        if (dayForecasts.length > 0) {
+          // Calculate daily averages
+          const avgTemp = dayForecasts.reduce((sum, f) => sum + f.temperature, 0) / dayForecasts.length;
+          const avgHumidity = dayForecasts.reduce((sum, f) => sum + f.humidity, 0) / dayForecasts.length;
+          const avgWind = dayForecasts.reduce((sum, f) => sum + f.windSpeed, 0) / dayForecasts.length;
+          // Use the most common condition for the day
+          const conditions = dayForecasts.map(f => f.weatherMain);
+          const mostCommonCondition = conditions.sort((a, b) =>
+            conditions.filter(v => v === a).length - conditions.filter(v => v === b).length
+          ).pop() || 'Clear';
+          weeklyData.push({
+            day: targetDate.toLocaleDateString('en', { weekday: 'short' }),
+            temp: Math.round(avgTemp),
+            humidity: Math.round(avgHumidity),
+            wind: Math.round(avgWind),
+            condition: mostCommonCondition,
+          });
+        } else if (i === 0) {
+          // For today, use current weather data if no forecast available
+          weeklyData.push({
+            day: targetDate.toLocaleDateString('en', { weekday: 'short' }),
+            temp: Math.round(weatherData.temperature),
+            humidity: weatherData.humidity,
+            wind: Math.round(weatherData.windSpeed),
+            condition: weatherData.weatherMain,
+          });
+        }
+      }
+
+      const statistics = {
+        temperature: {
+          current: Math.round(weatherData.temperature),
+          average: Math.round(avgTemp),
+          min: Math.round(Math.min(...temps)),
+          max: Math.round(Math.max(...temps)),
+          trend: tempTrend,
+        },
+        humidity: {
+          current: weatherData.humidity,
+          average: Math.round(avgHumidity),
+          trend: humidityTrend,
+        },
+        wind: {
+          current: Math.round(weatherData.windSpeed),
+          average: Math.round(avgWind),
+          trend: windTrend,
+        },
+        conditions,
+        weeklyData,
+      };
+
+      res.json(statistics);
+    } catch (error) {
+      console.error('Statistics API error (coords):', error);
+      res.status(500).json({ error: "Failed to fetch weather statistics by coordinates" });
+    }
+  });
+
   // Get weather statistics for a city
   app.get("/api/weather/statistics/:city", async (req, res) => {
     try {

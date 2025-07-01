@@ -1,4 +1,6 @@
-import { useState } from 'react';
+// No local selectedCity state needed
+import { useLocationState } from '@/hooks/use-location-state';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { TrendingUp, BarChart3, Activity, Calendar, MapPin, Thermometer, Droplets, Wind, Eye } from 'lucide-react';
 import { useWeatherStatistics } from '@/hooks/use-weather-statistics';
@@ -13,21 +15,36 @@ export default function StatisticsPage() {
   const { getFavorites, getRecent } = useLocationHistory();
   const { settings } = useSettings();
   const { t } = useTranslation(settings.weather.language);
-  const [selectedCity, setSelectedCity] = useState<string>('');
-  
+  const { locationState, setSelectedLocation, setCurrentLocation } = useLocationState();
+
   // Get available cities from location history
   const favoriteLocations = getFavorites();
   const recentLocations = getRecent(5);
   const allLocations = [...favoriteLocations, ...recentLocations.filter(loc => !favoriteLocations.find(fav => fav.id === loc.id))];
-  
-  // Default to first available city
-  const defaultCity = allLocations.length > 0 ? allLocations[0].name : 'London';
-  const currentCity = selectedCity || defaultCity;
-  
-  const { data: statsData, isLoading, error } = useWeatherStatistics(currentCity);
 
+
+  // Use coordinates if current location, else use selected city name
+  let statsLocation: string | { lat: number; lon: number } | null = null;
+  let displayLocation = 'London';
+  if (locationState.isCurrentLocation && locationState.coordinates) {
+    statsLocation = locationState.coordinates;
+    displayLocation = 'Current Location';
+  } else if (locationState.selectedLocation) {
+    statsLocation = locationState.selectedLocation;
+    displayLocation = locationState.selectedLocation;
+  } else if (allLocations.length > 0) {
+    statsLocation = allLocations[0].name;
+    displayLocation = allLocations[0].name;
+  } else {
+    statsLocation = 'London';
+    displayLocation = 'London';
+  }
+
+  const { data: statsData, isLoading, error } = useWeatherStatistics(statsLocation);
+
+  // When user selects a city, update the global selected location (syncs with home)
   const handleCitySearch = (city: string) => {
-    setSelectedCity(city);
+    setSelectedLocation(city);
   };
 
   return (
@@ -42,12 +59,12 @@ export default function StatisticsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">{t('statistics')}</h1>
-              <p className="text-muted-foreground">Detailed analytics and trends for {currentCity}</p>
+              <p className="text-muted-foreground">Detailed analytics and trends for {displayLocation}</p>
             </div>
             
             <div className="flex items-center gap-4">
               {allLocations.length > 0 && (
-                <Select value={currentCity} onValueChange={setSelectedCity}>
+                <Select value={displayLocation} onValueChange={setSelectedLocation}>
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
@@ -63,6 +80,30 @@ export default function StatisticsPage() {
                   </SelectContent>
                 </Select>
               )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        setCurrentLocation({
+                          lat: position.coords.latitude,
+                          lon: position.coords.longitude
+                        });
+                      },
+                      (error) => {
+                        // Optionally show a toast or alert
+                        console.error('Geolocation error:', error);
+                      }
+                    );
+                  }
+                }}
+                className="flex items-center gap-2 glass-card border-0 transition-all duration-200"
+              >
+                <MapPin className="h-4 w-4" />
+                Current Location
+              </Button>
               <SearchBar onCitySearch={handleCitySearch} />
             </div>
           </div>
@@ -82,7 +123,7 @@ export default function StatisticsPage() {
           </div>
         ) : error ? (
           <div className="glass-card rounded-3xl p-8 mb-8 text-center">
-            <p className="text-muted-foreground">Failed to load weather statistics for {currentCity}</p>
+            <p className="text-muted-foreground">Failed to load weather statistics for {displayLocation}</p>
             <p className="text-sm text-muted-foreground mt-2">Please try a different city or check your connection</p>
           </div>
         ) : statsData ? (
