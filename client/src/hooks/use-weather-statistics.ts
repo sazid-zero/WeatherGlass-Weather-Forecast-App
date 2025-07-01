@@ -52,11 +52,23 @@ export function useWeatherStatistics(cityOrCoords: string | { lat: number; lon: 
     queryKey,
     queryFn: async (): Promise<WeatherStats> => {
       if (!url) throw new Error('No location provided');
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch weather statistics');
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          // Try to parse error message from backend
+          let errorMsg = 'Failed to fetch weather statistics';
+          try {
+            const errJson = await response.json();
+            errorMsg = errJson.error || errorMsg;
+          } catch {}
+          throw new Error(errorMsg);
+        }
+        return response.json();
+      } catch (err) {
+        // Log error for debugging
+        console.error('Weather statistics fetch error:', err);
+        throw err;
       }
-      return response.json();
     },
     enabled: !!url,
     staleTime: 5 * 60 * 1000, // 5 minutes
