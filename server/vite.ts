@@ -76,7 +76,6 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // Serve static files from the correct directory for Vite build output
   const staticPath = path.join(process.cwd(), "dist", "public");
   log(`Checking static path: ${staticPath}`, "express");
 
@@ -89,10 +88,7 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(staticPath));
 
-  // SPA fallback: serve index.html for all non-API, non-static requests
-  app.get("*", (req, res) => {
-    // Don't serve index.html for API routes
-    if (req.path.startsWith("/api")) return res.status(404).send("API route not found");
+  app.get("*", (_req, res) => {
     const indexPath = path.join(staticPath, "index.html");
     if (fs.existsSync(indexPath)) {
       res.sendFile(path.resolve(indexPath));
