@@ -180,12 +180,12 @@ export function CurrentWeatherCard({ weatherData, className = "", isFavorite = f
   const weatherAnimation = getWeatherAnimation(weatherData.weatherMain);
 
   return (
-    <motion.div 
-      className={`glass-card rounded-3xl pt-8 px-8 pb-0 relative overflow-visible flex flex-col ${className}`}
+    <motion.div
+      className={`glass-card rounded-3xl pt-8 px-4 pb-0 relative overflow-visible flex flex-col w-full ${className}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ 
-        scale: 1.02, 
+      whileHover={{
+        scale: 1.02,
         y: -8,
         boxShadow: "0 25px 50px rgba(0, 0, 0, 0.25), 0 10px 30px rgba(0, 0, 0, 0.15)"
       }}

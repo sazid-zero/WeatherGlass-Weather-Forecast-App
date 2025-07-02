@@ -183,85 +183,76 @@ export default function WeatherPage() {
   const content = (
     <>
       {/* Header */}
-      <motion.header 
-        className="sm:ml-20 mb-8"
+      <motion.header
+        className="mb-8 sm:ml-20"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="flex flex-col gap-4 w-full">
           <div>
             <h1 className="text-4xl font-bold text-foreground mb-2">Weather Dashboard</h1>
             <p className="text-muted-foreground">
               {weatherData ? `Current weather in ${weatherData.cityName}` : 'Real-time weather information'}
             </p>
           </div>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex flex-col gap-3 w-full">
             {/* Action Buttons */}
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 w-full sm:flex-row sm:gap-2">
               {/* Favorite Button */}
               <motion.div
-                whileHover={{ 
-                  scale: 1.05,
-                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
-                }}
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)" }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
+                className="w-full sm:w-auto"
               >
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleToggleFavorite}
-                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 hover:bg-yellow-500/20"
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 hover:bg-yellow-500/20 w-full sm:w-auto"
                   disabled={!weatherData}
                 >
-                  <Star 
+                  <Star
                     className={`h-4 w-4 transition-all duration-300 ${
-                      isCurrentLocationFavorite 
-                        ? 'text-yellow-500 fill-current' 
+                      isCurrentLocationFavorite
+                        ? 'text-yellow-500 fill-current'
                         : 'text-muted-foreground hover:text-yellow-400'
-                    }`} 
+                    }`}
                   />
                   Favorite
                 </Button>
               </motion.div>
-
               {/* Refresh Button */}
               <motion.div
-                whileHover={{ 
-                  scale: 1.05,
-                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
-                }}
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)" }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
+                className="w-full sm:w-auto"
               >
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleRefresh}
-                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200"
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 w-full sm:w-auto"
                   disabled={isLoading}
                 >
                   <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                   Refresh
                 </Button>
               </motion.div>
-
               {/* Current Location Button */}
               <motion.div
-                whileHover={{ 
-                  scale: 1.05,
-                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
-                }}
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)" }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
+                className="w-full sm:w-auto"
               >
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleCurrentLocation}
-                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200"
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 w-full sm:w-auto"
                   disabled={geoLoading}
                 >
                   <MapPin className="h-4 w-4" />
@@ -269,8 +260,7 @@ export default function WeatherPage() {
                 </Button>
               </motion.div>
             </div>
-
-            <SearchBar onCitySearch={handleCitySearch} className="lg:w-80" />
+            <SearchBar onCitySearch={handleCitySearch} className="w-full" />
           </div>
         </div>
       </motion.header>
@@ -281,14 +271,14 @@ export default function WeatherPage() {
         <div className="relative">
           {/* Weather Content - Show last known data */}
           <div className="opacity-60 pointer-events-none select-none">
-            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 sm:ml-20">
-              <CurrentWeatherCard weatherData={lastWeatherData} className="h-full col-span-2 sm:col-span-1" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 sm:ml-20">
+              <CurrentWeatherCard weatherData={lastWeatherData} className="h-full col-span-1" />
               <WeatherStatsGrid weatherData={lastWeatherData} />
             </div>
           </div>
           {/* Overlay spinner */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <motion.div 
+            <motion.div
               className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full bg-background/80"
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -315,49 +305,49 @@ export default function WeatherPage() {
       {weatherData && (
         <>
           {/* Main Weather Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 sm:ml-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 sm:ml-20">
             {/* Current Weather Card */}
             <motion.div
-              className="col-span-2 sm:col-span-1 xl:col-span-1"
+              className="col-span-1"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <CurrentWeatherCard 
-                weatherData={weatherData} 
-                className="h-full" 
+              <CurrentWeatherCard
+                weatherData={weatherData}
+                className="h-full w-full"
               />
             </motion.div>
 
             {/* Weather Stats Grid */}
             <motion.div
-              className="col-span-2 sm:col-span-1 xl:col-span-2"
+              className="col-span-1 xl:col-span-2"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <WeatherStatsGrid weatherData={weatherData} />
+              <WeatherStatsGrid weatherData={weatherData} className="w-full" />
             </motion.div>
           </div>
 
           {/* Forecast Section */}
           {forecastLoading && !forecastData ? (
-          <motion.div 
-            className="glass-card rounded-3xl p-6 sm:ml-20 shadow-xl shadow-black/10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <div className="flex items-center gap-3 ">
-              <motion.div 
-                className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              />
-              <span className="text-foreground">Loading forecast data...</span>
-            </div>
-          </motion.div>
+            <motion.div
+              className="glass-card rounded-3xl p-6 sm:ml-20 shadow-xl shadow-black/10"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="flex items-center gap-3 ">
+                <motion.div
+                  className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                />
+                <span className="text-foreground">Loading forecast data...</span>
+              </div>
+            </motion.div>
           ) : forecastError && !forecastData ? (
-            <motion.div 
+            <motion.div
               className="glass-card rounded-3xl p-6 sm:ml-20 shadow-xl shadow-black/10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -371,8 +361,8 @@ export default function WeatherPage() {
             <>
               <ForecastSection forecastData={forecastData} />
 
-              {/* Weather Charts */}
-              <div className="mt-8 sm:ml-20">
+              {/* Weather Charts - hide on mobile */}
+              <div className="mt-8 sm:ml-20 hidden sm:block">
                 <WeatherCharts forecastData={forecastData} />
               </div>
             </>

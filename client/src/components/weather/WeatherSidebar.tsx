@@ -52,15 +52,20 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
   return (
     <>
       {/* Sidebar for desktop */}
-      <motion.aside 
-        className={cn("fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-20 min-w-[5rem] z-50 hidden sm:flex", className)}
+      <motion.aside
+        className={cn(
+          "fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-20 min-w-[5rem] z-50 hidden sm:flex",
+          "!w-20 !min-w-[5rem] !max-w-[5rem]", // force width, prevent shrink
+          className
+        )}
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.5 }}
+        style={{ width: '5rem', minWidth: '5rem', maxWidth: '5rem' }} // force width inline as well
       >
-        <div className="glass-card h-full m-2 rounded-3xl flex flex-col items-center py-6 space-y-6">
+        <div className="glass-card h-full m-2 rounded-3xl flex flex-col items-center py-6 space-y-6 min-w-full w-full">
           {/* Logo */}
-          <motion.div 
+          <motion.div
             className="w-12 h-12 weather-accent-gradient rounded-2xl flex items-center justify-center shadow-lg cursor-pointer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -69,7 +74,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
             <Cloud className="h-6 w-6 text-white" />
           </motion.div>
           {/* Navigation Items */}
-          <nav className="flex flex-col space-y-4">
+          <nav className="flex flex-col space-y-4 w-full">
             {navigationItems.map((item, index) => {
               const Icon = item.icon;
               return (
@@ -77,8 +82,8 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
                   <motion.button
                     className={cn(
                       "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
-                      item.active 
-                        ? "bg-primary/20 text-primary" 
+                      item.active
+                        ? "bg-primary/20 text-primary"
                         : "hover:bg-primary/20 text-muted-foreground hover:text-primary"
                     )}
                     whileHover={{ scale: 1.05 }}
@@ -127,7 +132,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
           </div>
           {/* Theme Toggle */}
           <div className="mb-2">
-            <motion.button 
+            <motion.button
               onClick={toggleTheme}
               className={cn(
                 "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
@@ -143,7 +148,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
       </motion.aside>
 
       {/* Mobile menu button (logo) */}
-      <div className="fixed left-0 top-0 z-50 flex sm:hidden p-3">
+      <div className="fixed left-0 top-0 z-50 flex sm:hidden p-3 w-full">
         <button
           className="w-12 h-12 weather-accent-gradient rounded-2xl flex items-center justify-center shadow-lg focus:outline-none"
           onClick={() => setMenuOpen(true)}
@@ -203,4 +208,4 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
     </>
   );
 }
-// Remove stray closing tags from previous implementation
+
