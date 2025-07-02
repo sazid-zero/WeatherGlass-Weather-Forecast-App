@@ -52,13 +52,18 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
   return (
     <>
       {/* Sidebar for desktop */}
-      <motion.aside 
-        className={cn("fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-20 min-w-[5rem] z-50 hidden sm:flex", className)}
+      <motion.aside
+        className={cn(
+          "fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-20 min-w-[5rem] z-50 hidden sm:flex",
+          "!w-20 !min-w-[5rem] !max-w-[5rem]", // force width, prevent shrink
+          className
+        )}
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.5 }}
+        style={{ width: '5rem', minWidth: '5rem', maxWidth: '5rem' }} // force width inline as well
       >
-        <div className="glass-card h-full m-2 rounded-3xl flex flex-col items-center py-6 space-y-6">
+        <div className="glass-card h-full m-2 rounded-3xl flex flex-col items-center py-6 space-y-6 min-w-full w-full">
           {/* Logo */}
           <motion.div 
             className="w-12 h-12 weather-accent-gradient rounded-2xl flex items-center justify-center shadow-lg cursor-pointer"
@@ -143,9 +148,9 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
       </motion.aside>
 
       {/* Mobile menu button (logo) */}
-      <div className="fixed left-0 top-0 z-50 flex sm:hidden p-3">
+      <div className="fixed left-0 top-0 z-50 flex sm:hidden p-3 w-full">
         <button
-          className="w-12 h-12 weather-accent-gradient rounded-2xl flex items-center justify-center shadow-lg focus:outline-none"
+          className="h-12 weather-accent-gradient rounded-2xl flex items-center justify-center shadow-lg focus:outline-none w-full"
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
         >
