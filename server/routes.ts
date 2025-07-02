@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage.js";
-import { insertWeatherDataSchema, insertForecastDataSchema } from "@shared/schema";
+// @ts-ignore
+import { insertWeatherDataSchema, insertForecastDataSchema } from "../../shared/schema.js";
 import { z } from "zod";
 
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || "db491620c4afabe70deb77af3b145cbd";
