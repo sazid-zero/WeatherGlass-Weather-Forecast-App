@@ -64,7 +64,13 @@ export function serveStatic(app) {
     // Use ESM-safe __dirname
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-    const staticPath = path.resolve(process.cwd(), "dist", "public");
+    // Try both possible locations for static files
+    let staticPath = path.resolve(process.cwd(), "dist", "public");
+    if (!fs.existsSync(staticPath)) {
+        // Fallback: if running from dist/server/server, go up one more level
+        staticPath = path.resolve(process.cwd(), "public");
+    }
+    log(`Checking static path: ${staticPath}`, "express");
     log(`Checking static path: ${staticPath}`, "express");
     log(`Checking static path: ${staticPath}`, "express");
     if (!fs.existsSync(staticPath)) {

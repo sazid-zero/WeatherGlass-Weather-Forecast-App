@@ -1,6 +1,7 @@
 {
-  "name": "WeatherGlassX - Advanced Weather App",
-  "short_name": "WeatherGlassX",
+  "version": "2",
+  "name": "WeatherGlass",
+  "short_name": "WeatherGlass",
   "description": "A beautiful, comprehensive weather application with real-time forecasts, statistics, and multi-language support",
   "start_url": "/",
   "display": "standalone",
@@ -12,51 +13,51 @@
   "lang": "en",
   "icons": [
     {
-      "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
       "sizes": "72x72",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
       "sizes": "96x96",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
       "sizes": "128x128",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
       "sizes": "144x144",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
       "sizes": "152x152",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
       "sizes": "384x384",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     }
   ],
@@ -68,7 +69,7 @@
       "url": "/",
       "icons": [
         {
-          "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
           "sizes": "96x96"
         }
       ]
@@ -80,7 +81,7 @@
       "url": "/statistics",
       "icons": [
         {
-          "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
           "sizes": "96x96"
         }
       ]
@@ -92,7 +93,7 @@
       "url": "/locations",
       "icons": [
         {
-          "src": "/icons/icon-72x72.svg",
+      "src": "/icons/weather-app.png",
           "sizes": "96x96"
         }
       ]

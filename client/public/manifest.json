@@ -1,4 +1,5 @@
 {
+  "version": "2",
   "name": "WeatherGlass",
   "short_name": "WeatherGlass",
   "description": "A beautiful, comprehensive weather application with real-time forecasts, statistics, and multi-language support",
