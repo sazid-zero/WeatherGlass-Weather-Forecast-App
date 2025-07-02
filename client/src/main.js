@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 // Suppress ResizeObserver loop errors
-const resizeObserverErrorHandler = (e) => {
+var resizeObserverErrorHandler = function (e) {
     if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
         e.stopImmediatePropagation();
         return false;
@@ -12,12 +12,12 @@ const resizeObserverErrorHandler = (e) => {
 window.addEventListener('error', resizeObserverErrorHandler);
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+    window.addEventListener('load', function () {
         navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
+            .then(function (registration) {
             console.log('SW registered: ', registration);
         })
-            .catch((registrationError) => {
+            .catch(function (registrationError) {
             console.log('SW registration failed: ', registrationError);
         });
     });

@@ -1,5 +1,5 @@
 export function getWeatherIcon(weatherMain, icon) {
-    const iconMap = {
+    var iconMap = {
         'Clear': 'fas fa-sun',
         'Clouds': 'fas fa-cloud',
         'Rain': 'fas fa-cloud-rain',
@@ -19,7 +19,7 @@ export function getWeatherIcon(weatherMain, icon) {
     return iconMap[weatherMain] || 'fas fa-cloud';
 }
 export function getWeatherColor(weatherMain) {
-    const colorMap = {
+    var colorMap = {
         'Clear': 'text-yellow-500',
         'Clouds': 'text-gray-500',
         'Rain': 'text-blue-500',
@@ -63,8 +63,8 @@ export function getAirQualityLevel(aqi) {
     return { level: 'Unknown', color: 'text-gray-500' };
 }
 export function getWindDirection(degrees) {
-    const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-    const index = Math.round(degrees / 22.5) % 16;
+    var directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    var index = Math.round(degrees / 22.5) % 16;
     return directions[index];
 }
 export function formatTime(date) {
@@ -75,8 +75,8 @@ export function formatTime(date) {
     });
 }
 export function formatDate(date) {
-    const today = new Date();
-    const tomorrow = new Date(today);
+    var today = new Date();
+    var tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
     if (date.toDateString() === today.toDateString()) {
         return 'Today';

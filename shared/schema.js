@@ -1,5 +1,5 @@
 import { z } from "zod";
-export const insertWeatherDataSchema = z.object({
+export var insertWeatherDataSchema = z.object({
     cityName: z.string(),
     country: z.string(),
     latitude: z.number(),
@@ -19,7 +19,7 @@ export const insertWeatherDataSchema = z.object({
     sunset: z.date(),
     airQuality: z.number().nullable(),
 });
-export const insertForecastDataSchema = z.object({
+export var insertForecastDataSchema = z.object({
     cityName: z.string(),
     date: z.date(),
     temperature: z.number(),

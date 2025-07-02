@@ -1,5 +1,5 @@
 // Internationalization system for the weather app
-export const translations = {
+export var translations = {
     en: {
         // Navigation
         home: 'Home',
@@ -598,15 +598,17 @@ export const translations = {
 };
 // Get translation for a specific key and language
 export function getTranslation(language, key) {
-    const keys = key.split('.');
-    let value = translations[language] || translations.en;
-    for (const k of keys) {
-        value = value?.[k];
+    var keys = key.split('.');
+    var value = translations[language] || translations.en;
+    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+        var k = keys_1[_i];
+        value = value === null || value === void 0 ? void 0 : value[k];
         if (value === undefined) {
             // Fallback to English if translation not found
             value = translations.en;
-            for (const k of keys) {
-                value = value?.[k];
+            for (var _a = 0, keys_2 = keys; _a < keys_2.length; _a++) {
+                var k_1 = keys_2[_a];
+                value = value === null || value === void 0 ? void 0 : value[k_1];
                 if (value === undefined)
                     return key;
             }
@@ -618,7 +620,7 @@ export function getTranslation(language, key) {
 // Hook for using translations in components
 export function useTranslation(language) {
     return {
-        t: (key) => getTranslation(language, key),
-        language
+        t: function (key) { return getTranslation(language, key); },
+        language: language
     };
 }
