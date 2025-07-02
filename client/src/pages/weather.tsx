@@ -184,7 +184,7 @@ export default function WeatherPage() {
     <>
       {/* Header */}
       <motion.header 
-        className="sm:ml-20 mb-8"
+        className="ml-20 mb-8"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -281,8 +281,8 @@ export default function WeatherPage() {
         <div className="relative">
           {/* Weather Content - Show last known data */}
           <div className="opacity-60 pointer-events-none select-none">
-            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 sm:ml-20">
-              <CurrentWeatherCard weatherData={lastWeatherData} className="h-full col-span-2 sm:col-span-1" />
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 ml-20">
+              <CurrentWeatherCard weatherData={lastWeatherData} className="h-full" />
               <WeatherStatsGrid weatherData={lastWeatherData} />
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function WeatherPage() {
       {/* Error State */}
       {(locationState.selectedLocation ? cityError : coordsError) && !lastWeatherData && (
         <motion.div 
-          className="glass-card rounded-3xl p-6 mb-6 sm:ml-24 shadow-xl shadow-black/10"
+          className="glass-card rounded-3xl p-6 mb-6 ml-24 shadow-xl shadow-black/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -315,10 +315,10 @@ export default function WeatherPage() {
       {weatherData && (
         <>
           {/* Main Weather Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 sm:ml-20">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 ml-20">
             {/* Current Weather Card */}
             <motion.div
-              className="col-span-2 sm:col-span-1 xl:col-span-1"
+              className="xl:col-span-1"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -331,7 +331,7 @@ export default function WeatherPage() {
 
             {/* Weather Stats Grid */}
             <motion.div
-              className="col-span-2 sm:col-span-1 xl:col-span-2"
+              className="xl:col-span-2"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -343,7 +343,7 @@ export default function WeatherPage() {
           {/* Forecast Section */}
           {forecastLoading && !forecastData ? (
           <motion.div 
-            className="glass-card rounded-3xl p-6 sm:ml-20 shadow-xl shadow-black/10"
+            className="glass-card rounded-3xl p-6 ml-20 shadow-xl shadow-black/10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -358,7 +358,7 @@ export default function WeatherPage() {
           </motion.div>
           ) : forecastError && !forecastData ? (
             <motion.div 
-              className="glass-card rounded-3xl p-6 sm:ml-20 shadow-xl shadow-black/10"
+              className="glass-card rounded-3xl p-6 ml-20 shadow-xl shadow-black/10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
@@ -372,7 +372,7 @@ export default function WeatherPage() {
               <ForecastSection forecastData={forecastData} />
 
               {/* Weather Charts */}
-              <div className="mt-8 sm:ml-20">
+              <div className="mt-8 ml-20">
                 <WeatherCharts forecastData={forecastData} />
               </div>
             </>
