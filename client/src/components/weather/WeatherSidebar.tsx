@@ -53,7 +53,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
     <>
       {/* Sidebar for desktop */}
       <motion.aside 
-        className={cn("fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-28 min-w-[7rem] z-50 hidden sm:flex", className)}
+        className={cn("fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-20 min-w-[5rem] z-50 hidden sm:flex", className)}
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.5 }}
@@ -99,7 +99,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="w-full max-w-[4.5rem] h-30 mb-2 flex flex-col items-center justify-center bg-primary/10 rounded-2xl shadow-none relative overflow-hidden"
+              className="w-full h-30 mb-2 flex flex-col items-center justify-center bg-primary/10 rounded-2xl shadow-none relative overflow-hidden"
               style={{ border: 'none' }}
             >
               {/* Weather Icon */}
