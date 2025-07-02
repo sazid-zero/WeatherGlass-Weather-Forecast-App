@@ -105,7 +105,7 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
   // Responsive grid: 2 columns on mobile, 2 on sm, 3 on xl
   // Main stats cards span 2 columns on mobile, 1 on sm+
   return (
-    <div className={`weather-stats-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 w-full ${className}`}>
+    <div className={`weather-stats-grid grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 ${className}`}>
       {stats.map((stat, index) => (
         <motion.div
           key={stat.id}
@@ -172,7 +172,7 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
 
       {/* Sun data in a combined card, spans 2 columns on mobile */}
       <motion.div
-        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-amber-400/20 to-orange-400/20 md:col-span-2 col-span-1 w-full"
+        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-amber-400/20 to-orange-400/20 md:col-span-2 col-span-2"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
@@ -228,7 +228,7 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
 
       {/* Atmospheric pressure card, spans 2 columns on mobile */}
       <motion.div
-        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-slate-400/20 to-gray-400/20 col-span-1 w-full"
+        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-slate-400/20 to-gray-400/20 col-span-2 sm:col-span-1"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 1.0 }}

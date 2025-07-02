@@ -84,8 +84,8 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
     chartData[chartData.length - 1].humidity - chartData[0].humidity : 0;
 
   return (
-    <motion.div
-      className="space-y-8 w-full"
+    <motion.div 
+      className="space-y-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -107,8 +107,8 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
       </div>
       
       {/* Temperature Trend Chart */}
-      <motion.div
-        className="glass-card-hover rounded-3xl p-6 w-full"
+      <motion.div 
+        className="glass-card-hover rounded-3xl p-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
@@ -182,10 +182,10 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
       </motion.div>
 
       {/* Multi-metric Dashboard */}
-      <div className="grid grid-cols-1 gap-6 w-full lg:grid-cols-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Humidity & Precipitation */}
-        <motion.div
-          className="glass-card-hover rounded-3xl p-6 w-full"
+        <motion.div 
+          className="glass-card-hover rounded-3xl p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -227,8 +227,8 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
         </motion.div>
 
         {/* Wind Speed */}
-        <motion.div
-          className="glass-card-hover rounded-3xl p-6 w-full"
+        <motion.div 
+          className="glass-card-hover rounded-3xl p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -268,8 +268,8 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
       </div>
 
       {/* Weather Distribution */}
-      <motion.div
-        className="glass-card-hover rounded-3xl p-6 w-full"
+      <motion.div 
+        className="glass-card-hover rounded-3xl p-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
