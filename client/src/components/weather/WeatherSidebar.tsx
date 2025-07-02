@@ -53,7 +53,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
     <>
       {/* Sidebar for desktop */}
       <motion.aside 
-        className={cn("fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-20 z-50 hidden sm:flex", className)}
+        className={cn("fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-24 z-50 hidden sm:flex", className)}
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.5 }}
