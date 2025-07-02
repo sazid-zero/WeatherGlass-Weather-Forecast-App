@@ -1,5 +1,5 @@
 // @ts-ignore
-import { type WeatherData, type ForecastData, type InsertWeatherData, type InsertForecastData } from "../../shared/schema.js";
+import { type WeatherData, type ForecastData, type InsertWeatherData, type InsertForecastData } from "../shared/schema.js";
 
 export interface IStorage {
   getWeatherData(cityName: string): Promise<WeatherData | undefined>;
