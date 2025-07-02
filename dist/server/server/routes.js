@@ -1,6 +1,6 @@
 import { createServer } from "http";
 import { storage } from "./storage.js";
-import { insertWeatherDataSchema, insertForecastDataSchema } from "@shared/schema";
+import { insertWeatherDataSchema, insertForecastDataSchema } from "../shared/schema";
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || "db491620c4afabe70deb77af3b145cbd";
 export async function registerRoutes(app) {
     // Get weather by coordinates (must come before /:city route)
