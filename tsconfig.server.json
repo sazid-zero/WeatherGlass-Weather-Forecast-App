@@ -1,7 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["server/**/*", "shared/**/*", "../vite.config.ts"],
-  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
     "outDir": "dist/server",
     "rootDir": ".",
@@ -14,5 +12,7 @@
     "paths": {
       "@shared/*": ["shared/*"]
     }
-  }
+  },
+  "include": ["server/**/*", "shared/**/*"],
+  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"]
 }
