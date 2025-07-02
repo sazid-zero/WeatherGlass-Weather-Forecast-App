@@ -289,7 +289,7 @@ export default function WeatherPage() {
           {/* Overlay spinner */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
             <motion.div 
-              className="w-6 h-6 border-4 border-primary border-t-transparent rounded-full bg-background/80"
+              className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full bg-background/80"
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             />
