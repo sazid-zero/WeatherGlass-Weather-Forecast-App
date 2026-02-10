@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+﻿import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Droplets, Wind } from 'lucide-react';
 import type { ForecastData } from '@shared/schema';
@@ -85,21 +85,21 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
 
   return (
     <motion.div 
-      className="space-y-8"
+      className="space-y-4 md:space-y-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-bold">Weather Analytics</h2>
-        <div className="flex items-center space-x-4 text-sm">
-          <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-between mb-3 md:mb-6">
+        <h2 className="text-xl md:text-3xl font-bold">Weather Analytics</h2>
+        <div className="flex items-center gap-2 md:space-x-4 text-xs md:text-sm">
+          <div className="flex items-center gap-1 md:space-x-2">
             {tempTrend > 0 ? (
-              <TrendingUp className="w-4 h-4 text-green-400" />
+              <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-green-400" />
             ) : (
-              <TrendingDown className="w-4 h-4 text-red-400" />
+              <TrendingDown className="w-3 h-3 md:w-4 md:h-4 text-red-400" />
             )}
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground text-[10px] md:text-sm">
               Temperature {tempTrend > 0 ? 'rising' : 'falling'}
             </span>
           </div>
@@ -108,221 +108,234 @@ export function WeatherCharts({ forecastData }: WeatherChartsProps) {
       
       {/* Temperature Trend Chart */}
       <motion.div 
-        className="glass-card-hover rounded-3xl p-6"
+        className="glass-card-hover rounded-2xl md:rounded-3xl p-3 md:p-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
         whileHover={{ scale: 1.01 }}
       >
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-semibold">24-Hour Temperature Trend</h3>
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 rounded-full bg-blue-400"></div>
+        <div className="flex items-center justify-between mb-4 md:mb-6">
+          <h3 className="text-base md:text-xl font-semibold">24-Hour Temperature Trend</h3>
+          <div className="flex items-center gap-2 md:space-x-4 text-[10px] md:text-sm text-muted-foreground">
+            <div className="flex items-center gap-1 md:space-x-1">
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-blue-400"></div>
               <span>Temperature</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 rounded-full bg-red-400"></div>
+            <div className="flex items-center gap-1 md:space-x-1">
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-red-400"></div>
               <span>Max</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 rounded-full bg-cyan-400"></div>
+            <div className="flex items-center gap-1 md:space-x-1">
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-cyan-400"></div>
               <span>Min</span>
             </div>
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={350}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-            <XAxis 
-              dataKey="time" 
-              stroke={axisColor} 
-              fontSize={12}
-            />
-            <YAxis 
-              stroke={axisColor} 
-              fontSize={12}
-              domain={['dataMin - 2', 'dataMax + 2']}
-            />
-            <Tooltip 
-              contentStyle={{
-                backgroundColor: tooltipBg,
-                border: `1px solid ${tooltipBorder}`,
-                borderRadius: '12px',
-                backdropFilter: 'blur(12px)',
-                color: isLightTheme ? '#000' : '#fff'
-              }}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="temperature" 
-              stroke="#3b82f6" 
-              strokeWidth={3}
-              dot={{ fill: '#3b82f6', strokeWidth: 2, r: 5 }}
-              activeDot={{ r: 7, stroke: '#3b82f6', strokeWidth: 2 }}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="tempMax" 
-              stroke="#ef4444" 
-              strokeWidth={2}
-              strokeDasharray="5 5"
-              dot={false}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="tempMin" 
-              stroke="#06b6d4" 
-              strokeWidth={2}
-              strokeDasharray="5 5"
-              dot={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="h-[250px] md:h-[350px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+              <XAxis 
+                dataKey="time" 
+                stroke={axisColor} 
+                fontSize={10}
+              />
+              <YAxis 
+                stroke={axisColor} 
+                fontSize={10}
+                domain={['dataMin - 2', 'dataMax + 2']}
+              />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: tooltipBg,
+                  border: `1px solid ${tooltipBorder}`,
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(12px)',
+                  color: isLightTheme ? '#000' : '#fff',
+                  fontSize: '12px'
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="temperature" 
+                stroke="#3b82f6" 
+                strokeWidth={3}
+                dot={{ fill: '#3b82f6', strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7, stroke: '#3b82f6', strokeWidth: 2 }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="tempMax" 
+                stroke="#ef4444" 
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={false}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="tempMin" 
+                stroke="#06b6d4" 
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </motion.div>
 
       {/* Multi-metric Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* Humidity & Precipitation */}
         <motion.div 
-          className="glass-card-hover rounded-3xl p-6"
+          className="glass-card-hover rounded-2xl md:rounded-3xl p-3 md:p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           whileHover={{ scale: 1.01 }}
         >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold flex items-center space-x-2">
-              <Droplets className="w-5 h-5 text-blue-400" />
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <h3 className="text-base md:text-xl font-semibold flex items-center gap-1 md:space-x-2">
+              <Droplets className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
               <span>Humidity & Rain</span>
             </h3>
-            <div className="flex items-center space-x-2 text-sm">
+            <div className="flex items-center gap-1 md:space-x-2 text-[10px] md:text-sm">
               {humidityTrend > 0 ? (
-                <TrendingUp className="w-4 h-4 text-blue-400" />
+                <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-blue-400" />
               ) : (
-                <TrendingDown className="w-4 h-4 text-blue-400" />
+                <TrendingDown className="w-3 h-3 md:w-4 md:h-4 text-blue-400" />
               )}
               <span className="text-muted-foreground">
                 {Math.abs(humidityTrend)}% change
               </span>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-              <XAxis dataKey="time" stroke={axisColor} fontSize={12} />
-              <YAxis stroke={axisColor} fontSize={12} />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: tooltipBg,
-                  border: `1px solid ${tooltipBorder}`,
-                  borderRadius: '12px',
-                  color: isLightTheme ? '#000' : '#fff'
-                }}
-              />
-              <Bar dataKey="humidity" fill="#06b6d4" name="Humidity %" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="precipitation" fill="#8b5cf6" name="Rain Chance %" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[200px] md:h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                <XAxis dataKey="time" stroke={axisColor} fontSize={10} />
+                <YAxis stroke={axisColor} fontSize={10} />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: tooltipBg,
+                    border: `1px solid ${tooltipBorder}`,
+                    borderRadius: '12px',
+                    color: isLightTheme ? '#000' : '#fff',
+                    fontSize: '12px'
+                  }}
+                />
+                <Bar dataKey="humidity" fill="#06b6d4" name="Humidity %" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="precipitation" fill="#8b5cf6" name="Rain Chance %" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </motion.div>
 
         {/* Wind Speed */}
         <motion.div 
-          className="glass-card-hover rounded-3xl p-6"
+          className="glass-card-hover rounded-2xl md:rounded-3xl p-3 md:p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           whileHover={{ scale: 1.01 }}
         >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold flex items-center space-x-2">
-              <Wind className="w-5 h-5 text-green-400" />
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <h3 className="text-base md:text-xl font-semibold flex items-center gap-1 md:space-x-2">
+              <Wind className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
               <span>Wind Speed</span>
             </h3>
-            <span className="text-sm text-muted-foreground">m/s</span>
+            <span className="text-[10px] md:text-sm text-muted-foreground">m/s</span>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-              <XAxis dataKey="time" stroke={axisColor} fontSize={12} />
-              <YAxis stroke={axisColor} fontSize={12} />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: tooltipBg,
-                  border: `1px solid ${tooltipBorder}`,
-                  borderRadius: '12px',
-                  color: isLightTheme ? '#000' : '#fff'
-                }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="windSpeed" 
-                stroke="#10b981" 
-                strokeWidth={3}
-                dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: '#10b981', strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[200px] md:h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                <XAxis dataKey="time" stroke={axisColor} fontSize={10} />
+                <YAxis stroke={axisColor} fontSize={10} />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: tooltipBg,
+                    border: `1px solid ${tooltipBorder}`,
+                    borderRadius: '12px',
+                    color: isLightTheme ? '#000' : '#fff',
+                     fontSize: '12px'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="windSpeed" 
+                  stroke="#10b981" 
+                  strokeWidth={3}
+                  dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#10b981', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </motion.div>
       </div>
 
       {/* Weather Distribution */}
       <motion.div 
-        className="glass-card-hover rounded-3xl p-6"
+        className="glass-card-hover rounded-2xl md:rounded-3xl p-3 md:p-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
         whileHover={{ scale: 1.01 }}
       >
-        <h3 className="text-xl font-semibold mb-6">Weather Conditions Distribution</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                innerRadius={40}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                labelLine={false}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'rgba(0,0,0,0.8)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '12px'
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+        <h3 className="text-base md:text-xl font-semibold mb-4 md:mb-6">Weather Conditions Distribution</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+          <div className="h-[200px] md:h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius="80%"
+                  innerRadius="40%"
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  labelLine={false}
+                  fontSize={10}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '12px',
+                    fontSize: '12px'
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
           
-          <div className="space-y-4">
+          <div className="space-y-2 md:space-y-4">
             {pieData.map((item, index) => (
               <motion.div 
                 key={item.name}
-                className="flex items-center justify-between p-3 rounded-xl bg-white/5"
+                className="flex items-center justify-between p-2 md:p-3 rounded-xl bg-white/5"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
               >
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center gap-2 md:space-x-3">
                   <div 
-                    className="w-4 h-4 rounded-full"
+                    className="w-3 h-3 md:w-4 md:h-4 rounded-full"
                     style={{ backgroundColor: item.color }}
                   ></div>
-                  <span className="font-medium">{item.name}</span>
+                  <span className="font-medium text-xs md:text-base">{item.name}</span>
                 </div>
                 <div className="text-right">
-                  <span className="font-bold">{item.value}</span>
-                  <span className="text-muted-foreground text-sm ml-1">hours</span>
+                  <span className="font-bold text-xs md:text-base">{item.value}</span>
+                  <span className="text-muted-foreground text-[10px] md:text-sm ml-1">hours</span>
                 </div>
               </motion.div>
             ))}

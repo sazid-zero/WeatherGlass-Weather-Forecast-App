@@ -2,7 +2,7 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import { createServer as createViteServer, createLogger } from "vite";
-// import viteConfig from "../vite.config"; // Removed: do not import Vite config at runtime
+import viteConfig from "../vite.config"; // Import config
 import { nanoid } from "nanoid";
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +24,7 @@ export async function setupVite(app, server) {
         host: true,
     };
     const vite = await createViteServer({
+        ...viteConfig, // Use the config
         configFile: false,
         customLogger: {
             ...viteLogger,

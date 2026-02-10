@@ -49,15 +49,24 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
 
   return (
     <motion.aside 
-      className={cn("fixed left-0 top-0 min-h-[100dvh] h-[100dvh] w-20 z-50", className)}
+      className={cn(
+        // Mobile: fixed bottom, w-full, h-16, row, z-50
+        "fixed bottom-0 left-0 w-full h-16 z-50 flex items-center justify-between px-0 bg-transparent pointer-events-none",
+        // Desktop: fixed left, top, h-screen, w-20, column
+        "md:fixed md:left-0 md:top-0 md:min-h-[100dvh] md:h-[100dvh] md:w-20 md:z-50",
+        className
+      )}
       initial={{ x: -100 }}
       animate={{ x: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="glass-card h-full m-2 rounded-3xl flex flex-col items-center py-6 space-y-6">
-        {/* Logo */}
+      <div className={cn(
+        "glass-card bg-background/80 flex items-center justify-between w-full h-full px-6 rounded-t-[2rem] pointer-events-auto shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)]",
+        "md:flex md:m-2 md:w-auto md:h-full md:rounded-3xl md:flex-col md:py-6 md:space-y-6 md:justify-start md:!bg-transparent md:!bg-none md:!shadow-none md:!backdrop-blur-none md:!border-none md:px-2"
+      )} >
+        {/* Logo - Hidden on mobile, Visible on Desktop */}
         <motion.div 
-          className="w-12 h-12 weather-accent-gradient rounded-2xl flex items-center justify-center shadow-lg"
+          className="hidden md:flex w-12 h-12 weather-accent-gradient rounded-2xl items-center justify-center shadow-lg"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -65,7 +74,7 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
         </motion.div>
         
         {/* Navigation Items */}
-        <nav className="flex flex-col space-y-4">
+        <nav className="flex flex-row justify-around w-full md:flex-col md:space-y-4 md:w-auto md:justify-start">
           {navigationItems.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -79,8 +88,8 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
                   )}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
                   <Icon className="h-5 w-5" />
@@ -88,10 +97,22 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
               </Link>
             );
           })}
+           {/* Theme Toggle - Mobile only (added to nav) */}
+           <motion.button 
+            onClick={toggleTheme}
+            className={cn(
+              "md:hidden w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
+              "bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
+            )}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Sun className="h-5 w-5" />
+          </motion.button>
         </nav>
         
-        {/* Live Weather Mini Summary */}
-        <div className="flex flex-col items-center justify-end flex-1 w-full pb-4">
+        {/* Live Weather Mini Summary - Hidden on mobile */}
+        <div className="hidden md:flex flex-col items-center justify-end flex-1 w-full pb-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -122,8 +143,8 @@ export function WeatherSidebar({ className = "" }: WeatherSidebarProps) {
             </span>
           </motion.div>
         </div>
-        {/* Theme Toggle */}
-        <div className="mb-2">
+        {/* Theme Toggle - Desktop */}
+        <div className="hidden md:block mb-2">
           <motion.button 
             onClick={toggleTheme}
             className={cn(

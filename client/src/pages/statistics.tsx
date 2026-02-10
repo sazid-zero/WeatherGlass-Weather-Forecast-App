@@ -1,8 +1,8 @@
-// No local selectedCity state needed
+﻿// No local selectedCity state needed
 import { useLocationState } from '@/hooks/use-location-state';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { TrendingUp, BarChart3, Activity, Calendar, MapPin, Thermometer, Droplets, Wind, Eye } from 'lucide-react';
+import { TrendingUp, BarChart3, Activity, Calendar, MapPin, Thermometer, Droplets, Wind, Eye, Sun, Moon } from 'lucide-react';
 import { useWeatherStatistics } from '@/hooks/use-weather-statistics';
 import { useLocationHistory } from '@/hooks/use-location-history';
 import { useSettings } from '@/hooks/use-settings';
@@ -49,23 +49,23 @@ export default function StatisticsPage() {
 
   return (
     <div className="min-h-screen weather-gradient-bg">
-      <div className="ml-24 p-6">
+      <div className="md:ml-24 ml-0 p-4 md:p-6 pb-24 md:pb-6">
         <motion.header 
           className="mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">{t('statistics')}</h1>
               <p className="text-muted-foreground">Detailed analytics and trends for {displayLocation}</p>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
               {allLocations.length > 0 && (
                 <Select value={displayLocation} onValueChange={setSelectedLocation}>
-                  <SelectTrigger className="w-48">
+                  <SelectTrigger className="w-full sm:w-48">
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
                   <SelectContent>
@@ -99,12 +99,14 @@ export default function StatisticsPage() {
                     );
                   }
                 }}
-                className="flex items-center gap-2 glass-card border-0 transition-all duration-200"
+                className="w-full sm:w-auto flex items-center gap-2 glass-card border-0 transition-all duration-200 justify-center"
               >
                 <MapPin className="h-4 w-4" />
                 Current Location
               </Button>
-              <SearchBar onCitySearch={handleCitySearch} />
+              <div className="w-full md:w-80">
+                <SearchBar onCitySearch={handleCitySearch} />
+              </div>
             </div>
           </div>
         </motion.header>
@@ -146,17 +148,17 @@ export default function StatisticsPage() {
                     statsData.temperature.trend === 'stable' ? 'rotate-90' : ''
                   }`} />
                   {statsData.temperature.current - statsData.temperature.average > 0 ? '+' : ''}
-                  {(statsData.temperature.current - statsData.temperature.average).toFixed(1)}°
+                  {(statsData.temperature.current - statsData.temperature.average).toFixed(1)}
                 </div>
               </div>
               
               <div className="mb-3">
-                <div className="text-2xl font-bold text-foreground">{statsData.temperature.current}°C</div>
+                <div className="text-2xl font-bold text-foreground">{statsData.temperature.current}C</div>
                 <div className="text-sm text-muted-foreground">Average Temperature</div>
               </div>
               
               <div className="text-xs text-muted-foreground">
-                Min: {statsData.temperature.min}° | Max: {statsData.temperature.max}°
+                Min: {statsData.temperature.min} | Max: {statsData.temperature.max}
               </div>
             </motion.div>
 
@@ -251,11 +253,11 @@ export default function StatisticsPage() {
             <h2 className="text-xl font-semibold text-foreground mb-6">Weekly Overview</h2>
             
             {statsData.weeklyData.length > 0 ? (
-              <div className="grid grid-cols-7 gap-4">
+              <div className="flex overflow-x-auto pb-4 md:pb-0 gap-4 md:grid md:grid-cols-7 md:overflow-visible">
                 {statsData.weeklyData.map((day, index) => (
                   <motion.div
                     key={day.day}
-                    className="text-center"
+                    className="text-center min-w-[100px] md:min-w-0"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: 0.7 + index * 0.1 }}
@@ -264,7 +266,7 @@ export default function StatisticsPage() {
                     
                     {/* Temperature Bar */}
                     <div className="bg-primary/20 rounded-lg p-3 mb-2">
-                      <div className="text-lg font-bold text-foreground">{day.temp}°</div>
+                      <div className="text-lg font-bold text-foreground">{day.temp}</div>
                       <div className="text-xs text-muted-foreground">Temp</div>
                     </div>
                     
@@ -298,25 +300,36 @@ export default function StatisticsPage() {
               className="glass-card rounded-3xl p-6"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.8 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
             >
-              <h3 className="text-lg font-semibold text-foreground mb-4">Temperature Trends</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Highest this week</span>
-                  <span className="font-semibold text-foreground">{statsData.temperature.max}°C</span>
+              <div className="flex items-center gap-3 mb-6">
+                <Activity className="h-6 w-6 text-primary" />
+                <h2 className="text-xl font-semibold text-foreground">Health & Safety</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <div className="text-sm text-muted-foreground mb-2">UV Index</div>
+                  <div className="text-2xl font-bold text-foreground mb-1">{statsData.health.uvIndex}</div>
+                  <div className="text-xs text-muted-foreground">Moderate</div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Lowest this week</span>
-                  <span className="font-semibold text-foreground">{statsData.temperature.min}°C</span>
+                
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <div className="text-sm text-muted-foreground mb-2">Air Quality</div>
+                  <div className="text-2xl font-bold text-foreground mb-1">{statsData.health.airQuality}</div>
+                  <div className="text-xs text-muted-foreground">Good</div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Average</span>
-                  <span className="font-semibold text-foreground">{statsData.temperature.average}°C</span>
+                
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <div className="text-sm text-muted-foreground mb-2">Pollen Count</div>
+                  <div className="text-2xl font-bold text-foreground mb-1">{statsData.health.pollenCount}</div>
+                  <div className="text-xs text-muted-foreground">Low Risk</div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Current</span>
-                  <span className="font-semibold text-primary">{statsData.temperature.current}°C</span>
+                
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <div className="text-sm text-muted-foreground mb-2">Pressure</div>
+                  <div className="text-2xl font-bold text-foreground mb-1">{statsData.health.pressure} hPa</div>
+                  <div className="text-xs text-muted-foreground">Stable</div>
                 </div>
               </div>
             </motion.section>
@@ -325,25 +338,56 @@ export default function StatisticsPage() {
               className="glass-card rounded-3xl p-6"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.9 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
             >
-              <h3 className="text-lg font-semibold text-foreground mb-4">Weather Patterns</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Sunny days</span>
-                  <span className="font-semibold text-green-500">{statsData.conditions.sunny} days</span>
+              <div className="flex items-center gap-3 mb-6">
+                <Sun className="h-6 w-6 text-yellow-500" />
+                <h2 className="text-xl font-semibold text-foreground">Sun & Moon</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sun className="h-5 w-5 text-yellow-500" />
+                      <span className="text-sm">Sunrise</span>
+                    </div>
+                    <span className="font-semibold">{statsData.astronomy.sunrise}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sun className="h-5 w-5 text-orange-500" />
+                      <span className="text-sm">Sunset</span>
+                    </div>
+                    <span className="font-semibold">{statsData.astronomy.sunset}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Cloudy days</span>
-                  <span className="font-semibold text-yellow-500">{statsData.conditions.cloudy} days</span>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Moon className="h-5 w-5 text-blue-300" />
+                      <span className="text-sm">Moonrise</span>
+                    </div>
+                    <span className="font-semibold">{statsData.astronomy.moonrise}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Moon className="h-5 w-5 text-slate-400" />
+                      <span className="text-sm">Moonset</span>
+                    </div>
+                    <span className="font-semibold">{statsData.astronomy.moonset}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Rainy days</span>
-                  <span className="font-semibold text-blue-500">{statsData.conditions.rainy} days</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Stormy days</span>
-                  <span className="font-semibold text-purple-500">{statsData.conditions.stormy} days</span>
+
+                <div className="col-span-full pt-4 border-t border-white/10">
+                   <div className="flex justify-between text-sm">
+                     <span className="text-muted-foreground">Moon Phase</span>
+                     <span className="font-semibold">{statsData.astronomy.moonPhase}</span>
+                   </div>
+                   <div className="w-full bg-secondary/30 h-2 rounded-full mt-2 overflow-hidden">
+                     <div className="bg-blue-200 h-full w-[65%] rounded-full shadow-[0_0_10px_rgba(191,219,254,0.5)]" />
+                   </div>
                 </div>
               </div>
             </motion.section>

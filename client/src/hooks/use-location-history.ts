@@ -74,7 +74,7 @@ export function useLocationHistory() {
     }
   };
 
-  const toggleFavorite = (id: string) => {
+  const toggleFavorite = (id: string, country: string, p0: { lat: number; lon: number; }) => {
     const updatedLocations = locations.map(loc =>
       loc.id === id ? { ...loc, favorite: !loc.favorite } : loc
     );

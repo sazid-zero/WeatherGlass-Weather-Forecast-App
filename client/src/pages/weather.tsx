@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, CloudRain, Sun, Wind, Eye, RefreshCw, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -103,50 +103,26 @@ export default function WeatherPage() {
         await queryClient.invalidateQueries({ 
           queryKey: ['/api/weather/coords', latitude, longitude] 
         });
-        if (coordsWeatherData?.cityName) {
-          await queryClient.invalidateQueries({ 
-            queryKey: ['/api/forecast', coordsWeatherData.cityName] 
-          });
-        }
+        await queryClient.invalidateQueries({ 
+          queryKey: ['/api/forecast/coords', latitude, longitude] 
+        });
       }
-      
-      // Also refresh location state
       refreshLocation();
     } catch (error) {
-      console.error('Failed to refresh weather data:', error);
+      console.error('Error refreshing weather data:', error);
     }
   };
 
   // Handle favorite toggle
   const handleToggleFavorite = () => {
     if (weatherData) {
-      const existingLocation = locations.find((loc: any) => 
-        loc.name.toLowerCase() === weatherData.cityName.toLowerCase()
-      );
-
-      if (existingLocation) {
-        toggleFavorite(existingLocation.id);
-      } else {
-        // Add to favorites if not already in history - first save, then toggle to favorite
-        saveLocation(weatherData.cityName, weatherData.country || 'Unknown', {
-          lat: weatherData.latitude,
-          lon: weatherData.longitude
-        });
-
-        // Find the newly added location and toggle it to favorite
-        setTimeout(() => {
-          const newLocation = locations.find((loc: any) => 
-            loc.name.toLowerCase() === weatherData.cityName.toLowerCase()
-          );
-          if (newLocation) {
-            toggleFavorite(newLocation.id);
-          }
-        }, 100);
-      }
+      toggleFavorite(weatherData.cityName, weatherData.country, {
+        lat: weatherData.latitude,
+        lon: weatherData.longitude
+      });
     }
   };
 
-  // Check if current location is favorite
   const isCurrentLocationFavorite = weatherData ? 
     locations.some((loc: any) => 
       loc.name.toLowerCase() === weatherData.cityName.toLowerCase() && loc.favorite
@@ -184,24 +160,25 @@ export default function WeatherPage() {
     <>
       {/* Header */}
       <motion.header 
-        className="ml-20 mb-8"
+        className=" ml-0 mb-6 mt-2 md:mt-0 px-0"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">Weather Dashboard</h1>
-            <p className="text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-1 md:mb-2 truncate">Weather Dashboard</h1>
+            <p className="text-sm md:text-base text-muted-foreground truncate">
               {weatherData ? `Current weather in ${weatherData.cityName}` : 'Real-time weather information'}
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Action Buttons */}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {/* Favorite Button */}
               <motion.div
+                className="flex-shrink-0"
                 whileHover={{ 
                   scale: 1.05,
                   boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
@@ -213,11 +190,11 @@ export default function WeatherPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleToggleFavorite}
-                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 hover:bg-yellow-500/20"
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 hover:bg-yellow-500/20 text-xs md:text-sm h-9 md:h-10"
                   disabled={!weatherData}
                 >
                   <Star 
-                    className={`h-4 w-4 transition-all duration-300 ${
+                    className={`h-3 w-3 md:h-4 md:w-4 transition-all duration-300 ${
                       isCurrentLocationFavorite 
                         ? 'text-yellow-500 fill-current' 
                         : 'text-muted-foreground hover:text-yellow-400'
@@ -229,6 +206,7 @@ export default function WeatherPage() {
 
               {/* Refresh Button */}
               <motion.div
+                 className="flex-shrink-0"
                 whileHover={{ 
                   scale: 1.05,
                   boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
@@ -240,16 +218,17 @@ export default function WeatherPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleRefresh}
-                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200"
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 text-xs md:text-sm h-9 md:h-10"
                   disabled={isLoading}
                 >
-                  <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`h-3 w-3 md:h-4 md:w-4 ${isLoading ? 'animate-spin' : ''}`} />
                   Refresh
                 </Button>
               </motion.div>
 
               {/* Current Location Button */}
               <motion.div
+                 className="flex-shrink-0"
                 whileHover={{ 
                   scale: 1.05,
                   boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)"
@@ -261,16 +240,18 @@ export default function WeatherPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleCurrentLocation}
-                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200"
+                  className="flex items-center gap-2 glass-card border-0 transition-all duration-200 text-xs md:text-sm h-9 md:h-10"
                   disabled={geoLoading}
                 >
-                  <MapPin className="h-4 w-4" />
+                  <MapPin className="h-3 w-3 md:h-4 md:w-4" />
                   Current Location
                 </Button>
               </motion.div>
             </div>
 
-            <SearchBar onCitySearch={handleCitySearch} className="lg:w-80" />
+            <div className="w-full sm:w-auto sm:min-w-[200px] lg:w-80">
+                <SearchBar onCitySearch={handleCitySearch} className="w-full" />
+            </div>
           </div>
         </div>
       </motion.header>
@@ -281,9 +262,9 @@ export default function WeatherPage() {
         <div className="relative">
           {/* Weather Content - Show last known data */}
           <div className="opacity-60 pointer-events-none select-none">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 ml-20">
-              <CurrentWeatherCard weatherData={lastWeatherData} className="h-full" />
-              <WeatherStatsGrid weatherData={lastWeatherData} />
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 mb-8 md:ml-0 ml-0 place-items-stretch">
+              <CurrentWeatherCard weatherData={lastWeatherData} className="h-full w-full max-w-full overflow-hidden" />
+              <WeatherStatsGrid weatherData={lastWeatherData} className="col-span-1 xl:col-span-2 w-full max-w-full overflow-hidden" />
             </div>
           </div>
           {/* Overlay spinner */}
@@ -300,7 +281,7 @@ export default function WeatherPage() {
       {/* Error State */}
       {(locationState.selectedLocation ? cityError : coordsError) && !lastWeatherData && (
         <motion.div 
-          className="glass-card rounded-3xl p-6 mb-6 ml-24 shadow-xl shadow-black/10"
+          className="glass-card rounded-3xl p-6 mb-6 md:ml-0 ml-0 shadow-xl shadow-black/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -315,35 +296,35 @@ export default function WeatherPage() {
       {weatherData && (
         <>
           {/* Main Weather Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 ml-20">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8 md:ml-0 ml-0 place-items-stretch">
             {/* Current Weather Card */}
             <motion.div
-              className="xl:col-span-1"
+              className="xl:col-span-1 w-full"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
               <CurrentWeatherCard 
                 weatherData={weatherData} 
-                className="h-full" 
+                className="h-full w-full max-w-full" 
               />
             </motion.div>
 
             {/* Weather Stats Grid */}
             <motion.div
-              className="xl:col-span-2"
+              className="xl:col-span-2 w-full"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <WeatherStatsGrid weatherData={weatherData} />
+              <WeatherStatsGrid weatherData={weatherData} className="w-full max-w-full" />
             </motion.div>
           </div>
 
-          {/* Forecast Section */}
+         {/* Forecast Section */}
           {forecastLoading && !forecastData ? (
           <motion.div 
-            className="glass-card rounded-3xl p-6 ml-20 shadow-xl shadow-black/10"
+            className="glass-card rounded-3xl p-6 shadow-xl shadow-black/10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -358,7 +339,7 @@ export default function WeatherPage() {
           </motion.div>
           ) : forecastError && !forecastData ? (
             <motion.div 
-              className="glass-card rounded-3xl p-6 ml-20 shadow-xl shadow-black/10"
+              className="glass-card rounded-3xl p-6 shadow-xl shadow-black/10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
@@ -372,7 +353,7 @@ export default function WeatherPage() {
               <ForecastSection forecastData={forecastData} />
 
               {/* Weather Charts */}
-              <div className="mt-8 ml-20">
+              <div className="mt-8">
                 <WeatherCharts forecastData={forecastData} />
               </div>
             </>
@@ -383,7 +364,7 @@ export default function WeatherPage() {
   );
 
   return (
-    <div className="p-6">
+    <div className="p-3 pb-24 md:p-6 md:pb-6 w-full min-w-0 overflow-x-hidden">
       {/* Background Gradients */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {gradientElements.map((element, index) => (

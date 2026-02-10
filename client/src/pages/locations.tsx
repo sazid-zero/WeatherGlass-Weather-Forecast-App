@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Trash2, Star, Thermometer, Droplets, Wind, Eye } from 'lucide-react';
 import { useLocation } from 'wouter';
@@ -26,21 +26,21 @@ function LocationWeatherCard({ location, onToggleFavorite, onRemove, onLocationS
 
   return (
     <motion.div
-      className="glass-card rounded-2xl p-4 hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+      className="glass-card rounded-2xl p-4 hover:scale-[1.02] transition-all duration-300 cursor-pointer w-full"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
       onClick={() => onLocationSelect(location.name)}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <MapPin className="h-5 w-5 text-primary" />
-          <div>
-            <h3 className="font-semibold text-foreground">{location.name}</h3>
-            <p className="text-sm text-muted-foreground">{location.country}</p>
+      <div className="flex items-start justify-between mb-3 gap-2">
+        <div className="flex items-center gap-3 min-w-0">
+          <MapPin className="h-5 w-5 text-primary shrink-0" />
+          <div className="min-w-0">
+            <h3 className="font-semibold text-foreground truncate">{location.name}</h3>
+            <p className="text-sm text-muted-foreground truncate">{location.country}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 shrink-0">
           <Button
             variant="ghost"
             size="sm"
@@ -48,7 +48,7 @@ function LocationWeatherCard({ location, onToggleFavorite, onRemove, onLocationS
               e.stopPropagation();
               onToggleFavorite(location.id);
             }}
-            className="p-2 hover:bg-yellow-500/20"
+            className="h-8 w-8 p-0 hover:bg-yellow-500/20"
           >
             <Star className={`h-4 w-4 ${location.favorite ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} />
           </Button>
@@ -59,7 +59,7 @@ function LocationWeatherCard({ location, onToggleFavorite, onRemove, onLocationS
               e.stopPropagation();
               onRemove(location.id);
             }}
-            className="p-2 hover:bg-red-500/20"
+            className="h-8 w-8 p-0 hover:bg-red-500/20"
           >
             <Trash2 className="h-4 w-4 text-red-500" />
           </Button>
@@ -75,30 +75,30 @@ function LocationWeatherCard({ location, onToggleFavorite, onRemove, onLocationS
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold text-foreground">
-              {Math.round(weatherData.temperature)}°C
+              {Math.round(weatherData.temperature)}C
             </div>
             <div className="text-right">
               <div className="text-sm text-muted-foreground capitalize">
                 {weatherData.weatherDescription}
               </div>
               <div className="text-xs text-muted-foreground">
-                Feels like {Math.round(weatherData.feelsLike)}°C
+                Feels like {Math.round(weatherData.feelsLike)}C
               </div>
             </div>
           </div>
           
           <div className="grid grid-cols-3 gap-2 text-xs">
-            <div className="flex items-center gap-1">
-              <Droplets className="h-3 w-3 text-blue-500" />
-              <span className="text-muted-foreground">{weatherData.humidity}%</span>
+            <div className="flex items-center gap-1 min-w-0">
+              <Droplets className="h-3 w-3 text-blue-500 shrink-0" />
+              <span className="text-muted-foreground truncate">{weatherData.humidity}%</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Wind className="h-3 w-3 text-green-500" />
-              <span className="text-muted-foreground">{Math.round(weatherData.windSpeed)} m/s</span>
+            <div className="flex items-center gap-1 min-w-0">
+              <Wind className="h-3 w-3 text-green-500 shrink-0" />
+              <span className="text-muted-foreground truncate">{Math.round(weatherData.windSpeed)} m/s</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Eye className="h-3 w-3 text-purple-500" />
-              <span className="text-muted-foreground">{Math.round(weatherData.visibility / 1000)} km</span>
+            <div className="flex items-center gap-1 min-w-0">
+              <Eye className="h-3 w-3 text-purple-500 shrink-0" />
+              <span className="text-muted-foreground truncate">{Math.round(weatherData.visibility / 1000)} km</span>
             </div>
           </div>
         </div>
@@ -152,27 +152,29 @@ export default function LocationsPage() {
 
   return (
     <div className="min-h-screen weather-gradient-bg">
-      <div className="ml-24 p-6">
+      <div className="md:ml-24 ml-0 p-4 md:p-6 pb-24 md:pb-6">
         <motion.header 
           className="mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">{t('myLocations')}</h1>
-              <p className="text-muted-foreground">{t('manageLocations')}</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{t('myLocations')}</h1>
+              <p className="text-sm text-muted-foreground">{t('manageLocations')}</p>
             </div>
             
-            <SearchBar onCitySearch={handleAddLocation} />
+            <div className="w-full md:w-80">
+               <SearchBar onCitySearch={handleAddLocation} />
+            </div>
           </div>
         </motion.header>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Favorite Locations */}
           <motion.section
-            className="glass-card rounded-3xl p-6"
+            className="glass-card rounded-3xl p-4 md:p-6"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
@@ -182,7 +184,7 @@ export default function LocationsPage() {
               <h2 className="text-xl font-semibold text-foreground">{t('favorites')}</h2>
             </div>
             
-            <div className="grid gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-4">
               {favorites.length > 0 ? (
                 favorites.map((location, index) => (
                   <LocationWeatherCard
@@ -194,7 +196,7 @@ export default function LocationsPage() {
                   />
                 ))
               ) : (
-                <div className="text-center text-muted-foreground py-8">
+                <div className="col-span-full text-center text-muted-foreground py-8">
                   <Star className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
                   <p>{t('noFavoriteLocations')}</p>
                   <p className="text-sm">{t('addFirstFavorite')}</p>
@@ -205,7 +207,7 @@ export default function LocationsPage() {
 
           {/* Recent Locations */}
           <motion.section
-            className="glass-card rounded-3xl p-6"
+            className="glass-card rounded-3xl p-4 md:p-6"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -215,7 +217,7 @@ export default function LocationsPage() {
               <h2 className="text-xl font-semibold text-foreground">{t('recentLocations')}</h2>
             </div>
             
-            <div className="grid gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-4">
               {recentLocations.length > 0 ? (
                 recentLocations.map((location, index) => (
                   <LocationWeatherCard
@@ -227,7 +229,7 @@ export default function LocationsPage() {
                   />
                 ))
               ) : (
-                <div className="text-center text-muted-foreground py-8">
+                <div className="col-span-full text-center text-muted-foreground py-8">
                   <MapPin className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
                   <p>{t('noRecentLocations')}</p>
                   <p className="text-sm">{t('recentSearchedCities')}</p>

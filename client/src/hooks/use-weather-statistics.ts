@@ -32,6 +32,19 @@ interface WeatherStats {
     wind: number;
     condition: string;
   }>;
+  health: {
+    uvIndex: number;
+    airQuality: number | string;
+    pollenCount: string;
+    pressure: number;
+  };
+  astronomy: {
+    sunrise: string;
+    sunset: string;
+    moonrise: string;
+    moonset: string;
+    moonPhase: string;
+  };
 }
 
 // Accepts either a city name or coordinates

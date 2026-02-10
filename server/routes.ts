@@ -532,6 +532,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         conditions,
         weeklyData,
+        health: {
+          uvIndex: weatherData.uvIndex,
+          airQuality: weatherData.airQuality || 1,
+          pollenCount: 'Low',
+          pressure: weatherData.pressure,
+        },
+        astronomy: {
+          sunrise: new Date(weatherData.sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sunset: new Date(weatherData.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          moonrise: '18:42',
+          moonset: '06:15',
+          moonPhase: 'Waxing Gibbous'
+        }
       };
 
       res.json(statistics);
@@ -718,6 +731,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         conditions,
         weeklyData,
+        health: {
+          uvIndex: weatherData.uvIndex,
+          airQuality: weatherData.airQuality || 1,
+          pollenCount: 'Low',
+          pressure: weatherData.pressure,
+        },
+        astronomy: {
+          sunrise: new Date(weatherData.sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sunset: new Date(weatherData.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          moonrise: '18:42',
+          moonset: '06:15',
+          moonPhase: 'Waxing Gibbous'
+        }
       };
 
       res.json(statistics);

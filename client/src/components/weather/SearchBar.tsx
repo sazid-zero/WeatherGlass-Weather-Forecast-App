@@ -66,7 +66,7 @@ export function SearchBar({ onCitySearch, className = "", placeholder = "Search 
     <div className={`relative ${className}`} ref={searchRef}>
       <motion.form 
         onSubmit={handleSubmit}
-        className="glass-card rounded-2xl p-1 flex items-center space-x-3 w-80"
+        className="glass-card rounded-2xl p-1 flex items-center space-x-3 w-full"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}

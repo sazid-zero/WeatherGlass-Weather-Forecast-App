@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { Eye, Wind, Droplets, Thermometer, Sun, Gauge } from 'lucide-react';
 import { SunriseIcon, SunsetIcon, WindIcon, VisibilityIcon } from './WeatherIcon';
 import { getUVIndexLevel, getAirQualityLevel, getWindDirection } from '@/lib/weather-utils';
@@ -18,7 +18,7 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
     {
       id: 'feels-like',
       title: 'Feels Like',
-      value: `${Math.round(weatherData.feelsLike)}°`,
+      value: `${Math.round(weatherData.feelsLike)}`,
       description: 'Perceived temperature',
       icon: Thermometer,
       color: 'from-orange-400/20 to-red-400/20',
@@ -102,118 +102,123 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
     }
   ];
 
-  // Responsive grid: 2 columns on mobile, 2 on sm, 3 on xl
-  // Main stats cards span 2 columns on mobile, 1 on sm+
   return (
-    <div className={`weather-stats-grid grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 ${className}`}>
+    <div className={`weather-stats-grid grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6 ${className}`}>
       {stats.map((stat, index) => (
         <motion.div
           key={stat.id}
-          className={`glass-card-hover rounded-3xl p-6 bg-gradient-to-br  ${stat.color} col-span-2 sm:col-span-1`}
+          className={`glass-card-hover rounded-2xl md:rounded-3xl p-3 md:p-6 bg-gradient-to-br ${stat.color} col-span-1 h-full flex flex-col justify-between`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: index * 0.1 }}
           whileHover={{ scale: 1.02 }}
         >
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              {stat.customIcon ? (
-                <stat.customIcon className={`w-6 h-6 ${stat.iconColor}`} />
-              ) : (
-                <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
-              )}
-              <h3 className="font-semibold text-foreground">{stat.title}</h3>
+          <div>
+            <div className="flex items-center justify-between mb-2 md:mb-4">
+                <div className="flex items-center space-x-2 md:space-x-3">
+                {stat.customIcon ? (
+                    <stat.customIcon className={`w-4 h-4 md:w-6 md:h-6 ${stat.iconColor}`} />
+                ) : (
+                    <stat.icon className={`w-4 h-4 md:w-6 md:h-6 ${stat.iconColor}`} />
+                )}
+                <h3 className="text-xs md:text-sm font-semibold text-foreground">{stat.title}</h3>
+                </div>
+            </div>
+            <div className="space-y-0 md:space-y-2">
+                <motion.p 
+                className="text-lg md:text-3xl font-bold text-foreground"
+                initial={{ scale: 0.5 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
+                >
+                {stat.value}
+                </motion.p>
+                <p className="text-[10px] md:text-sm text-muted-foreground line-clamp-1">{stat.description}</p>
             </div>
           </div>
-          <div className="space-y-2">
-            <motion.p 
-              className="text-3xl font-bold text-foreground"
-              initial={{ scale: 0.5 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
-            >
-              {stat.value}
-            </motion.p>
-            <p className="text-sm text-muted-foreground">{stat.description}</p>
+          
+          {/* Progress indicators wrapper to push to bottom */}
+          <div>
+            {stat.id === 'humidity' && (
+                <div className="mt-2 md:mt-4">
+                <div className="w-full bg-white/20 rounded-full h-1.5 md:h-2">
+                    <motion.div 
+                    className="bg-blue-400 h-1.5 md:h-2 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${weatherData.humidity}%` }}
+                    transition={{ duration: 1, delay: index * 0.1 + 0.5 }}
+                    />
+                </div>
+                </div>
+            )}
+            {stat.id === 'uv-index' && (
+                <div className="mt-2 md:mt-4">
+                <div className="w-full bg-white/20 rounded-full h-1.5 md:h-2">
+                    <motion.div 
+                    className={`h-1.5 md:h-2 rounded-full ${
+                        (weatherData.uvIndex || 0) <= 2 ? 'bg-green-400' :
+                        (weatherData.uvIndex || 0) <= 5 ? 'bg-yellow-400' :
+                        (weatherData.uvIndex || 0) <= 7 ? 'bg-orange-400' :
+                        (weatherData.uvIndex || 0) <= 10 ? 'bg-red-400' :
+                        'bg-purple-400'
+                    }`}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(((weatherData.uvIndex || 0) / 12) * 100, 100)}%` }}
+                    transition={{ duration: 1, delay: index * 0.1 + 0.5 }}
+                    />
+                </div>
+                </div>
+            )}
           </div>
-          {/* Progress indicator for certain stats */}
-          {stat.id === 'humidity' && (
-            <div className="mt-4">
-              <div className="w-full bg-white/20 rounded-full h-2">
-                <motion.div 
-                  className="bg-blue-400 h-2 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${weatherData.humidity}%` }}
-                  transition={{ duration: 1, delay: index * 0.1 + 0.5 }}
-                />
-              </div>
-            </div>
-          )}
-          {stat.id === 'uv-index' && (
-            <div className="mt-4">
-              <div className="w-full bg-white/20 rounded-full h-2">
-                <motion.div 
-                  className={`h-2 rounded-full ${
-                    (weatherData.uvIndex || 0) <= 2 ? 'bg-green-400' :
-                    (weatherData.uvIndex || 0) <= 5 ? 'bg-yellow-400' :
-                    (weatherData.uvIndex || 0) <= 7 ? 'bg-orange-400' :
-                    (weatherData.uvIndex || 0) <= 10 ? 'bg-red-400' :
-                    'bg-purple-400'
-                  }`}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(((weatherData.uvIndex || 0) / 12) * 100, 100)}%` }}
-                  transition={{ duration: 1, delay: index * 0.1 + 0.5 }}
-                />
-              </div>
-            </div>
-          )}
         </motion.div>
       ))}
 
-      {/* Sun data in a combined card, spans 2 columns on mobile */}
+      {/* Sun data card - Responsive: col-span-1 on mobile/tablet, col-span-2 on XL */}
       <motion.div
-        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-amber-400/20 to-orange-400/20 md:col-span-2 col-span-2"
+        className="glass-card-hover rounded-2xl md:rounded-3xl p-4 md:p-6 bg-gradient-to-br from-amber-400/20 to-orange-400/20 col-span-1 xl:col-span-2 h-full flex flex-col justify-between"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
         whileHover={{ scale: 1.02 }}
       >
-        <h3 className="font-semibold text-foreground mb-6 flex items-center space-x-2">
-          <Sun className="w-5 h-5 text-yellow-500" />
-          <span>Sun & Moon</span>
-        </h3>
-        <div className="grid grid-cols-2 gap-6">
-          {sunData.map((sun, index) => (
-            <div key={sun.id} className="text-center">
-              <motion.div 
-                className="flex justify-center mb-3"
-                initial={{ rotate: -180, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.9 + index * 0.1 }}
-              >
-                <sun.icon className={`w-8 h-8 ${sun.iconColor}`} />
-              </motion.div>
-              <motion.p 
-                className="text-2xl font-bold text-foreground mb-1"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
-              >
-                {sun.value}
-              </motion.p>
-              <p className="text-sm text-muted-foreground">{sun.title}</p>
+        <div>
+            <h3 className="font-semibold text-foreground mb-3 md:mb-6 flex items-center space-x-2">
+            <Sun className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
+            <span className="text-sm md:text-base">Sun & Moon</span>
+            </h3>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-6">
+            {sunData.map((sun, index) => (
+                <div key={sun.id} className="text-center">
+                <motion.div 
+                    className="flex justify-center mb-1 md:mb-3"
+                    initial={{ rotate: -180, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 0.9 + index * 0.1 }}
+                >
+                    <sun.icon className={`w-6 h-6 md:w-8 md:h-8 ${sun.iconColor}`} />
+                </motion.div>
+                <motion.p 
+                    className="text-lg md:text-2xl font-bold text-foreground mb-0 md:mb-1"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
+                >
+                    {sun.value}
+                </motion.p>
+                <p className="text-[10px] md:text-sm text-muted-foreground">{sun.title}</p>
+                </div>
+            ))}
             </div>
-          ))}
         </div>
-        {/* Day length calculation */}
+        {/* Day length */}
         <motion.div 
-          className="mt-6 pt-4 border-t border-white/20 text-center"
+          className="mt-3 md:mt-6 pt-2 md:pt-4 border-t border-white/20 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1.3 }}
         >
-          <p className="text-sm text-muted-foreground mb-1">Day Length</p>
-          <p className="font-semibold">
+          <p className="text-[10px] md:text-sm text-muted-foreground mb-0 md:mb-1">Day Length</p>
+          <p className="text-xs md:text-base font-semibold">
             {(() => {
               const sunrise = new Date(weatherData.sunrise);
               const sunset = new Date(weatherData.sunset);
@@ -226,39 +231,41 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
         </motion.div>
       </motion.div>
 
-      {/* Atmospheric pressure card, spans 2 columns on mobile */}
+      {/* Atmospheric pressure card - Always col-span-1 to match other small cards */}
       <motion.div
-        className="glass-card-hover rounded-3xl p-6 bg-gradient-to-br from-slate-400/20 to-gray-400/20 col-span-2 sm:col-span-1"
+        className="glass-card-hover rounded-2xl md:rounded-3xl p-3 md:p-6 bg-gradient-to-br from-slate-400/20 to-gray-400/20 col-span-1 h-full flex flex-col justify-between"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 1.0 }}
         whileHover={{ scale: 1.02 }}
       >
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <Gauge className="w-6 h-6 text-slate-400" />
-            <h3 className="font-semibold text-foreground">Pressure</h3>
-          </div>
+        <div>
+            <div className="flex items-start justify-between mb-2 md:mb-4">
+            <div className="flex items-center space-x-2 md:space-x-3">
+                <Gauge className="w-4 h-4 md:w-6 md:h-6 text-slate-400" />
+                <h3 className="text-xs md:text-sm font-semibold text-foreground">Pressure</h3>
+            </div>
+            </div>
+            <div className="space-y-0 md:space-y-2">
+            <motion.p 
+                className="text-lg md:text-3xl font-bold text-foreground"
+                initial={{ scale: 0.5 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.1 }}
+            >
+                {weatherData.pressure} hPa
+            </motion.p>
+            <p className="text-[10px] md:text-sm text-muted-foreground">
+                {weatherData.pressure > 1013 ? 'High pressure' : 
+                weatherData.pressure < 1009 ? 'Low pressure' : 
+                'Normal pressure'}
+            </p>
+            </div>
         </div>
-        <div className="space-y-2">
-          <motion.p 
-            className="text-3xl font-bold text-foreground"
-            initial={{ scale: 0.5 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 1.1 }}
-          >
-            {weatherData.pressure} hPa
-          </motion.p>
-          <p className="text-sm text-muted-foreground">
-            {weatherData.pressure > 1013 ? 'High pressure' : 
-             weatherData.pressure < 1009 ? 'Low pressure' : 
-             'Normal pressure'}
-          </p>
-        </div>
-        <div className="mt-4">
-          <div className="w-full bg-white/20 rounded-full h-2">
+        <div className="mt-2 md:mt-4">
+          <div className="w-full bg-white/20 rounded-full h-1.5 md:h-2">
             <motion.div 
-              className={`h-2 rounded-full ${
+              className={`h-1.5 md:h-2 rounded-full ${
                 weatherData.pressure > 1020 ? 'bg-green-400' :
                 weatherData.pressure > 1013 ? 'bg-blue-400' :
                 weatherData.pressure > 1009 ? 'bg-yellow-400' :

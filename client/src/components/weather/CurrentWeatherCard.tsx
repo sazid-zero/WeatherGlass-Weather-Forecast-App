@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { Eye, Droplets, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatTime } from '@/lib/weather-utils';
