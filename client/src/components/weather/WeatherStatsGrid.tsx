@@ -103,7 +103,7 @@ export function WeatherStatsGrid({ weatherData, className = "" }: WeatherStatsGr
   ];
 
   return (
-    <div className={`weather-stats-grid grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6 ${className}`}>
+    <div className={`weather-stats-grid grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-6 ${className}`}>
       {stats.map((stat, index) => (
         <motion.div
           key={stat.id}
